@@ -1,4 +1,5 @@
 import React from 'react';
+import CelestialVisualizer from './CelestialVisualizer';
 import { X, Scale, Trash2, Eye } from 'lucide-react';
 
 export default function CompareObjectsDrawer({ 
@@ -66,6 +67,9 @@ export default function CompareObjectsDrawer({
                     <th className="p-3 text-slate-500 w-36 uppercase text-[10px]">Parameter</th>
                     {compareList.map(obj => (
                       <th key={obj.id} className="p-3 min-w-[200px]">
+                        <div className="w-16 h-16 mb-2 rounded-lg overflow-hidden border border-slate-800">
+                          <CelestialVisualizer object={obj} size={64} className="w-full h-full" />
+                        </div>
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-hud-cyan text-sm">{obj.name}</span>
                           <button 

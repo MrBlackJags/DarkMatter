@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import CelestialVisualizer from './CelestialVisualizer';
 import { 
   X, 
   Compass, 
@@ -35,34 +36,41 @@ export default function ObjectDetailModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-cosmic-950/85 backdrop-blur-md overflow-y-auto">
       <div className="hud-bracket-card w-full max-w-4xl bg-cosmic-900 border border-cyan-500/40 rounded-2xl shadow-2xl overflow-hidden my-auto max-h-[92vh] flex flex-col">
         
-        {/* MODAL HEADER WITH TECHNICAL HUD TELEMETRY */}
-        <div className="p-5 sm:p-6 bg-cosmic-950 border-b border-cyan-500/30 flex items-start justify-between relative">
+        {/* MODAL HEADER WITH TECHNICAL HUD TELEMETRY & CELESTIAL MODEL */}
+        <div className="p-5 sm:p-6 bg-cosmic-950 border-b border-cyan-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative">
           <div className="hud-scanline"></div>
 
-          <div>
-            <div className="flex items-center space-x-2 text-xs font-mono mb-1.5">
-              <span className="px-2 py-0.5 rounded bg-cyan-950 text-hud-cyan border border-cyan-800 uppercase font-bold tracking-wider">
-                {object.subType}
-              </span>
-              <span className="text-slate-500">•</span>
-              <span className="text-hud-emerald flex items-center space-x-1">
-                <Sparkles className="w-3 h-3" />
-                <span>DISCOVERY YEAR: {object.discoveryYear}</span>
-              </span>
+          <div className="flex items-center space-x-4 sm:space-x-5">
+            {/* Prominent Procedural Visual Model */}
+            <div className="w-20 h-20 sm:w-28 sm:h-28 shrink-0">
+              <CelestialVisualizer object={object} size={112} className="w-full h-full shadow-lg shadow-cyan-500/10" />
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-wide flex items-center space-x-3">
-              <span>{object.name}</span>
-              <span className="text-xs font-mono font-normal text-slate-400 px-2 py-0.5 rounded bg-cosmic-900 border border-slate-800">
-                {object.constellation}
-              </span>
-            </h2>
-            <div className="text-xs font-mono text-slate-400 mt-1">
-              Catalog Designation: <span className="text-slate-200">{object.designation}</span>
+            <div>
+              <div className="flex items-center space-x-2 text-xs font-mono mb-1.5">
+                <span className="px-2 py-0.5 rounded bg-cyan-950 text-hud-cyan border border-cyan-800 uppercase font-bold tracking-wider">
+                  {object.subType}
+                </span>
+                <span className="text-slate-500">•</span>
+                <span className="text-hud-emerald flex items-center space-x-1">
+                  <Sparkles className="w-3 h-3" />
+                  <span>DISCOVERY YEAR: {object.discoveryYear}</span>
+                </span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-wide flex items-center space-x-3">
+                <span>{object.name}</span>
+                <span className="text-xs font-mono font-normal text-slate-400 px-2 py-0.5 rounded bg-cosmic-900 border border-slate-800">
+                  {object.constellation}
+                </span>
+              </h2>
+              <div className="text-xs font-mono text-slate-400 mt-1">
+                Catalog Designation: <span className="text-slate-200">{object.designation}</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 self-start sm:self-auto">
             <button 
               onClick={handleShare}
               className="p-2 rounded-lg bg-cosmic-900 border border-slate-800 hover:border-hud-cyan text-slate-400 hover:text-hud-cyan text-xs font-mono transition flex items-center space-x-1"

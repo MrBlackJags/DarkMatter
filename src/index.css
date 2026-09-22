@@ -12,44 +12,46 @@
   }
 
   body {
-    @apply bg-cosmic-950 text-slate-100 font-sans antialiased selection:bg-cyan-500/30 selection:text-cyan-200 overflow-x-hidden;
-    background-image: 
-      radial-gradient(circle at 10% 15%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
-      radial-gradient(circle at 90% 75%, rgba(168, 85, 247, 0.04) 0%, transparent 45%),
-      radial-gradient(circle at 50% 50%, rgba(255, 170, 0, 0.02) 0%, transparent 60%);
-    background-color: #03060f;
+    @apply bg-black text-slate-100 font-sans antialiased selection:bg-cyan-500/30 selection:text-cyan-200 overflow-x-hidden;
+    background-color: #000000;
   }
 }
 
-/* Observatory Astrometric Grid Background */
-.hud-grid-pattern {
-  background-size: 36px 36px;
-  background-image: 
-    linear-gradient(to right, rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+/* Deep Space Subtle Dot Pattern Grid */
+.space-dot-pattern {
+  background-size: 32px 32px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
 }
 
-/* Technical HUD Corner Brackets */
+/* Astrometric Fine Lines */
+.hud-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+}
+
+/* Technical Minimalist Space Cards */
 .hud-bracket-card {
   position: relative;
-  background: rgba(12, 19, 40, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 240, 255, 0.15);
+  background: rgba(8, 12, 22, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hud-bracket-card:hover {
-  border-color: rgba(0, 240, 255, 0.45);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 240, 255, 0.12);
+  border-color: rgba(0, 240, 255, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 240, 255, 0.08);
 }
 
 .hud-bracket-card::before,
 .hud-bracket-card::after {
   content: '';
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   pointer-events: none;
 }
 
@@ -67,36 +69,41 @@
   border-right: 2px solid var(--hud-cyan);
 }
 
-/* Scanline Effect */
+/* Subtle Scanline Effect */
 .hud-scanline {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.8), transparent);
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.6), transparent);
+  box-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
   pointer-events: none;
   z-index: 10;
 }
 
-/* Technical Telemetry Badges */
-.telemetry-tag {
-  @apply px-2 py-0.5 rounded text-[10px] font-mono uppercase tracking-wider font-semibold border inline-flex items-center space-x-1;
-}
-
 /* Custom Scrollbar for HUD Panels */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #060a17;
+  background: #000000;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1b2a52;
+  background: #1e293b;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #00f0ff;
+}
+
+/* Subtle fade in keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
