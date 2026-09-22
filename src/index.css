@@ -3,107 +3,110 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --hud-cyan: #00f0ff;
-    --hud-emerald: #00ff88;
-    --hud-amber: #ffaa00;
-    --hud-rose: #ff3366;
-    --hud-violet: #a855f7;
-  }
-
   body {
-    @apply bg-black text-slate-100 font-sans antialiased selection:bg-cyan-500/30 selection:text-cyan-200 overflow-x-hidden;
-    background-color: #000000;
+    @apply bg-black text-white antialiased overflow-x-hidden;
+    font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  }
+
+  ::selection {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
   }
 }
 
-/* Deep Space Subtle Dot Pattern Grid */
-.space-dot-pattern {
-  background-size: 32px 32px;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-}
-
-/* Astrometric Fine Lines */
-.hud-grid-pattern {
-  background-size: 40px 40px;
-  background-image: 
-    linear-gradient(to right, rgba(0, 240, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
-}
-
-/* Technical Minimalist Space Cards */
-.hud-bracket-card {
-  position: relative;
-  background: rgba(8, 12, 22, 0.75);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hud-bracket-card:hover {
-  border-color: rgba(0, 240, 255, 0.4);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 240, 255, 0.08);
-}
-
-.hud-bracket-card::before,
-.hud-bracket-card::after {
-  content: '';
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  pointer-events: none;
-}
-
-.hud-bracket-card::before {
-  top: -1px;
-  left: -1px;
-  border-top: 2px solid var(--hud-cyan);
-  border-left: 2px solid var(--hud-cyan);
-}
-
-.hud-bracket-card::after {
-  bottom: -1px;
-  right: -1px;
-  border-bottom: 2px solid var(--hud-cyan);
-  border-right: 2px solid var(--hud-cyan);
-}
-
-/* Subtle Scanline Effect */
-.hud-scanline {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.6), transparent);
-  box-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
-  pointer-events: none;
-  z-index: 10;
-}
-
-/* Custom Scrollbar for HUD Panels */
+/* Custom scrollbar — minimal and invisible-feeling */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #00f0ff;
+  background: rgba(255, 255, 255, 0.15);
 }
 
-/* Subtle fade in keyframes */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Gentle fade-in utility */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Subtle float animation for antigravity feel */
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-gentle-float {
+  animation: gentleFloat 6s ease-in-out infinite;
+}
+
+/* Reduced bounce for scroll indicator */
+@keyframes subtleBounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 0.15;
+  }
+}
+
+.animate-subtle-bounce {
+  animation: subtleBounce 3s ease-in-out infinite;
+}
+
+/* Title glow effect */
+.text-glow {
+  text-shadow: 
+    0 0 40px rgba(255, 140, 50, 0.15),
+    0 0 80px rgba(40, 100, 255, 0.1),
+    0 0 120px rgba(255, 255, 255, 0.05);
+}
+
+/* Card hover glow */
+.card-glow:hover {
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
