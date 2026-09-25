@@ -78,10 +78,18 @@ export async function initDatabase(initialObjects = []) {
       spectral_lines_json TEXT,
       key_discoveries_json TEXT,
       research_papers_json TEXT,
+      image TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  // Ensure image column exists for existing SQLite database
+  try {
+    await dbRun(`ALTER TABLE objects ADD COLUMN image TEXT`);
+  } catch (e) {
+    // Column already exists or error ignored
+  }
 
   await dbRun(`
     CREATE TABLE IF NOT EXISTS pipeline_jobs (
@@ -126,8 +134,8 @@ export async function initDatabase(initialObjects = []) {
           id, name, designation, class, sub_type, discovery_year, discovery_mission,
           discovery_instrument, discovery_method, constellation, ra, dec, ra_deg, dec_deg,
           distance_json, physics_json, spectral_bands_json, spectral_lines_json,
-          key_discoveries_json, research_papers_json
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          key_discoveries_json, research_papers_json, image
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [
         obj.id,
         obj.name,
@@ -148,7 +156,8 @@ export async function initDatabase(initialObjects = []) {
         JSON.stringify(obj.spectralBands || {}),
         JSON.stringify(obj.spectralLines || []),
         JSON.stringify(obj.keyDiscoveries || []),
-        JSON.stringify(obj.researchPapers || [])
+        JSON.stringify(obj.researchPapers || []),
+        obj.image || ''
       ]);
     }
     console.log(`[+] Seeded/verified ${initialObjects.length} discovery database objects successfully.`);

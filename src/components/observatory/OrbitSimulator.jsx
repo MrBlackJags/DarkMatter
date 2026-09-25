@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { 
+  Orbit,
   Play, 
   Pause, 
   RotateCcw, 
@@ -16,41 +17,41 @@ import {
   Maximize2
 } from 'lucide-react';
 
-const G_SIM = 1000;
+const G_SIM = 1.0;
 
 const PLANET_PRESETS = [
   {
     name: 'Earth Analog (Terra)',
-    mass: 60000,
+    mass: 1200,
     radius: 70,
-    atmosphereRadius: 110,
+    atmosphereRadius: 105,
     color: '#00f0ff',
     atmosphereColor: 'rgba(0, 240, 255, 0.16)',
     desc: 'Dense atmosphere, balanced surface gravity (g = 9.8 m/s²)'
   },
   {
     name: 'Mars Analog (Ares)',
-    mass: 22000,
+    mass: 480,
     radius: 52,
-    atmosphereRadius: 70,
+    atmosphereRadius: 72,
     color: '#ff5533',
     atmosphereColor: 'rgba(255, 85, 51, 0.12)',
     desc: 'Low mass, thin atmosphere, shallow gravitational well'
   },
   {
     name: 'Gas Giant Core (Jovian)',
-    mass: 220000,
-    radius: 115,
-    atmosphereRadius: 175,
+    mass: 3600,
+    radius: 105,
+    atmosphereRadius: 155,
     color: '#ffaa00',
     atmosphereColor: 'rgba(255, 170, 0, 0.22)',
     desc: 'Deep gravity well with dense turbulent atmospheric drag'
   },
   {
     name: 'Dense Neutron Star',
-    mass: 420000,
+    mass: 7500,
     radius: 32,
-    atmosphereRadius: 40,
+    atmosphereRadius: 42,
     color: '#a855f7',
     atmosphereColor: 'rgba(168, 85, 247, 0.25)',
     desc: 'Intense gravitational spacetime curvature'
@@ -58,8 +59,8 @@ const PLANET_PRESETS = [
 ];
 
 const BODY_TYPES = [
-  { id: 'probe', name: 'Science Satellite', mass: 1, radius: 4, color: '#00ff88', desc: 'Lightweight orbital probe' },
-  { id: 'asteroid', name: 'Near-Earth Asteroid', mass: 50, radius: 6, color: '#ffaa00', desc: 'Porous rocky asteroid' },
+  { id: 'probe', name: 'Science Satellite', mass: 1, radius: 5, color: '#00ff88', desc: 'Lightweight orbital probe' },
+  { id: 'asteroid', name: 'Near-Earth Asteroid', mass: 50, radius: 7, color: '#ffaa00', desc: 'Porous rocky asteroid' },
   { id: 'chx_asteroid', name: 'Chicxulub Impactor', mass: 400, radius: 10, color: '#ff3366', desc: 'Massive extinction-level impactor' },
   { id: 'moon', name: 'Lunar Body', mass: 180, radius: 8, color: '#e2e8f0', desc: 'Natural solid satellite' },
   { id: 'comet', name: 'Volatile Ice Comet', mass: 20, radius: 5, color: '#38bdf8', desc: 'Outgassing frozen volatiles' }
@@ -78,16 +79,20 @@ export default function OrbitSimulator() {
   const [showAtmosphere, setShowAtmosphere] = useState(true);
   const [launchSpeedMultiplier, setLaunchSpeedMultiplier] = useState(1.0);
 
-  // Slingshot Aim
+  // Slingshot Aim (using ref to prevent destroying 60fps loop on mousemove)
   const [isAiming, setIsAiming] = useState(false);
-  const [aimStart, setAimStart] = useState({ x: 0, y: 0 });
-  const [aimCurrent, setAimCurrent] = useState({ x: 0, y: 0 });
+  const aimRef = useRef({
+    isAiming: false,
+    start: { x: 0, y: 0 },
+    current: { x: 0, y: 0 }
+  });
 
-  // Physics arrays
+  // Physics arrays & loop throttling
   const bodiesRef = useRef([]);
   const impactParticlesRef = useRef([]);
   const cratersRef = useRef([]);
   const shockwavesRef = useRef([]);
+  const frameCountRef = useRef(0);
 
   // Telemetry
   const [telemetry, setTelemetry] = useState({
@@ -101,8 +106,9 @@ export default function OrbitSimulator() {
 
   const getCanvasCoords = (clientX, clientY) => {
     const canvas = canvasRef.current;
-    if (!canvas) return { x: 0, y: 0 };
+    if (!canvas) return { x: 500, y: 300 };
     const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return { x: 500, y: 300 };
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
     return {
@@ -113,7 +119,7 @@ export default function OrbitSimulator() {
 
   const getCenter = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return { x: 500, y: 320 };
+    if (!canvas) return { x: 500, y: 300 };
     return { x: canvas.width / 2, y: canvas.height / 2 };
   };
 
@@ -126,7 +132,7 @@ export default function OrbitSimulator() {
 
     if (scenarioKey === 'circular_leo') {
       setPlanet(PLANET_PRESETS[0]);
-      const r = 165;
+      const r = 170;
       const v = Math.sqrt((G_SIM * PLANET_PRESETS[0].mass) / r);
       bodiesRef.current = [
         {
@@ -145,8 +151,8 @@ export default function OrbitSimulator() {
       ];
     } else if (scenarioKey === 'elliptical') {
       setPlanet(PLANET_PRESETS[0]);
-      const r = 135;
-      const v = Math.sqrt((G_SIM * PLANET_PRESETS[0].mass) / r) * 1.22;
+      const r = 130;
+      const v = Math.sqrt((G_SIM * PLANET_PRESETS[0].mass) / r) * 1.25;
       bodiesRef.current = [
         {
           id: 'probe-elliptical',
@@ -170,19 +176,19 @@ export default function OrbitSimulator() {
           name: 'Chicxulub Asteroid (2026-DM)',
           type: 'chx_asteroid',
           x: center.x - 340,
-          y: center.y - 190,
-          vx: 6.5,
-          vy: 3.8,
-          mass: 500,
-          radius: 11,
+          y: center.y - 180,
+          vx: 2.85,
+          vy: 1.45,
+          mass: 400,
+          radius: 10,
           color: '#ff3366',
           trail: []
         }
       ];
     } else if (scenarioKey === 'aerobraking') {
       setPlanet(PLANET_PRESETS[0]);
-      const r = 135;
-      const v = Math.sqrt((G_SIM * PLANET_PRESETS[0].mass) / r) * 0.90;
+      const r = 98;
+      const v = Math.sqrt((G_SIM * PLANET_PRESETS[0].mass) / r) * 0.96;
       bodiesRef.current = [
         {
           id: 'probe-decay',
@@ -200,14 +206,14 @@ export default function OrbitSimulator() {
       ];
     } else if (scenarioKey === 'binary_moons') {
       setPlanet(PLANET_PRESETS[2]); // Jovian
-      const r1 = 185;
+      const r1 = 180;
       const v1 = Math.sqrt((G_SIM * PLANET_PRESETS[2].mass) / r1);
       const r2 = 280;
       const v2 = Math.sqrt((G_SIM * PLANET_PRESETS[2].mass) / r2);
       bodiesRef.current = [
         {
           id: 'moon-inner',
-          name: 'Inner Moonlet',
+          name: 'Inner Moonlet (Io Analog)',
           type: 'moon',
           x: center.x,
           y: center.y - r1,
@@ -220,7 +226,7 @@ export default function OrbitSimulator() {
         },
         {
           id: 'moon-outer',
-          name: 'Outer Moonlet',
+          name: 'Outer Moonlet (Europa Analog)',
           type: 'moon',
           x: center.x,
           y: center.y + r2,
@@ -239,37 +245,109 @@ export default function OrbitSimulator() {
     loadScenario('circular_leo');
   }, [loadScenario]);
 
-  // Mouse & Touch aiming handlers
+  // Mouse & Touch aiming handlers (do not trigger re-render on move)
   const handleStart = (clientX, clientY) => {
     const coords = getCanvasCoords(clientX, clientY);
+    aimRef.current = {
+      isAiming: true,
+      start: coords,
+      current: coords
+    };
     setIsAiming(true);
-    setAimStart(coords);
-    setAimCurrent(coords);
   };
 
   const handleMove = (clientX, clientY) => {
-    if (!isAiming) return;
-    setAimCurrent(getCanvasCoords(clientX, clientY));
+    if (!aimRef.current.isAiming) return;
+    aimRef.current.current = getCanvasCoords(clientX, clientY);
   };
 
   const handleEnd = () => {
-    if (!isAiming) return;
+    if (!aimRef.current.isAiming) return;
+    const { start, current } = aimRef.current;
+    aimRef.current.isAiming = false;
     setIsAiming(false);
 
-    const dx = aimStart.x - aimCurrent.x;
-    const dy = aimStart.y - aimCurrent.y;
-    const power = 0.085 * launchSpeedMultiplier;
-    const vx = dx * power;
-    const vy = dy * power;
+    const dx = start.x - current.x;
+    const dy = start.y - current.y;
+    const dragDist = Math.hypot(dx, dy);
+
+    let vx = dx * 0.045 * launchSpeedMultiplier;
+    let vy = dy * 0.045 * launchSpeedMultiplier;
+
+    // If tapped or clicked without dragging, provide stable orbital injection tangent
+    if (dragDist < 6) {
+      const cx = canvasRef.current ? canvasRef.current.width / 2 : 500;
+      const cy = canvasRef.current ? canvasRef.current.height / 2 : 300;
+      const distFromCenter = Math.hypot(start.x - cx, start.y - cy);
+      const orbitSpeed = Math.sqrt((G_SIM * planet.mass) / Math.max(distFromCenter, 60));
+      const nx = -(start.y - cy) / distFromCenter;
+      const ny = (start.x - cx) / distFromCenter;
+      vx = nx * orbitSpeed * launchSpeedMultiplier;
+      vy = ny * orbitSpeed * launchSpeedMultiplier;
+    }
+
+    // Ensure spawn is outside the planet surface
+    const cx = canvasRef.current ? canvasRef.current.width / 2 : 500;
+    const cy = canvasRef.current ? canvasRef.current.height / 2 : 300;
+    const distFromCenter = Math.hypot(start.x - cx, start.y - cy);
+    if (distFromCenter < planet.radius + 15) {
+      // Clamped slightly outside surface
+      const ang = Math.atan2(start.y - cy, start.x - cx);
+      start.x = cx + Math.cos(ang) * (planet.radius + 20);
+      start.y = cy + Math.sin(ang) * (planet.radius + 20);
+    }
 
     bodiesRef.current.push({
-      id: `body-${Date.now()}`,
+      id: `body-${Date.now()}-${Math.random()}`,
       name: `${selectedBodyType.name} #${bodiesRef.current.length + 1}`,
       type: selectedBodyType.id,
-      x: aimStart.x,
-      y: aimStart.y,
+      x: start.x,
+      y: start.y,
       vx,
       vy,
+      mass: selectedBodyType.mass,
+      radius: selectedBodyType.radius,
+      color: selectedBodyType.color,
+      trail: []
+    });
+  };
+
+  // Quick 1-click orbital injection
+  const handleQuickLaunchOrbit = () => {
+    const center = getCenter();
+    const r = planet.radius + 105;
+    const v = Math.sqrt((G_SIM * planet.mass) / r) * launchSpeedMultiplier;
+    bodiesRef.current.push({
+      id: `body-quick-orbit-${Date.now()}`,
+      name: `${selectedBodyType.name} (Orbital)`,
+      type: selectedBodyType.id,
+      x: center.x,
+      y: center.y - r,
+      vx: v,
+      vy: 0,
+      mass: selectedBodyType.mass,
+      radius: selectedBodyType.radius,
+      color: selectedBodyType.color,
+      trail: []
+    });
+  };
+
+  // Quick 1-click direct planetary impact
+  const handleQuickLaunchImpact = () => {
+    const center = getCenter();
+    const spawnX = center.x - 320;
+    const spawnY = center.y - 170;
+    const targetAngle = Math.atan2(center.y - spawnY, center.x - spawnX);
+    const speed = 3.2 * launchSpeedMultiplier;
+
+    bodiesRef.current.push({
+      id: `body-quick-impact-${Date.now()}`,
+      name: `${selectedBodyType.name} (Impactor)`,
+      type: selectedBodyType.id,
+      x: spawnX,
+      y: spawnY,
+      vx: Math.cos(targetAngle) * speed,
+      vy: Math.sin(targetAngle) * speed,
       mass: selectedBodyType.mass,
       radius: selectedBodyType.radius,
       color: selectedBodyType.color,
@@ -317,12 +395,12 @@ export default function OrbitSimulator() {
 
         if (isRunning) {
           const steps = 4;
-          const dt = (0.016 * timeStep) / steps;
+          const dt = (1.0 * timeStep) / steps;
 
           for (let s = 0; s < steps; s++) {
             const dx = cx - b.x;
             const dy = cy - b.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
+            const dist = Math.hypot(dx, dy);
 
             if (dist <= planet.radius + b.radius * 0.7) {
               triggerCollision(b, cx, cy, planet);
@@ -330,27 +408,27 @@ export default function OrbitSimulator() {
               break;
             }
 
-            const force = (G_SIM * planet.mass) / Math.max(dist * dist, 120);
+            const force = (G_SIM * planet.mass) / Math.max(dist * dist, 100);
             const ax = (dx / dist) * force;
             const ay = (dy / dist) * force;
 
             let dragX = 0;
             let dragY = 0;
-            if (dist < planet.atmosphereRadius) {
+            if (dist < planet.atmosphereRadius && dist > planet.radius) {
               const altRatio = (dist - planet.radius) / (planet.atmosphereRadius - planet.radius);
-              const density = Math.exp(-3 * altRatio) * 0.0028;
-              const speed = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+              const density = Math.exp(-3 * altRatio) * 0.0016;
+              const speed = Math.hypot(b.vx, b.vy);
               dragX = -0.5 * density * speed * b.vx;
               dragY = -0.5 * density * speed * b.vy;
 
-              if (speed > 2.0 && Math.random() < 0.3) {
+              if (speed > 1.2 && Math.random() < 0.3) {
                 impactParticlesRef.current.push({
                   x: b.x + (Math.random() - 0.5) * 4,
                   y: b.y + (Math.random() - 0.5) * 4,
                   vx: -b.vx * 0.2 + (Math.random() - 0.5),
                   vy: -b.vy * 0.2 + (Math.random() - 0.5),
                   life: 1.0,
-                  decay: 0.08,
+                  decay: 0.06,
                   color: '#ffaa00',
                   size: 2
                 });
@@ -359,12 +437,18 @@ export default function OrbitSimulator() {
 
             b.vx += (ax + dragX) * dt;
             b.vy += (ay + dragY) * dt;
-            b.x += b.vx * dt * 60;
-            b.y += b.vy * dt * 60;
+            b.x += b.vx * dt;
+            b.y += b.vy * dt;
           }
         }
 
         if (!b.collided) {
+          const distFromCenter = Math.hypot(cx - b.x, cy - b.y);
+          // Cull if escaped too far (> 2600 px) to prevent memory leak
+          if (distFromCenter > 2600) {
+            continue;
+          }
+
           b.trail.push({ x: b.x, y: b.y });
           if (b.trail.length > 220) b.trail.shift();
 
@@ -378,58 +462,78 @@ export default function OrbitSimulator() {
 
       bodiesRef.current = surviving;
 
-      // 6. Kepler orbit prediction
-      if (showPredictedOrbit && surviving.length > 0) {
-        drawOrbitPrediction(ctx, surviving[0], cx, cy, planet);
+      // 6. Kepler orbit prediction (live preview during aim, or tracks active body)
+      if (showPredictedOrbit) {
+        if (aimRef.current.isAiming) {
+          const { start, current } = aimRef.current;
+          const dx = start.x - current.x;
+          const dy = start.y - current.y;
+          const dragDist = Math.hypot(dx, dy);
+          let vx = dx * 0.045 * launchSpeedMultiplier;
+          let vy = dy * 0.045 * launchSpeedMultiplier;
+          if (dragDist < 6) {
+            const distFromCenter = Math.hypot(start.x - cx, start.y - cy);
+            const orbitSpeed = Math.sqrt((G_SIM * planet.mass) / Math.max(distFromCenter, 60));
+            vx = -(start.y - cy) / distFromCenter * orbitSpeed * launchSpeedMultiplier;
+            vy = (start.x - cx) / distFromCenter * orbitSpeed * launchSpeedMultiplier;
+          }
+          const aimingBody = { x: start.x, y: start.y, vx, vy, radius: selectedBodyType.radius };
+          drawOrbitPrediction(ctx, aimingBody, cx, cy, planet, true);
+        } else if (surviving.length > 0) {
+          drawOrbitPrediction(ctx, surviving[surviving.length - 1], cx, cy, planet, false);
+        }
       }
 
       // 7. Impact particles
       updateAndDrawParticles(ctx, impactParticlesRef.current);
 
-      // 8. Slingshot guide
-      if (isAiming) {
-        drawAimGuide(ctx, aimStart, aimCurrent, selectedBodyType, launchSpeedMultiplier);
+      // 8. Slingshot guide (drawn smoothly from aimRef)
+      if (aimRef.current.isAiming) {
+        drawAimGuide(ctx, aimRef.current.start, aimRef.current.current, selectedBodyType, launchSpeedMultiplier);
       }
 
-      // Update HUD telemetry
-      if (surviving.length > 0) {
-        const lead = surviving[0];
-        const dx = cx - lead.x;
-        const dy = cy - lead.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const altitude = Math.max(0, dist - planet.radius);
-        const speed = Math.sqrt(lead.vx * lead.vx + lead.vy * lead.vy);
+      // Update HUD telemetry throttled every 6 frames (~10Hz) to prevent React state churn
+      frameCountRef.current++;
+      if (frameCountRef.current % 6 === 0) {
+        if (surviving.length > 0) {
+          const lead = surviving[surviving.length - 1];
+          const dx = cx - lead.x;
+          const dy = cy - lead.y;
+          const dist = Math.hypot(dx, dy);
+          const altitude = Math.max(0, dist - planet.radius);
+          const speed = Math.hypot(lead.vx, lead.vy);
 
-        const mu = G_SIM * planet.mass;
-        const rVec = { x: lead.x - cx, y: lead.y - cy };
-        const vVec = { x: lead.vx, y: lead.vy };
-        const energy = (speed * speed) / 2 - mu / dist;
-        const h = rVec.x * vVec.y - rVec.y * vVec.x;
-        const eTerm = 1 + (2 * energy * h * h) / (mu * mu);
-        const ecc = eTerm >= 0 ? Math.sqrt(eTerm) : 1;
+          const mu = G_SIM * planet.mass;
+          const rVec = { x: lead.x - cx, y: lead.y - cy };
+          const vVec = { x: lead.vx, y: lead.vy };
+          const energy = (speed * speed) / 2 - mu / dist;
+          const h = rVec.x * vVec.y - rVec.y * vVec.x;
+          const eTerm = 1 + (2 * energy * h * h) / (mu * mu);
+          const ecc = eTerm >= 0 ? Math.sqrt(eTerm) : 1;
 
-        let statusText = 'STABLE ORBIT';
-        if (dist < planet.atmosphereRadius) statusText = 'ATMOSPHERIC DECAY';
-        if (ecc >= 1) statusText = 'HYPERBOLIC ESCAPE';
-        if (dist < planet.radius + 15) statusText = 'COLLISION COURSE';
+          let statusText = 'STABLE ORBIT';
+          if (dist < planet.atmosphereRadius) statusText = 'ATMOSPHERIC DECAY';
+          if (ecc >= 1.08) statusText = 'HYPERBOLIC ESCAPE';
+          if (dist < planet.radius + 15) statusText = 'COLLISION COURSE';
 
-        setTelemetry(prev => ({
-          ...prev,
-          activeBodies: surviving.length,
-          speed,
-          altitude,
-          eccentricity: ecc,
-          status: statusText
-        }));
-      } else {
-        setTelemetry(prev => ({
-          ...prev,
-          activeBodies: 0,
-          speed: 0,
-          altitude: 0,
-          eccentricity: 0,
-          status: 'READY / AWAITING LAUNCH'
-        }));
+          setTelemetry(prev => ({
+            ...prev,
+            activeBodies: surviving.length,
+            speed,
+            altitude,
+            eccentricity: ecc,
+            status: statusText
+          }));
+        } else {
+          setTelemetry(prev => ({
+            ...prev,
+            activeBodies: 0,
+            speed: 0,
+            altitude: 0,
+            eccentricity: 0,
+            status: 'READY / AWAITING LAUNCH'
+          }));
+        }
       }
 
       animationFrameId = requestAnimationFrame(loop);
@@ -437,15 +541,15 @@ export default function OrbitSimulator() {
 
     animationFrameId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [isRunning, timeStep, showGravityGrid, showPredictedOrbit, showAtmosphere, isAiming, aimStart, aimCurrent, selectedBodyType, launchSpeedMultiplier, planet]);
+  }, [isRunning, timeStep, showGravityGrid, showPredictedOrbit, showAtmosphere, selectedBodyType, launchSpeedMultiplier, planet]);
 
   const triggerCollision = (body, cx, cy, planetState) => {
-    const speed = Math.sqrt(body.vx * body.vx + body.vy * body.vy);
-    const impactSpeedKms = speed * 4.2;
+    const speed = Math.hypot(body.vx, body.vy);
+    const impactSpeedKms = (speed * 11.2).toFixed(1);
     const massTons = body.mass * 1e5;
-    const kineticEnergyJoules = 0.5 * massTons * 1000 * Math.pow(impactSpeedKms * 1000, 2);
+    const kineticEnergyJoules = 0.5 * massTons * 1000 * Math.pow(Number(impactSpeedKms) * 1000, 2);
     const megatonsTnt = kineticEnergyJoules / 4.184e15;
-    const craterDiameterKm = Math.pow(megatonsTnt, 0.294) * 1.8;
+    const craterDiameterKm = (Math.pow(Math.max(megatonsTnt, 0.1), 0.294) * 2.2).toFixed(1);
 
     const angle = Math.atan2(body.y - cy, body.x - cx);
     const impactX = cx + Math.cos(angle) * planetState.radius;
@@ -454,7 +558,7 @@ export default function OrbitSimulator() {
     cratersRef.current.push({
       x: impactX,
       y: impactY,
-      radius: Math.max(5, Math.min(24, body.radius * 1.6)),
+      radius: Math.max(6, Math.min(26, body.radius * 1.8)),
       createdAt: Date.now()
     });
 
@@ -462,21 +566,21 @@ export default function OrbitSimulator() {
       x: impactX,
       y: impactY,
       radius: 4,
-      maxRadius: Math.min(130, body.radius * 9),
+      maxRadius: Math.min(150, body.radius * 10),
       alpha: 1.0
     });
 
-    const particleCount = Math.min(110, body.radius * 12);
+    const particleCount = Math.min(90, body.radius * 10);
     for (let i = 0; i < particleCount; i++) {
       const pAngle = angle + Math.PI + (Math.random() - 0.5) * 2.2;
-      const pSpeed = Math.random() * 8 + 2;
+      const pSpeed = Math.random() * 5 + 1.5;
       impactParticlesRef.current.push({
         x: impactX,
         y: impactY,
         vx: Math.cos(pAngle) * pSpeed,
         vy: Math.sin(pAngle) * pSpeed,
         life: 1.0,
-        decay: Math.random() * 0.02 + 0.015,
+        decay: Math.random() * 0.025 + 0.02,
         color: i % 2 === 0 ? '#ff3366' : '#ffaa00',
         size: Math.random() * 3 + 1.5
       });
@@ -486,9 +590,9 @@ export default function OrbitSimulator() {
       ...prev,
       lastImpact: {
         bodyName: body.name,
-        speedKms: impactSpeedKms.toFixed(1),
-        megatonsTnt: megatonsTnt.toLocaleString(undefined, { maximumFractionDigits: 1 }),
-        craterDiameterKm: craterDiameterKm.toFixed(1),
+        speedKms: impactSpeedKms,
+        megatonsTnt: Math.round(megatonsTnt).toLocaleString(),
+        craterDiameterKm: craterDiameterKm,
         time: new Date().toLocaleTimeString()
       }
     }));
@@ -563,6 +667,7 @@ export default function OrbitSimulator() {
               onMouseDown={e => handleStart(e.clientX, e.clientY)}
               onMouseMove={e => handleMove(e.clientX, e.clientY)}
               onMouseUp={handleEnd}
+              onMouseLeave={handleEnd}
               onTouchStart={e => {
                 if (e.touches[0]) handleStart(e.touches[0].clientX, e.touches[0].clientY);
               }}
@@ -574,9 +679,11 @@ export default function OrbitSimulator() {
             />
 
             {/* In-Canvas Instruction Overlay */}
-            <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono text-slate-300 flex items-center space-x-2 pointer-events-none">
-              <Crosshair className="w-3.5 h-3.5 text-hud-cyan animate-pulse" />
-              <span>Click & drag anywhere to launch <strong>{selectedBodyType.name}</strong></span>
+            <div className="absolute top-3 left-3 bg-black/85 backdrop-blur-md px-3.5 py-2 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 flex items-center space-x-2.5 pointer-events-none">
+              <Crosshair className="w-4 h-4 text-hud-cyan animate-pulse" />
+              <span>
+                <strong>Click & drag</strong> to slingshot, or click <strong>Direct Impact</strong>
+              </span>
             </div>
 
             {/* In-Canvas Status Alert Banner */}
@@ -751,6 +858,29 @@ export default function OrbitSimulator() {
                 onChange={e => setLaunchSpeedMultiplier(Number(e.target.value))}
                 className="w-full accent-hud-cyan cursor-pointer"
               />
+            </div>
+
+            {/* Quick Action Launchers */}
+            <div className="pt-2 border-t border-slate-800 space-y-1.5">
+              <div className="text-[10px] text-slate-500 uppercase font-mono mb-1">Instant Injection</div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={handleQuickLaunchOrbit}
+                  className="px-2.5 py-2 rounded-lg bg-emerald-950/60 border border-emerald-600/50 hover:bg-emerald-900 text-emerald-300 font-bold flex items-center justify-center gap-1.5 transition text-[11px]"
+                  title="Inject into circular orbit around current planet"
+                >
+                  <Compass className="w-3.5 h-3.5" />
+                  <span>Launch Orbit</span>
+                </button>
+                <button
+                  onClick={handleQuickLaunchImpact}
+                  className="px-2.5 py-2 rounded-lg bg-rose-950/60 border border-rose-600/50 hover:bg-rose-900 text-rose-300 font-bold flex items-center justify-center gap-1.5 transition text-[11px]"
+                  title="Launch direct high-speed asteroid collision into planet"
+                >
+                  <Flame className="w-3.5 h-3.5" />
+                  <span>Direct Impact</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -945,41 +1075,41 @@ function drawCometTail(ctx, body, cx, cy) {
   ctx.stroke();
 }
 
-function drawOrbitPrediction(ctx, body, cx, cy, planet) {
+function drawOrbitPrediction(ctx, body, cx, cy, planet, isAiming = false) {
   let px = body.x;
   let py = body.y;
   let pvx = body.vx;
   let pvy = body.vy;
-  const dt = 0.08;
+  const dt = 1.0;
   const points = [];
 
-  for (let step = 0; step < 180; step++) {
+  for (let step = 0; step < 420; step++) {
     const dx = cx - px;
     const dy = cy - py;
-    const dist = Math.sqrt(dx * dx + dy * dy);
+    const dist = Math.hypot(dx, dy);
 
     if (dist <= planet.radius) {
       points.push({ x: px, y: py, hit: true });
       break;
     }
 
-    const force = (G_SIM * planet.mass) / Math.max(dist * dist, 120);
+    const force = (G_SIM * planet.mass) / Math.max(dist * dist, 100);
     const ax = (dx / dist) * force;
     const ay = (dy / dist) * force;
 
     pvx += ax * dt;
     pvy += ay * dt;
-    px += pvx * dt * 60;
-    py += pvy * dt * 60;
+    px += pvx * dt;
+    py += pvy * dt;
 
     points.push({ x: px, y: py, hit: false });
   }
 
   if (points.length < 2) return;
 
-  ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
-  ctx.setLineDash([4, 4]);
-  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = isAiming ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 240, 255, 0.45)';
+  ctx.setLineDash(isAiming ? [5, 3] : [4, 4]);
+  ctx.lineWidth = isAiming ? 2 : 1.5;
   ctx.beginPath();
   ctx.moveTo(points[0].x, points[0].y);
   for (let i = 1; i < points.length; i++) {
@@ -991,13 +1121,13 @@ function drawOrbitPrediction(ctx, body, cx, cy, planet) {
   const last = points[points.length - 1];
   if (last.hit) {
     ctx.strokeStyle = '#ff3366';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.arc(last.x, last.y, 8, 0, Math.PI * 2);
+    ctx.arc(last.x, last.y, 9, 0, Math.PI * 2);
     ctx.stroke();
     ctx.fillStyle = '#ff3366';
-    ctx.font = '9px monospace';
-    ctx.fillText('IMPACT', last.x + 12, last.y + 3);
+    ctx.font = 'bold 10px monospace';
+    ctx.fillText('⚡ IMPACT', last.x + 13, last.y + 4);
   }
 }
 
@@ -1039,15 +1169,15 @@ function drawAimGuide(ctx, start, current, bodyType, speedMul) {
 
   const dx = start.x - current.x;
   const dy = start.y - current.y;
-  const vx = dx * 0.085 * speedMul;
-  const vy = dy * 0.085 * speedMul;
+  const vx = dx * 0.045 * speedMul;
+  const vy = dy * 0.045 * speedMul;
 
   ctx.strokeStyle = '#ffffff';
   ctx.lineWidth = 1.5;
-  ctx.setLineDash([2, 4]);
+  ctx.setLineDash([3, 4]);
   ctx.beginPath();
   ctx.moveTo(start.x, start.y);
-  ctx.lineTo(start.x + vx * 20, start.y + vy * 20);
+  ctx.lineTo(start.x + vx * 25, start.y + vy * 25);
   ctx.stroke();
   ctx.setLineDash([]);
 }

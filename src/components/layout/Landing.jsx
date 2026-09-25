@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
  * Contains ONLY the title "Darkmatter" centered in sleek typography with subtle glow,
  * and a single "Discover" button that transitions into the data sections.
  */
-export default function Landing({ onDiscover }) {
+export default function Landing({ onDiscover, onNavigate }) {
   const [isVisible, setIsVisible] = useState(false);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
 
@@ -66,7 +66,7 @@ export default function Landing({ onDiscover }) {
           }}
         />
 
-        {/* ONLY TITLE: "Darkmatter" centered in sleek typography with subtle glow */}
+        {/* TITLE: "Darkmatter" centered in sleek typography with subtle glow */}
         <h1
           className="text-7xl sm:text-8xl md:text-9xl font-extralight tracking-[-0.04em] text-white relative transition-all duration-700 ease-out animate-gentle-float"
           style={{
@@ -80,10 +80,10 @@ export default function Landing({ onDiscover }) {
           Darkmatter
         </h1>
 
-        {/* SINGLE "Discover" BUTTON */}
+        {/* PRIMARY "Discover" BUTTON */}
         <button
           onClick={onDiscover}
-          className="mt-14 sm:mt-16 group relative inline-flex items-center gap-3 px-8 py-3.5 rounded-full border border-white/20 bg-white/[0.02] text-white/75 text-xs sm:text-sm font-light tracking-[0.25em] uppercase backdrop-blur-md transition-all duration-500 hover:text-white hover:border-white/50 hover:bg-white/[0.08] hover:shadow-[0_0_35px_rgba(255,255,255,0.12),0_0_15px_rgba(255,140,50,0.1)] active:scale-95 focus:outline-none"
+          className="mt-12 sm:mt-14 group relative inline-flex items-center gap-3 px-9 py-3.5 rounded-full border border-white/20 bg-white/[0.02] text-white/80 text-xs sm:text-sm font-light tracking-[0.25em] uppercase backdrop-blur-md transition-all duration-500 hover:text-white hover:border-white/50 hover:bg-white/[0.08] hover:shadow-[0_0_35px_rgba(255,255,255,0.15),0_0_15px_rgba(255,140,50,0.1)] active:scale-95 focus:outline-none cursor-pointer"
           aria-label="Discover space catalog"
         >
           <span>Discover</span>
@@ -102,6 +102,28 @@ export default function Landing({ onDiscover }) {
             <path d="m12 5 7 7-7 7" />
           </svg>
         </button>
+
+        {/* QUICK LAUNCH SUITE NAVIGATION */}
+        <div className="mt-8 flex items-center justify-center gap-2.5 sm:gap-3 flex-wrap">
+          <button
+            onClick={() => onNavigate && onNavigate('calculators')}
+            className="px-4 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.08] hover:border-white/30 text-white/50 hover:text-white text-xs font-mono tracking-wider transition-all duration-300 backdrop-blur-sm cursor-pointer"
+          >
+            Space Calculators
+          </button>
+          <button
+            onClick={() => onNavigate && onNavigate('simulation')}
+            className="px-4 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.08] hover:border-white/30 text-white/50 hover:text-white text-xs font-mono tracking-wider transition-all duration-300 backdrop-blur-sm cursor-pointer"
+          >
+            Gravity & Collisions
+          </button>
+          <button
+            onClick={() => onNavigate && onNavigate('pipeline')}
+            className="px-4 py-1.5 rounded-full border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.08] hover:border-white/30 text-white/50 hover:text-white text-xs font-mono tracking-wider transition-all duration-300 backdrop-blur-sm cursor-pointer"
+          >
+            Telemetry Pipeline & DB
+          </button>
+        </div>
       </div>
     </main>
   );

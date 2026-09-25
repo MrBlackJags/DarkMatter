@@ -65,6 +65,12 @@ function AntigravityCard({ object, index, onSelect }) {
       if (p.equilibriumTemp) return { label: 'Equilibrium Temp', value: p.equilibriumTemp };
       if (p.orbitalPeriod) return { label: 'Orbital Period', value: p.orbitalPeriod };
     }
+    if (object.class === 'star') {
+      if (p.radius) return { label: 'Radius', value: p.radius.split('(')[0].trim() };
+      if (p.luminosity) return { label: 'Luminosity', value: p.luminosity.split('(')[0].trim() };
+      if (p.mass) return { label: 'Stellar Mass', value: p.mass.split('(')[0].trim() };
+      if (p.temperature) return { label: 'Surface Temp', value: p.temperature.split('(')[0].trim() };
+    }
     if (p.stellarMass) return { label: 'Stellar Mass', value: p.stellarMass };
     if (d.lightTravelTime) return { label: 'Lookback Time', value: d.lightTravelTime };
     if (d.lightYears) return { label: 'Distance', value: `${d.lightYears} LY` };
@@ -170,7 +176,7 @@ export default function DataCards({ objects = [], onSelectObject, onBack }) {
   }, []);
 
   // Filter objects by the requested Databases
-  const isStarObject = (cls) => ['galaxy', 'pulsar', 'supernova'].includes(cls);
+  const isStarObject = (cls) => ['star', 'galaxy', 'pulsar', 'supernova'].includes(cls);
   const isBlackHoleObject = (cls) => cls === 'blackhole';
   const isPlanetObject = (cls) => ['exoplanet', 'interstellar'].includes(cls);
 
@@ -198,7 +204,7 @@ export default function DataCards({ objects = [], onSelectObject, onBack }) {
   });
 
   return (
-    <section className="relative z-10 min-h-screen w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 transition-opacity duration-700 ease-out">
+    <section className="relative z-10 min-h-screen w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 transition-opacity duration-700 ease-out">
       {/* MINIMALIST TOP NAV BAR */}
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-6 mb-8">
         <button

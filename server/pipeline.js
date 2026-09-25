@@ -74,6 +74,7 @@ export class AstronomicalDataPipeline {
       researchPapers: normalizedPapers,
       subType: candidate.subType || 'Survey Target Candidate',
       discoveryYear: candidate.discoveryYear || new Date().getFullYear(),
+      image: candidate.image || null,
       keyDiscoveries: candidate.keyDiscoveries && candidate.keyDiscoveries.length > 0
         ? candidate.keyDiscoveries
         : ['Astrometrically cataloged via automated high-cadence observatory pipeline.']
@@ -130,7 +131,7 @@ export class AstronomicalDataPipeline {
               constellation = ?, ra = ?, dec = ?, ra_deg = ?, dec_deg = ?,
               distance_json = ?, physics_json = ?, spectral_bands_json = ?,
               spectral_lines_json = ?, key_discoveries_json = ?, research_papers_json = ?,
-              updated_at = CURRENT_TIMESTAMP
+              image = ?, updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
           `, [
             enriched.designation || enriched.name,
@@ -151,6 +152,7 @@ export class AstronomicalDataPipeline {
             JSON.stringify(enriched.spectralLines || []),
             JSON.stringify(enriched.keyDiscoveries || []),
             JSON.stringify(enriched.researchPapers || []),
+            enriched.image || '',
             existing.id
           ]);
         } else {
@@ -160,8 +162,8 @@ export class AstronomicalDataPipeline {
               id, name, designation, class, sub_type, discovery_year, discovery_mission,
               discovery_instrument, discovery_method, constellation, ra, dec, ra_deg, dec_deg,
               distance_json, physics_json, spectral_bands_json, spectral_lines_json,
-              key_discoveries_json, research_papers_json
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              key_discoveries_json, research_papers_json, image
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `, [
             enriched.id,
             enriched.name,
@@ -182,7 +184,8 @@ export class AstronomicalDataPipeline {
             JSON.stringify(enriched.spectralBands || {}),
             JSON.stringify(enriched.spectralLines || []),
             JSON.stringify(enriched.keyDiscoveries || []),
-            JSON.stringify(enriched.researchPapers || [])
+            JSON.stringify(enriched.researchPapers || []),
+            enriched.image || ''
           ]);
         }
 

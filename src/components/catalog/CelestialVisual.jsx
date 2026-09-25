@@ -74,7 +74,7 @@ export default function CelestialVisual({ object, isHovered = false, size = 'car
       } else if (isPlanet) {
         drawPlanet(ctx, cx, cy, w, h, time, isHovered, subType, name);
       } else {
-        drawStar(ctx, cx, cy, w, h, time, isHovered);
+        drawStar(ctx, cx, cy, w, h, time, isHovered, subType, name);
       }
 
       animId = requestAnimationFrame(render);
@@ -217,21 +217,41 @@ export default function CelestialVisual({ object, isHovered = false, size = 'car
     ctx.restore();
   };
 
-  // DRAW STAR / SUPERNOVA (Radiant Corona, Convective Granulation)
-  const drawStar = (ctx, cx, cy, w, h, time, hovered) => {
-    const radius = isDetail ? 36 : 24;
+  // DRAW STAR (Dynamic Spectral Corona, Convective Granulation & Flares)
+  const drawStar = (ctx, cx, cy, w, h, time, hovered, subType = '', name = '') => {
+    const s = (subType + ' ' + name).toLowerCase();
+    const isBlue = s.includes('blue') || s.includes('wolf-rayet') || s.includes('o-type') || s.includes('b-type') || s.includes('wo') || s.includes('wn') || s.includes('rigel') || s.includes('spica');
+    const isRed = s.includes('red') || s.includes('m-dwarf') || s.includes('m-type') || s.includes('supergiant') || s.includes('hypergiant') || s.includes('garnet') || s.includes('betelgeuse') || s.includes('antares');
+    const isWhiteDwarf = s.includes('white dwarf') || s.includes('sirius b');
 
-    // Atmospheric Corona
+    const radius = isWhiteDwarf ? (isDetail ? 18 : 12) : (isDetail ? 36 : 24);
+
+    // Dynamic Corona Gradient based on stellar spectral type
     const corona = ctx.createRadialGradient(cx, cy, radius * 0.4, cx, cy, radius * 2.8);
-    corona.addColorStop(0, hovered ? 'rgba(255, 200, 120, 0.5)' : 'rgba(255, 170, 80, 0.35)');
-    corona.addColorStop(0.6, 'rgba(255, 120, 40, 0.1)');
-    corona.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    if (isBlue) {
+      corona.addColorStop(0, hovered ? 'rgba(100, 200, 255, 0.6)' : 'rgba(70, 160, 255, 0.4)');
+      corona.addColorStop(0.6, 'rgba(30, 100, 255, 0.15)');
+      corona.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    } else if (isRed) {
+      corona.addColorStop(0, hovered ? 'rgba(255, 90, 40, 0.55)' : 'rgba(230, 60, 30, 0.35)');
+      corona.addColorStop(0.6, 'rgba(200, 30, 10, 0.12)');
+      corona.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    } else if (isWhiteDwarf) {
+      corona.addColorStop(0, hovered ? 'rgba(220, 240, 255, 0.7)' : 'rgba(200, 230, 255, 0.5)');
+      corona.addColorStop(0.6, 'rgba(120, 180, 255, 0.2)');
+      corona.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    } else {
+      corona.addColorStop(0, hovered ? 'rgba(255, 200, 120, 0.5)' : 'rgba(255, 170, 80, 0.35)');
+      corona.addColorStop(0.6, 'rgba(255, 120, 40, 0.1)');
+      corona.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    }
+
     ctx.fillStyle = corona;
     ctx.beginPath();
     ctx.arc(cx, cy, radius * 2.8, 0, Math.PI * 2);
     ctx.fill();
 
-    // Stellar Body
+    // Stellar Body Core
     const bodyGrad = ctx.createRadialGradient(
       cx - radius * 0.3,
       cy - radius * 0.3,
@@ -240,26 +260,44 @@ export default function CelestialVisual({ object, isHovered = false, size = 'car
       cy,
       radius
     );
-    bodyGrad.addColorStop(0, '#ffffff');
-    bodyGrad.addColorStop(0.4, '#fff2cc');
-    bodyGrad.addColorStop(0.8, '#ff9933');
-    bodyGrad.addColorStop(1, '#e65100');
+    if (isBlue) {
+      bodyGrad.addColorStop(0, '#ffffff');
+      bodyGrad.addColorStop(0.4, '#cce6ff');
+      bodyGrad.addColorStop(0.8, '#3399ff');
+      bodyGrad.addColorStop(1, '#0055cc');
+    } else if (isRed) {
+      bodyGrad.addColorStop(0, '#fff0e6');
+      bodyGrad.addColorStop(0.4, '#ff7733');
+      bodyGrad.addColorStop(0.8, '#cc2200');
+      bodyGrad.addColorStop(1, '#770000');
+    } else if (isWhiteDwarf) {
+      bodyGrad.addColorStop(0, '#ffffff');
+      bodyGrad.addColorStop(0.5, '#e6f2ff');
+      bodyGrad.addColorStop(0.9, '#99ccff');
+      bodyGrad.addColorStop(1, '#4477bb');
+    } else {
+      bodyGrad.addColorStop(0, '#ffffff');
+      bodyGrad.addColorStop(0.4, '#fff2cc');
+      bodyGrad.addColorStop(0.8, '#ff9933');
+      bodyGrad.addColorStop(1, '#e65100');
+    }
 
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.fillStyle = bodyGrad;
     ctx.fill();
 
-    // Granulation pulses
+    // Granulation pulses & flares
     ctx.save();
     ctx.translate(cx, cy);
-    const flareCount = 6;
+    const flareCount = isBlue ? 8 : (isRed ? 5 : 6);
+    const flareColor = isBlue ? 'rgba(180, 220, 255, 0.7)' : (isRed ? 'rgba(255, 120, 80, 0.7)' : 'rgba(255, 230, 180, 0.6)');
     for (let i = 0; i < flareCount; i++) {
       const angle = (i * Math.PI * 2) / flareCount + time * 0.01;
       const flareLen = radius * (1.15 + Math.sin(time * 0.05 + i) * 0.15);
       ctx.beginPath();
-      ctx.arc(Math.cos(angle) * flareLen, Math.sin(angle) * flareLen, 2, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255, 230, 180, 0.6)';
+      ctx.arc(Math.cos(angle) * flareLen, Math.sin(angle) * flareLen, isDetail ? 2.5 : 1.8, 0, Math.PI * 2);
+      ctx.fillStyle = flareColor;
       ctx.fill();
     }
     ctx.restore();
