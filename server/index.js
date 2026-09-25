@@ -44,6 +44,7 @@ function formatObjectRow(row) {
     spectralLines: row.spectral_lines_json ? JSON.parse(row.spectral_lines_json) : [],
     keyDiscoveries: row.key_discoveries_json ? JSON.parse(row.key_discoveries_json) : [],
     researchPapers: row.research_papers_json ? JSON.parse(row.research_papers_json) : [],
+    image: row.image_url || row.image || null,
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };

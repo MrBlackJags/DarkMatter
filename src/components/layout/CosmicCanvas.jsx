@@ -1,5 +1,10 @@
 import React, { useRef, useEffect } from 'react';
 
+/**
+ * CosmicCanvas
+ * Weightless cosmic canvas with black base, volumetric gradients of orange,
+ * blue, and white, multi-depth star drift, and zero-G antigravity particles.
+ */
 export default function CosmicCanvas() {
   const canvasRef = useRef(null);
 
@@ -11,26 +16,30 @@ export default function CosmicCanvas() {
     if (!ctx) return;
 
     let animationFrameId;
-    let width = 0;
-    let height = 0;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
 
-    // Mouse state for interaction
-    const mouse = { x: -1000, y: -1000 };
+    // Mouse state with smooth inertia
+    const mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000 };
+    const parallax = { x: 0, y: 0, targetX: 0, targetY: 0 };
 
     const handleMouseMove = (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
+      parallax.targetX = (e.clientX / width - 0.5) * 30;
+      parallax.targetY = (e.clientY / height - 0.5) * 30;
     };
 
     const handleMouseLeave = () => {
-      mouse.x = -1000;
-      mouse.y = -1000;
+      mouse.targetX = -1000;
+      mouse.targetY = -1000;
+      parallax.targetX = 0;
+      parallax.targetY = 0;
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('mouseleave', handleMouseLeave);
 
-    // Resize handler
     const resizeCanvas = () => {
       width = window.innerWidth;
       height = window.innerHeight;
@@ -50,163 +59,234 @@ export default function CosmicCanvas() {
       stars = [];
       particles = [];
 
-      // Init Stars (200)
-      for (let i = 0; i < 200; i++) {
-        const isBright = Math.random() < 0.08;
-        const size = isBright ? 1.2 + Math.random() * 0.8 : 0.3 + Math.random() * 0.9;
-        
+      // 3 Layers of Stars for deep zero-G parallax
+      // Layer 1: Distant background pinpricks (180 stars)
+      for (let i = 0; i < 180; i++) {
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: 0.4 + Math.random() * 0.6,
+          baseAlpha: 0.15 + Math.random() * 0.4,
+          twinkleSpeed: 0.003 + Math.random() * 0.008,
+          twinklePhase: Math.random() * Math.PI * 2,
+          vx: (Math.random() - 0.5) * 0.03,
+          vy: -0.02 - Math.random() * 0.03,
+          depth: 0.2, // moves least with parallax
+          color: '#ffffff'
+        });
+      }
+
+      // Layer 2: Midground stars (80 stars)
+      for (let i = 0; i < 80; i++) {
+        const rand = Math.random();
         let color = '#ffffff';
-        const colorRand = Math.random();
-        if (colorRand > 0.8) color = '#fff5e6'; // warm white
-        else if (colorRand > 0.6) color = '#e0eaff'; // cool blue-white
+        if (rand > 0.7) color = '#ffe8d6'; // subtle orange-white
+        else if (rand > 0.4) color = '#dbeafe'; // subtle blue-white
 
         stars.push({
           x: Math.random() * width,
           y: Math.random() * height,
-          size,
-          baseAlpha: 0.2 + Math.random() * 0.6,
-          twinkleSpeed: 0.005 + Math.random() * 0.015,
+          size: 0.8 + Math.random() * 0.8,
+          baseAlpha: 0.3 + Math.random() * 0.5,
+          twinkleSpeed: 0.006 + Math.random() * 0.015,
           twinklePhase: Math.random() * Math.PI * 2,
-          vx: (Math.random() - 0.5) * 0.1,
-          vy: (Math.random() - 0.5) * 0.1,
-          color,
-          isBright
+          vx: (Math.random() - 0.5) * 0.05,
+          vy: -0.04 - Math.random() * 0.04,
+          depth: 0.5,
+          color
         });
       }
 
-      // Init Particles (40)
-      for (let i = 0; i < 40; i++) {
-        let colorObj = { r: 255, g: 255, b: 255 };
-        const cRand = Math.random();
-        if (cRand > 0.66) colorObj = { r: 255, g: 160, b: 60 }; // warm orange
-        else if (cRand > 0.33) colorObj = { r: 100, g: 150, b: 255 }; // cool blue
-
-        particles.push({
+      // Layer 3: Foreground luminous beacons (18 stars)
+      for (let i = 0; i < 18; i++) {
+        stars.push({
           x: Math.random() * width,
           y: Math.random() * height,
-          size: 0.5 + Math.random() * 1.0,
-          vy: -(0.05 + Math.random() * 0.15), // upward drift
-          baseAlpha: 0.15 + Math.random() * 0.35,
-          pulseSpeed: 0.01 + Math.random() * 0.02,
-          pulsePhase: Math.random() * Math.PI * 2,
-          wobbleSpeed: 0.01 + Math.random() * 0.02,
-          wobblePhase: Math.random() * Math.PI * 2,
-          wobbleAmount: 0.2 + Math.random() * 0.5,
-          color: colorObj,
-          originalX: Math.random() * width
+          size: 1.4 + Math.random() * 1.0,
+          baseAlpha: 0.6 + Math.random() * 0.3,
+          twinkleSpeed: 0.01 + Math.random() * 0.02,
+          twinklePhase: Math.random() * Math.PI * 2,
+          vx: (Math.random() - 0.5) * 0.08,
+          vy: -0.06 - Math.random() * 0.05,
+          depth: 0.9,
+          isBeacon: true,
+          color: Math.random() > 0.5 ? '#fff4eb' : '#eff6ff'
         });
-        particles[i].originalX = particles[i].x;
+      }
+
+      // Antigravity Floating Particles (50 particles)
+      for (let i = 0; i < 50; i++) {
+        let rgb = { r: 255, g: 255, b: 255 };
+        const cRand = Math.random();
+        if (cRand > 0.6) rgb = { r: 255, g: 150, b: 65 }; // Cosmic orange
+        else if (cRand > 0.3) rgb = { r: 80, g: 145, b: 255 }; // Cosmic blue
+
+        const px = Math.random() * width;
+        const py = Math.random() * height;
+
+        particles.push({
+          x: px,
+          y: py,
+          baseX: px,
+          size: 0.8 + Math.random() * 1.6,
+          vy: -(0.06 + Math.random() * 0.18), // weightless upward drift
+          wobbleSpeed: 0.008 + Math.random() * 0.015,
+          wobbleAmp: 15 + Math.random() * 35,
+          wobblePhase: Math.random() * Math.PI * 2,
+          baseAlpha: 0.12 + Math.random() * 0.35,
+          pulseSpeed: 0.008 + Math.random() * 0.015,
+          pulsePhase: Math.random() * Math.PI * 2,
+          color: rgb,
+          vxImpulse: 0,
+          vyImpulse: 0
+        });
       }
     };
 
-    // Draw Atmosphere Gradients
-    const drawAtmosphere = (ctx, time) => {
+    // Draw smooth, soft volumetric cosmic gradients (Orange, Blue, White)
+    const drawAtmosphere = (ctx, t) => {
       ctx.globalCompositeOperation = 'screen';
 
-      // Warm orange glow
-      const orangeX = width * 0.25 + Math.sin(time * 0.0005) * 50;
-      const orangeY = height * 0.60 + Math.cos(time * 0.0004) * 50;
-      const grad1 = ctx.createRadialGradient(orangeX, orangeY, 0, orangeX, orangeY, Math.max(width, height) * 0.5);
-      grad1.addColorStop(0, 'rgba(255, 140, 50, 0.06)');
-      grad1.addColorStop(1, 'rgba(255, 140, 50, 0)');
-      ctx.fillStyle = grad1;
+      // Accretion Orange Glow (Left/Lower quadrant)
+      const orangeX = width * 0.22 + Math.sin(t * 0.0004) * 60 - parallax.x * 0.4;
+      const orangeY = height * 0.68 + Math.cos(t * 0.0003) * 50 - parallax.y * 0.4;
+      const orangeRadius = Math.max(width, height) * 0.55;
+      const gradOrange = ctx.createRadialGradient(orangeX, orangeY, 0, orangeX, orangeY, orangeRadius);
+      gradOrange.addColorStop(0, 'rgba(255, 130, 45, 0.08)');
+      gradOrange.addColorStop(0.4, 'rgba(255, 110, 30, 0.035)');
+      gradOrange.addColorStop(1, 'rgba(255, 110, 30, 0)');
+      ctx.fillStyle = gradOrange;
       ctx.fillRect(0, 0, width, height);
 
-      // Cool blue glow
-      const blueX = width * 0.75 + Math.cos(time * 0.0006) * 60;
-      const blueY = height * 0.35 + Math.sin(time * 0.0005) * 60;
-      const grad2 = ctx.createRadialGradient(blueX, blueY, 0, blueX, blueY, Math.max(width, height) * 0.6);
-      grad2.addColorStop(0, 'rgba(40, 100, 255, 0.08)');
-      grad2.addColorStop(1, 'rgba(40, 100, 255, 0)');
-      ctx.fillStyle = grad2;
+      // Deep Cosmic Starlight Blue Glow (Right/Upper quadrant)
+      const blueX = width * 0.78 + Math.cos(t * 0.0004) * 60 - parallax.x * 0.5;
+      const blueY = height * 0.28 + Math.sin(t * 0.0003) * 50 - parallax.y * 0.5;
+      const blueRadius = Math.max(width, height) * 0.65;
+      const gradBlue = ctx.createRadialGradient(blueX, blueY, 0, blueX, blueY, blueRadius);
+      gradBlue.addColorStop(0, 'rgba(45, 105, 255, 0.09)');
+      gradBlue.addColorStop(0.45, 'rgba(30, 80, 220, 0.04)');
+      gradBlue.addColorStop(1, 'rgba(30, 80, 220, 0)');
+      ctx.fillStyle = gradBlue;
       ctx.fillRect(0, 0, width, height);
 
-      // Faint white/silver glow
-      const whiteX = width * 0.5 + Math.sin(time * 0.0003) * 40;
-      const whiteY = height * 0.2 + Math.cos(time * 0.0003) * 40;
-      const grad3 = ctx.createRadialGradient(whiteX, whiteY, 0, whiteX, whiteY, Math.max(width, height) * 0.4);
-      grad3.addColorStop(0, 'rgba(200, 200, 220, 0.04)');
-      grad3.addColorStop(1, 'rgba(200, 200, 220, 0)');
-      ctx.fillStyle = grad3;
+      // Center Subtle Silver/White Luminous Depth (Core)
+      const whiteX = width * 0.5 + Math.sin(t * 0.0002) * 40 - parallax.x * 0.3;
+      const whiteY = height * 0.48 + Math.cos(t * 0.0002) * 40 - parallax.y * 0.3;
+      const whiteRadius = Math.max(width, height) * 0.45;
+      const gradWhite = ctx.createRadialGradient(whiteX, whiteY, 0, whiteX, whiteY, whiteRadius);
+      gradWhite.addColorStop(0, 'rgba(240, 245, 255, 0.05)');
+      gradWhite.addColorStop(0.5, 'rgba(220, 230, 255, 0.015)');
+      gradWhite.addColorStop(1, 'rgba(220, 230, 255, 0)');
+      ctx.fillStyle = gradWhite;
       ctx.fillRect(0, 0, width, height);
 
       ctx.globalCompositeOperation = 'source-over';
     };
 
     const render = () => {
-      // Base: Pure black
+      // Smooth mouse & parallax inertia
+      mouse.x += (mouse.targetX - mouse.x) * 0.08;
+      mouse.y += (mouse.targetY - mouse.y) * 0.08;
+      parallax.x += (parallax.targetX - parallax.x) * 0.05;
+      parallax.y += (parallax.targetY - parallax.y) * 0.05;
+
+      // Base: Pure deep space black
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, width, height);
 
+      // Cosmic Depth Gradients
       drawAtmosphere(ctx, time);
 
-      // Draw Stars
-      for (const star of stars) {
-        star.x += star.vx;
-        star.y += star.vy;
+      // Render Star Drift with depth parallax
+      for (const s of stars) {
+        s.x += s.vx;
+        s.y += s.vy;
 
-        // Wrap around screen
-        if (star.x < 0) star.x = width;
-        if (star.x > width) star.x = 0;
-        if (star.y < 0) star.y = height;
-        if (star.y > height) star.y = 0;
+        // Wrap around boundaries smoothly
+        if (s.x < 0) s.x = width;
+        if (s.x > width) s.x = 0;
+        if (s.y < 0) s.y = height;
+        if (s.y > height) s.y = 0;
 
-        const currentAlpha = star.baseAlpha + Math.sin(star.twinklePhase + time * star.twinkleSpeed) * 0.2;
-        const safeAlpha = Math.max(0, Math.min(1, currentAlpha));
+        const px = s.x - parallax.x * s.depth;
+        const py = s.y - parallax.y * s.depth;
 
-        // Bright star halo
-        if (star.isBright) {
-          const haloGrad = ctx.createRadialGradient(star.x, star.y, 0, star.x, star.y, 6);
-          haloGrad.addColorStop(0, `rgba(255, 255, 255, ${safeAlpha * 0.3})`);
-          haloGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
-          ctx.fillStyle = haloGrad;
+        const twinkle = Math.sin(s.twinklePhase + time * s.twinkleSpeed) * 0.22;
+        const alpha = Math.max(0.08, Math.min(1, s.baseAlpha + twinkle));
+
+        // Beacon halo
+        if (s.isBeacon) {
+          const halo = ctx.createRadialGradient(px, py, 0, px, py, 7);
+          halo.addColorStop(0, `rgba(255, 255, 255, ${alpha * 0.35})`);
+          halo.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          ctx.fillStyle = halo;
           ctx.beginPath();
-          ctx.arc(star.x, star.y, 6, 0, Math.PI * 2);
+          ctx.arc(px, py, 7, 0, Math.PI * 2);
           ctx.fill();
         }
 
-        ctx.fillStyle = star.color;
-        ctx.globalAlpha = safeAlpha;
+        ctx.fillStyle = s.color;
+        ctx.globalAlpha = alpha;
         ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.arc(px, py, s.size, 0, Math.PI * 2);
         ctx.fill();
         ctx.globalAlpha = 1.0;
       }
 
-      // Draw Particles
+      // Render Antigravity Floating Particles
       for (const p of particles) {
-        p.originalX += (Math.random() - 0.5) * 0.05; // extremely subtle drift of the center axis
+        // Zero-G harmonic wobble
+        p.baseX += (Math.random() - 0.5) * 0.04;
+        const wobble = Math.sin(p.wobblePhase + time * p.wobbleSpeed) * p.wobbleAmp;
         
-        // Wobble and drift
-        p.x = p.originalX + Math.sin(p.wobblePhase + time * p.wobbleSpeed) * p.wobbleAmount;
-        p.y += p.vy;
+        // Dissipate impulse gently
+        p.vxImpulse *= 0.94;
+        p.vyImpulse *= 0.94;
 
-        // Antigravity mouse repulsion
-        const dx = p.x - mouse.x;
-        const dy = p.y - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 150) {
-          const force = (150 - dist) / 150;
-          p.x += (dx / dist) * force * 2.0;
-          p.y += (dy / dist) * force * 2.0;
-          p.originalX = p.x; // Sync originalX to prevent snapping back
+        p.x = p.baseX + wobble + p.vxImpulse;
+        p.y += p.vy + p.vyImpulse;
+
+        // Antigravity cursor deflection (matter smoothly deflects in zero-G)
+        if (mouse.x > 0) {
+          const dx = p.x - mouse.x;
+          const dy = p.y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const influenceRadius = 140;
+
+          if (dist < influenceRadius && dist > 1) {
+            const force = (influenceRadius - dist) / influenceRadius;
+            p.vxImpulse += (dx / dist) * force * 0.7;
+            p.vyImpulse += (dy / dist) * force * 0.7;
+          }
         }
 
-        // Wrap vertically and horizontally
-        if (p.y < -10) {
-          p.y = height + 10;
-          p.originalX = Math.random() * width;
-          p.x = p.originalX;
+        // Screen wrap
+        if (p.y < -15) {
+          p.y = height + 15;
+          p.baseX = Math.random() * width;
+          p.x = p.baseX;
+          p.vxImpulse = 0;
+          p.vyImpulse = 0;
         }
-        if (p.x < 0) p.originalX = width;
-        if (p.x > width) p.originalX = 0;
+        if (p.x < -20) {
+          p.baseX = width + 10;
+          p.x = p.baseX;
+        }
+        if (p.x > width + 20) {
+          p.baseX = -10;
+          p.x = p.baseX;
+        }
 
-        const currentAlpha = p.baseAlpha + Math.sin(p.pulsePhase + time * p.pulseSpeed) * 0.15;
-        const safeAlpha = Math.max(0, Math.min(1, currentAlpha));
+        const pulse = Math.sin(p.pulsePhase + time * p.pulseSpeed) * 0.15;
+        const alpha = Math.max(0.05, Math.min(0.85, p.baseAlpha + pulse));
 
-        ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${safeAlpha})`;
+        const px = p.x - parallax.x * 0.7;
+        const py = p.y - parallax.y * 0.7;
+
+        // Soft particle glow
+        ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${alpha})`;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.arc(px, py, p.size, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -214,11 +294,9 @@ export default function CosmicCanvas() {
       animationFrameId = requestAnimationFrame(render);
     };
 
-    // Initialize and start animation
     resizeCanvas();
     render();
 
-    // Cleanup
     return () => {
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('mousemove', handleMouseMove);
@@ -230,8 +308,8 @@ export default function CosmicCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 w-full h-full z-0"
-      style={{ background: '#000' }}
+      className="fixed inset-0 w-full h-full z-0 pointer-events-none"
+      style={{ background: '#000000' }}
     />
   );
 }

@@ -17,6 +17,7 @@ export const DISCOVERED_OBJECTS = [
   // 1. JWST JADES-GS-z14-0
   {
     id: 'obj-jades-z14',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/JADES-GS-z14-0_NIRCam.jpg/800px-JADES-GS-z14-0_NIRCam.jpg',
     name: 'JADES-GS-z14-0',
     designation: 'JADES-GS-z14-0 (COSMOS Dawn)',
     class: 'galaxy',
@@ -68,6 +69,7 @@ export const DISCOVERED_OBJECTS = [
   // 2. M87* Supermassive Black Hole
   {
     id: 'obj-m87-star',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg',
     name: 'M87* (Pōwehi)',
     designation: 'Messier 87 Central Supermassive Black Hole',
     class: 'blackhole',
@@ -118,6 +120,7 @@ export const DISCOVERED_OBJECTS = [
   // 3. TRAPPIST-1e
   {
     id: 'obj-trappist-1e',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/PIA21422_-_TRAPPIST-1e_artist_concept_2018.jpg/800px-PIA21422_-_TRAPPIST-1e_artist_concept_2018.jpg',
     name: 'TRAPPIST-1e',
     designation: '2MASS J23062928-0502285 e',
     class: 'exoplanet',
@@ -166,6 +169,7 @@ export const DISCOVERED_OBJECTS = [
   // 4. K2-18 b
   {
     id: 'obj-k2-18b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Artist%E2%80%99s_impression_of_the_exoplanet_K2-18b.jpg/800px-Artist%E2%80%99s_impression_of_the_exoplanet_K2-18b.jpg',
     name: 'K2-18 b',
     designation: 'EPIC 201912552 b',
     class: 'exoplanet',
@@ -214,6 +218,7 @@ export const DISCOVERED_OBJECTS = [
   // 5. 51 Pegasi b (Dimidium) - Historic first exoplanet around solar twin
   {
     id: 'obj-51-peg-b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Artist%E2%80%99s_impression_of_the_planet_51_Pegasi_b.jpg/800px-Artist%E2%80%99s_impression_of_the_planet_51_Pegasi_b.jpg',
     name: '51 Pegasi b (Dimidium)',
     designation: 'HD 217014 b',
     class: 'exoplanet',
@@ -442,6 +447,7 @@ export const DISCOVERED_OBJECTS = [
   // 10. Kepler-16b (First Circumbinary Planet - Tatooine)
   {
     id: 'obj-kepler-16b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Kepler16_transit.jpg/800px-Kepler16_transit.jpg',
     name: 'Kepler-16b (Tatooine)',
     designation: 'Kepler-16(AB) b',
     class: 'exoplanet',
@@ -486,6 +492,7 @@ export const DISCOVERED_OBJECTS = [
   // 11. GW150914 - First direct detection of gravitational waves
   {
     id: 'obj-gw150914',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/LIGO_and_Virgo_detect_neutron_star_merger_-_artist%27s_impression.jpg/800px-LIGO_and_Virgo_detect_neutron_star_merger_-_artist%27s_impression.jpg',
     name: 'GW150914',
     designation: 'First Gravitational-Wave Detection',
     class: 'blackhole',
@@ -576,6 +583,7 @@ export const DISCOVERED_OBJECTS = [
   // 13. Crab Pulsar (PSR B0531+21)
   {
     id: 'obj-crab-pulsar',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Crab_Nebula.jpg/800px-Crab_Nebula.jpg',
     name: 'Crab Pulsar (PSR B0531+21)',
     designation: 'PSR J0534+2200',
     class: 'pulsar',
@@ -708,6 +716,7 @@ export const DISCOVERED_OBJECTS = [
   // 16. 101955 Bennu - Pristine Carbonaceous Asteroid
   {
     id: 'obj-bennu',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Asteroid_101955_Bennu_mosaic.png/800px-Asteroid_101955_Bennu_mosaic.png',
     name: '101955 Bennu',
     designation: '1999 RQ36',
     class: 'interstellar',
@@ -748,6 +757,7 @@ export const DISCOVERED_OBJECTS = [
   // 17. 67P/Churyumov–Gerasimenko
   {
     id: 'obj-rosetta-67p',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Comet_67P_on_19_September_2014_NavCam_mosaic.jpg/800px-Comet_67P_on_19_September_2014_NavCam_mosaic.jpg',
     name: '67P/Churyumov–Gerasimenko',
     designation: '67P/C-G',
     class: 'interstellar',
@@ -788,6 +798,7 @@ export const DISCOVERED_OBJECTS = [
   // 18. SN 1054 (Historical Supernova of the Crab Nebula)
   {
     id: 'obj-sn-1054',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Crab_Nebula.jpg/800px-Crab_Nebula.jpg',
     name: 'Supernova 1054',
     designation: 'SN 1054 / Chinese Guest Star',
     class: 'supernova',
@@ -827,6 +838,7 @@ export const DISCOVERED_OBJECTS = [
   // 19. Kepler-452b
   {
     id: 'obj-kepler-452b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Artist%27s_concept_of_Kepler-452b.jpg/800px-Artist%27s_concept_of_Kepler-452b.jpg',
     name: 'Kepler-452b',
     designation: 'KOI-7016.01',
     class: 'exoplanet',
@@ -991,6 +1003,7 @@ export const DISCOVERED_OBJECTS = [
   // 23. GN-z11
   {
     id: 'obj-gn-z11',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/GN-z11.jpg/800px-GN-z11.jpg',
     name: 'GN-z11',
     designation: 'GOODS-N-z11',
     class: 'galaxy',
@@ -1102,6 +1115,7 @@ export const DISCOVERED_OBJECTS = [
   // 26. Cygnus X-1
   {
     id: 'obj-cygnus-x1',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Cygnus_X-1_artist_concept.jpg/800px-Cygnus_X-1_artist_concept.jpg',
     name: 'Cygnus X-1',
     designation: 'HDE 226868',
     class: 'blackhole',
@@ -1142,6 +1156,7 @@ export const DISCOVERED_OBJECTS = [
   // 27. Sagittarius A*
   {
     id: 'obj-sgra-star',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/5/51/First_image_of_Sagittarius_A%2A.jpg',
     name: 'Sagittarius A*',
     designation: 'Sgr A* Central Singularity',
     class: 'blackhole',
@@ -1221,6 +1236,7 @@ export const DISCOVERED_OBJECTS = [
   // 29. 1I/'Oumuamua
   {
     id: 'obj-oumuamua',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/1I-2017_U1_ESO.jpg/800px-1I-2017_U1_ESO.jpg',
     name: "1I/'Oumuamua",
     designation: '1I/2017 U1',
     class: 'interstellar',
@@ -1298,6 +1314,7 @@ export const DISCOVERED_OBJECTS = [
   // 31. 486958 Arrokoth
   {
     id: 'obj-arrokoth',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/UltimaThule_CA04_color_20190101.png/800px-UltimaThule_CA04_color_20190101.png',
     name: '486958 Arrokoth',
     designation: '2014 MU69',
     class: 'interstellar',
@@ -1374,6 +1391,7 @@ export const DISCOVERED_OBJECTS = [
   // 33. Supernova 1987A
   {
     id: 'obj-sn-1987a',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Supernova_1987A.jpg/800px-Supernova_1987A.jpg',
     name: 'Supernova 1987A',
     designation: 'SN 1987A',
     class: 'supernova',

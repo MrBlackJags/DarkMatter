@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import CelestialVisual from './CelestialVisual';
 
 const camelToTitle = (str) => {
   const result = str.replace(/([A-Z])/g, ' $1');
@@ -10,7 +11,6 @@ export default function ObjectDetail({ object, onClose }) {
 
   useEffect(() => {
     if (object) {
-      // Small delay to trigger transition
       requestAnimationFrame(() => setIsVisible(true));
     } else {
       setIsVisible(false);
@@ -22,7 +22,7 @@ export default function ObjectDetail({ object, onClose }) {
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       setIsVisible(false);
-      setTimeout(onClose, 300); // Wait for fade out transition
+      setTimeout(onClose, 300);
     }
   };
 
@@ -31,198 +31,169 @@ export default function ObjectDetail({ object, onClose }) {
     setTimeout(onClose, 300);
   };
 
-  const getClassColor = (cls) => {
+  const getClassTheme = (cls) => {
     const c = (cls || '').toLowerCase();
-    if (['galaxy', 'pulsar', 'supernova'].includes(c)) return 'bg-orange-400/60';
-    if (['blackhole', 'black hole'].includes(c)) return 'bg-blue-400/60';
-    if (['exoplanet', 'interstellar'].includes(c)) return 'bg-emerald-400/60';
-    return 'bg-white/40';
+    if (c === 'blackhole') return { dot: 'bg-blue-400', label: 'Black Hole Singularity' };
+    if (['exoplanet', 'interstellar'].includes(c)) return { dot: 'bg-emerald-400', label: 'Planetary World' };
+    return { dot: 'bg-amber-400', label: 'Stellar System' };
   };
 
-  const SectionLabel = ({ children }) => (
-    <div className="text-[10px] text-white/15 uppercase tracking-[0.3em] mb-4">
-      {children}
-    </div>
-  );
+  const theme = getClassTheme(object.class);
 
   return (
     <div
-      className={`fixed inset-0 z-50 bg-black/95 backdrop-blur-md transition-opacity duration-300 overflow-y-auto ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+      className={`fixed inset-0 z-50 bg-black/90 backdrop-blur-xl transition-opacity duration-300 overflow-y-auto ${
+        isVisible ? 'opacity-100' : 'opacity-0'
+      }`}
       onClick={handleBackdropClick}
     >
-      <div className="max-w-3xl mx-auto py-16 px-6 min-h-screen relative flex flex-col pointer-events-none">
-        <div className="pointer-events-auto">
-          <button
-            onClick={handleClose}
-            className="absolute top-6 right-6 text-white/30 hover:text-white/60 text-2xl cursor-pointer transition select-none z-10"
-            aria-label="Close"
-          >
-            &#x2715;
-          </button>
-
-          <header>
+      <div className="max-w-3xl mx-auto py-12 px-6 min-h-screen relative flex flex-col pointer-events-none">
+        <div className="pointer-events-auto bg-black/40 border border-white/[0.08] rounded-3xl p-6 sm:p-8 backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.8)]">
+          {/* CLOSE BUTTON */}
+          <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-2">
-              <span className={`w-1.5 h-1.5 rounded-full ${getClassColor(object.class)}`} />
-              <span className="text-[11px] text-white/30 uppercase tracking-widest">
-                {object.subType || object.class}
+              <span className={`w-2 h-2 rounded-full ${theme.dot}`} />
+              <span className="text-[11px] font-mono tracking-widest text-white/40 uppercase">
+                {theme.label} · {object.subType || object.class}
               </span>
             </div>
-            <h1 className="text-4xl sm:text-5xl font-extralight text-white mt-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+            <button
+              onClick={handleClose}
+              className="w-8 h-8 rounded-full border border-white/10 bg-white/[0.03] text-white/50 hover:text-white hover:border-white/30 hover:bg-white/[0.08] flex items-center justify-center transition-all focus:outline-none"
+              aria-label="Close detail view"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* LARGE CELESTIAL VISUAL (Interactive Model or Image) */}
+          <div className="mb-8">
+            <CelestialVisual object={object} size="detail" isHovered={true} />
+          </div>
+
+          {/* OBJECT HEADER */}
+          <header className="border-b border-white/[0.06] pb-6">
+            <h1 className="text-3xl sm:text-4xl font-extralight tracking-tight text-white">
               {object.name}
             </h1>
-            {object.designation && (
-              <p className="text-sm text-white/20 font-light mt-2">
+            {object.designation && object.designation !== object.name && (
+              <p className="text-sm font-mono text-white/40 mt-1">
                 {object.designation}
               </p>
             )}
           </header>
 
-          {(object.discoveryYear || object.discoveryMission || object.constellation || object.discoveryMethod) && (
-            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3">
-              {object.discoveryYear && (
-                <div>
-                  <div className="text-[10px] text-white/20 uppercase tracking-wider">Discovered</div>
-                  <div className="text-sm text-white/50 mt-0.5">{object.discoveryYear}</div>
-                </div>
-              )}
-              {object.discoveryMission && (
-                <div>
-                  <div className="text-[10px] text-white/20 uppercase tracking-wider">Mission</div>
-                  <div className="text-sm text-white/50 mt-0.5">{object.discoveryMission}</div>
-                </div>
-              )}
-              {object.constellation && (
-                <div>
-                  <div className="text-[10px] text-white/20 uppercase tracking-wider">Constellation</div>
-                  <div className="text-sm text-white/50 mt-0.5">{object.constellation}</div>
-                </div>
-              )}
-              {object.discoveryMethod && (
-                <div>
-                  <div className="text-[10px] text-white/20 uppercase tracking-wider">Method</div>
-                  <div className="text-sm text-white/50 mt-0.5">{object.discoveryMethod}</div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {object.physics && Object.keys(object.physics).length > 0 && (
-            <section className="mt-10">
-              <SectionLabel>Physical Properties</SectionLabel>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {Object.entries(object.physics).map(([key, value]) => {
-                  if (value == null) return null;
-                  return (
-                    <div key={key} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                      <div className="text-lg font-extralight text-white/70">{value}</div>
-                      <div className="text-[10px] text-white/20 uppercase tracking-wider mt-1">
-                        {camelToTitle(key)}
-                      </div>
-                    </div>
-                  );
-                })}
+          {/* METADATA GRID */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-6 border-b border-white/[0.06]">
+            {object.discoveryYear && (
+              <div>
+                <div className="text-[10px] font-mono text-white/30 uppercase tracking-wider">Discovered</div>
+                <div className="text-sm font-light text-white/80 mt-1">{object.discoveryYear}</div>
               </div>
-            </section>
-          )}
-
-          <section className="mt-10">
-            <SectionLabel>Distance & Position</SectionLabel>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {object.distance && Object.entries(object.distance).map(([key, value]) => {
-                if (value == null) return null;
-                return (
-                  <div key={key} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                    <div className="text-lg font-extralight text-white/70">{value}</div>
-                    <div className="text-[10px] text-white/20 uppercase tracking-wider mt-1">
-                      {camelToTitle(key)}
-                    </div>
-                  </div>
-                );
-              })}
-              {object.coordinates && object.coordinates.ra && (
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <div className="text-lg font-extralight text-white/70">{object.coordinates.ra}</div>
-                  <div className="text-[10px] text-white/20 uppercase tracking-wider mt-1">Right Ascension</div>
+            )}
+            {object.discoveryMission && (
+              <div>
+                <div className="text-[10px] font-mono text-white/30 uppercase tracking-wider">Mission</div>
+                <div className="text-sm font-light text-white/80 mt-1 truncate" title={object.discoveryMission}>
+                  {object.discoveryMission}
                 </div>
-              )}
-              {object.coordinates && object.coordinates.dec && (
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <div className="text-lg font-extralight text-white/70">{object.coordinates.dec}</div>
-                  <div className="text-[10px] text-white/20 uppercase tracking-wider mt-1">Declination</div>
-                </div>
-              )}
-            </div>
-          </section>
+              </div>
+            )}
+            {object.constellation && (
+              <div>
+                <div className="text-[10px] font-mono text-white/30 uppercase tracking-wider">Constellation</div>
+                <div className="text-sm font-light text-white/80 mt-1">{object.constellation}</div>
+              </div>
+            )}
+            {object.distance?.lightYears && (
+              <div>
+                <div className="text-[10px] font-mono text-white/30 uppercase tracking-wider">Distance</div>
+                <div className="text-sm font-light text-white/80 mt-1">{object.distance.lightYears} LY</div>
+              </div>
+            )}
+          </div>
 
+          {/* KEY DISCOVERIES */}
           {object.keyDiscoveries && object.keyDiscoveries.length > 0 && (
-            <section className="mt-10">
-              <SectionLabel>Key Discoveries</SectionLabel>
-              <ol className="list-none m-0 p-0">
-                {object.keyDiscoveries.map((discovery, idx) => (
-                  <li key={idx} className="text-sm text-white/40 leading-relaxed mb-3 font-light">
-                    <span className="text-white/15 mr-2">{idx + 1}.</span>
-                    {discovery}
+            <section className="py-6 border-b border-white/[0.06]">
+              <div className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/30 mb-4">
+                Scientific Telemetry & Breakthroughs
+              </div>
+              <ul className="space-y-3">
+                {object.keyDiscoveries.map((disc, idx) => (
+                  <li key={idx} className="flex gap-3 text-sm font-light text-white/60 leading-relaxed">
+                    <span className="text-white/20 font-mono text-xs mt-0.5">0{idx + 1}</span>
+                    <span>{disc}</span>
                   </li>
                 ))}
-              </ol>
+              </ul>
             </section>
           )}
 
-          {object.spectralBands && (
-            <section className="mt-10">
-              <SectionLabel>Spectral Signature</SectionLabel>
-              <div className="space-y-2">
-                {Object.entries(object.spectralBands).map(([band, val]) => {
+          {/* PHYSICAL PROPERTIES */}
+          {object.physics && Object.keys(object.physics).length > 0 && (
+            <section className="py-6 border-b border-white/[0.06]">
+              <div className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/30 mb-4">
+                Physical Properties
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {Object.entries(object.physics).map(([key, val]) => {
                   if (val == null) return null;
-                  const percentage = Math.min(Math.max(Number(val) || 0, 0), 100);
                   return (
-                    <div key={band} className="flex items-center gap-3 mb-2">
-                      <div className="text-[10px] text-white/20 uppercase w-20 shrink-0">
-                        {band}
+                    <div key={key} className="p-3.5 rounded-xl border border-white/[0.05] bg-white/[0.015]">
+                      <div className="text-[10px] font-mono text-white/30 uppercase tracking-wider">
+                        {camelToTitle(key)}
                       </div>
-                      <div className="flex-1 bg-white/[0.02] h-1 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-white/10 to-white/30 rounded-full" 
-                          style={{ width: `${percentage}%` }}
-                        />
+                      <div className="text-base font-extralight text-white/90 mt-1">
+                        {val}
                       </div>
                     </div>
                   );
                 })}
               </div>
-              {object.spectralLines && object.spectralLines.length > 0 && (
-                <div className="mt-4 text-xs text-white/20 font-light">
-                  Spectral Lines: {object.spectralLines.join(', ')}
-                </div>
-              )}
             </section>
           )}
 
+          {/* ASTRONOMICAL COORDINATES */}
+          {object.coordinates && (
+            <section className="py-6 border-b border-white/[0.06]">
+              <div className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/30 mb-4">
+                Astrometric Coordinates
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3.5 rounded-xl border border-white/[0.05] bg-white/[0.015]">
+                  <div className="text-[10px] font-mono text-white/30 uppercase">Right Ascension (RA)</div>
+                  <div className="text-sm font-mono text-white/80 mt-1">{object.coordinates.ra}</div>
+                </div>
+                <div className="p-3.5 rounded-xl border border-white/[0.05] bg-white/[0.015]">
+                  <div className="text-[10px] font-mono text-white/30 uppercase">Declination (DEC)</div>
+                  <div className="text-sm font-mono text-white/80 mt-1">{object.coordinates.dec}</div>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* RESEARCH CITATIONS */}
           {object.researchPapers && object.researchPapers.length > 0 && (
-            <section className="mt-10">
-              <SectionLabel>Research Papers</SectionLabel>
-              <div>
+            <section className="pt-6">
+              <div className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/30 mb-4">
+                Peer-Reviewed Research Citations
+              </div>
+              <div className="space-y-3">
                 {object.researchPapers.map((paper, idx) => (
-                  <div key={idx} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] mb-3">
-                    <div className="text-sm text-white/50 font-light">{paper.title}</div>
-                    {paper.authors && (
-                      <div className="text-xs text-white/20 mt-1 truncate">
-                        {paper.authors}
-                      </div>
-                    )}
-                    {(paper.journal || paper.year) && (
-                      <div className="text-xs text-white/30 mt-1">
-                        {paper.journal}{paper.journal && paper.year ? ' • ' : ''}{paper.year}
-                      </div>
-                    )}
-                    {paper.doi && (
-                      <a 
-                        href={paper.openAccessUrl || `https://doi.org/${paper.doi}`} 
-                        target="_blank" 
+                  <div key={idx} className="p-4 rounded-xl border border-white/[0.05] bg-white/[0.015]">
+                    <div className="text-sm font-light text-white/80">{paper.title}</div>
+                    <div className="text-xs text-white/30 mt-1 font-light">
+                      {paper.authors} {paper.journal && `· ${paper.journal}`} {paper.year && `(${paper.year})`}
+                    </div>
+                    {paper.openAccessUrl && (
+                      <a
+                        href={paper.openAccessUrl}
+                        target="_blank"
                         rel="noreferrer"
-                        className="block mt-2 text-[11px] text-white/20 hover:text-white/50 transition"
+                        className="inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-white mt-2 transition-colors font-mono"
                       >
-                        {paper.openAccessUrl ? 'Open Access ↗' : `DOI: ${paper.doi} ↗`}
+                        Read Publication ↗
                       </a>
                     )}
                   </div>
@@ -230,8 +201,6 @@ export default function ObjectDetail({ object, onClose }) {
               </div>
             </section>
           )}
-
-          <div className="pb-16" />
         </div>
       </div>
     </div>

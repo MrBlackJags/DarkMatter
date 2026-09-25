@@ -1,67 +1,108 @@
 import React, { useState, useEffect } from 'react';
 
+/**
+ * Landing Page
+ * Minimalist, futuristic, and weightless.
+ * Contains ONLY the title "Darkmatter" centered in sleek typography with subtle glow,
+ * and a single "Discover" button that transitions into the data sections.
+ */
 export default function Landing({ onDiscover }) {
   const [isVisible, setIsVisible] = useState(false);
+  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
-    }, 100);
+    }, 120);
     return () => clearTimeout(timer);
   }, []);
 
-  return (
-    <section className="min-h-screen flex flex-col items-center justify-center relative z-10 px-4">
-      <div 
-        className={`flex flex-col items-center transition-all duration-[1500ms] ease-out ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-        }`}
-      >
-        {/* TITLE BLOCK */}
-        <div className="flex flex-col items-center">
-          <span className="text-[10px] tracking-[0.35em] text-white/40 mb-6 uppercase font-mono">
-            DEEP SPACE OBSERVATORY
-          </span>
-          <h1 
-            className="text-6xl sm:text-7xl lg:text-8xl font-extralight tracking-tight text-white"
-            style={{ 
-              textShadow: '0 0 40px rgba(255,140,50,0.15), 0 0 80px rgba(40,100,255,0.1), 0 0 120px rgba(255,255,255,0.05)'
-            }}
-          >
-            Darkmatter
-          </h1>
-          <p className="text-sm text-white/30 font-light tracking-wide mt-4">
-            Where ideas defy gravity
-          </p>
-        </div>
+  // Weightless mouse parallax inertia
+  useEffect(() => {
+    let frameId;
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
 
-        {/* DISCOVER BUTTON */}
+    const handleMouseMove = (e) => {
+      const { innerWidth, innerHeight } = window;
+      targetX = (e.clientX / innerWidth - 0.5) * 18;
+      targetY = (e.clientY / innerHeight - 0.5) * 18;
+    };
+
+    const loop = () => {
+      currentX += (targetX - currentX) * 0.05;
+      currentY += (targetY - currentY) * 0.05;
+      setMouseOffset({ x: currentX, y: currentY });
+      frameId = requestAnimationFrame(loop);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    loop();
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(frameId);
+    };
+  }, []);
+
+  return (
+    <main className="min-h-screen w-full flex flex-col items-center justify-center relative z-10 px-6 select-none overflow-hidden">
+      <div
+        className={`flex flex-col items-center transition-all duration-[1200ms] cubic-bezier(0.16, 1, 0.3, 1) ${
+          isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        }`}
+        style={{
+          transform: `translate3d(${mouseOffset.x}px, ${mouseOffset.y}px, 0)`,
+          willChange: 'transform'
+        }}
+      >
+        {/* Subtle breathing aura behind title */}
+        <div
+          className="absolute -inset-16 pointer-events-none rounded-full blur-[100px] opacity-40 transition-opacity duration-1000"
+          style={{
+            background: 'radial-gradient(circle, rgba(255,140,50,0.12) 0%, rgba(60,120,255,0.1) 45%, rgba(255,255,255,0.04) 75%, transparent 100%)'
+          }}
+        />
+
+        {/* ONLY TITLE: "Darkmatter" centered in sleek typography with subtle glow */}
+        <h1
+          className="text-7xl sm:text-8xl md:text-9xl font-extralight tracking-[-0.04em] text-white relative transition-all duration-700 ease-out animate-gentle-float"
+          style={{
+            textShadow: `
+              0 0 25px rgba(255, 255, 255, 0.25),
+              0 0 50px rgba(255, 140, 50, 0.18),
+              0 0 90px rgba(60, 130, 255, 0.16)
+            `
+          }}
+        >
+          Darkmatter
+        </h1>
+
+        {/* SINGLE "Discover" BUTTON */}
         <button
           onClick={onDiscover}
-          className="mt-12 px-8 py-3 rounded-full border border-white/20 text-white/70 text-sm tracking-widest uppercase font-light transition-all duration-500 hover:border-white/40 hover:text-white hover:bg-white/5 hover:shadow-[0_0_30px_rgba(255,255,255,0.08)] flex items-center gap-3 group"
+          className="mt-14 sm:mt-16 group relative inline-flex items-center gap-3 px-8 py-3.5 rounded-full border border-white/20 bg-white/[0.02] text-white/75 text-xs sm:text-sm font-light tracking-[0.25em] uppercase backdrop-blur-md transition-all duration-500 hover:text-white hover:border-white/50 hover:bg-white/[0.08] hover:shadow-[0_0_35px_rgba(255,255,255,0.12),0_0_15px_rgba(255,140,50,0.1)] active:scale-95 focus:outline-none"
+          aria-label="Discover space catalog"
         >
-          Discover
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="14" 
-            height="14" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="1.5" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className="transition-transform duration-500 group-hover:translate-y-0.5"
+          <span>Discover</span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="transition-transform duration-500 ease-out group-hover:translate-x-1"
           >
-            <path d="m6 9 6 6 6-6"/>
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
           </svg>
         </button>
       </div>
-
-      {/* SCROLL INDICATOR */}
-      <div className="absolute bottom-8 flex justify-center w-full">
-        <div className="w-[1px] h-8 bg-gradient-to-b from-transparent via-white/20 to-transparent animate-bounce" />
-      </div>
-    </section>
+    </main>
   );
 }

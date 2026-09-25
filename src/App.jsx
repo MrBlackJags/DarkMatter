@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { DISCOVERED_OBJECTS } from './data/discoveredObjects';
 import { fetchCatalogObjects } from './services/api';
 
-// New minimalist components
+// Minimalist cosmic components
 import CosmicCanvas from './components/layout/CosmicCanvas';
 import Landing from './components/layout/Landing';
 import DataCards from './components/catalog/DataCards';
@@ -10,8 +10,16 @@ import ObjectDetail from './components/catalog/ObjectDetail';
 
 export default function App() {
   const [objects, setObjects] = useState(() => {
-    const saved = localStorage.getItem('darkmatter_catalog_objects');
-    return saved ? JSON.parse(saved) : DISCOVERED_OBJECTS;
+    try {
+      const saved = localStorage.getItem('darkmatter_catalog_v2');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+    return DISCOVERED_OBJECTS;
   });
 
   const [view, setView] = useState('landing'); // 'landing' | 'explore'
@@ -36,27 +44,35 @@ export default function App() {
 
   // Sync to localStorage
   useEffect(() => {
-    localStorage.setItem('darkmatter_catalog_objects', JSON.stringify(objects));
+    try {
+      localStorage.setItem('darkmatter_catalog_v2', JSON.stringify(objects));
+    } catch (e) {}
   }, [objects]);
 
-  // Smooth transition from landing to explore
+  // Smooth weightless transition from landing to explore
   const handleDiscover = () => {
     setIsTransitioning(true);
     setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'instant' });
       setView('explore');
-      setIsTransitioning(false);
-    }, 600);
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 100);
+    }, 500);
   };
 
   const handleBack = () => {
     setIsTransitioning(true);
     setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'instant' });
       setView('landing');
-      setIsTransitioning(false);
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 100);
     }, 400);
   };
 
-  // Escape key to close detail
+  // Keyboard navigation: Escape key closes modal or returns to landing
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -73,14 +89,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden selection:bg-white/20 selection:text-white">
-      
       {/* Immersive cosmic background canvas */}
       <CosmicCanvas />
 
-      {/* Page transition overlay */}
+      {/* Cinematic weightless transition overlay */}
       <div 
-        className={`fixed inset-0 z-30 bg-black pointer-events-none transition-opacity ${
-          isTransitioning ? 'opacity-100 duration-300' : 'opacity-0 duration-500'
+        className={`fixed inset-0 z-40 bg-black pointer-events-none transition-opacity ease-in-out ${
+          isTransitioning ? 'opacity-100 duration-400' : 'opacity-0 duration-600'
         }`}
       />
 
@@ -97,7 +112,7 @@ export default function App() {
         />
       )}
 
-      {/* Object detail overlay */}
+      {/* Object detail dossier modal */}
       <ObjectDetail 
         object={selectedObject}
         onClose={() => setSelectedObject(null)}
