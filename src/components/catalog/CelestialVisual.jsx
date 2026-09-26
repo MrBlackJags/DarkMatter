@@ -11,6 +11,11 @@ export default function CelestialVisual({ object, isHovered = false, size = 'car
   const [viewMode, setViewMode] = useState(object?.image ? 'image' : 'model');
   const [imgError, setImgError] = useState(false);
 
+  useEffect(() => {
+    setViewMode(object?.image ? 'image' : 'model');
+    setImgError(false);
+  }, [object?.image, object?.id, object?.name]);
+
   const isDetail = size === 'detail';
   const canvasHeight = isDetail ? 280 : 160;
 

@@ -266,6 +266,7 @@ export const DISCOVERED_OBJECTS = [
   // 6. PSR B1257+12 b (Draugr) - First exoplanet ever discovered
   {
     id: 'obj-draugr',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/PSR_B1257%2B12_system.jpg/640px-PSR_B1257%2B12_system.jpg',
     name: 'PSR B1257+12 b (Draugr)',
     designation: 'PSR B1257+12 b',
     class: 'exoplanet',
@@ -311,6 +312,7 @@ export const DISCOVERED_OBJECTS = [
   // 7. HD 209458 b (Osiris) - First transiting exoplanet
   {
     id: 'obj-hd-209458b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Osiris_artist_concept.jpg/640px-Osiris_artist_concept.jpg',
     name: 'HD 209458 b (Osiris)',
     designation: 'HD 209458 b',
     class: 'exoplanet',
@@ -357,6 +359,7 @@ export const DISCOVERED_OBJECTS = [
   // 8. 55 Cancri e (Janssen) - Lava Ocean Super-Earth
   {
     id: 'obj-55-cnc-e',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/55_Cancri_e_artist_impression.jpg/640px-55_Cancri_e_artist_impression.jpg',
     name: '55 Cancri e (Janssen)',
     designation: '55 Cnc e',
     class: 'exoplanet',
@@ -403,6 +406,7 @@ export const DISCOVERED_OBJECTS = [
   // 9. WASP-76 b (Iron Rain Hot Jupiter)
   {
     id: 'obj-wasp-76b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Artist%E2%80%99s_impression_of_the_ultra-hot_giant_exoplanet_WASP-76b.jpg/640px-Artist%E2%80%99s_impression_of_the_ultra-hot_giant_exoplanet_WASP-76b.jpg',
     name: 'WASP-76 b',
     designation: 'WASP-76 b',
     class: 'exoplanet',
@@ -539,6 +543,7 @@ export const DISCOVERED_OBJECTS = [
   // 12. Phoenix A - Ultra-Massive Black Hole
   {
     id: 'obj-phoenix-a',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Phoenix_cluster_by_Chandra.jpg/640px-Phoenix_cluster_by_Chandra.jpg',
     name: 'Phoenix A',
     designation: 'Phoenix Cluster Central Singularity',
     class: 'blackhole',
@@ -630,6 +635,7 @@ export const DISCOVERED_OBJECTS = [
   // 14. FRB 121102 - First Repeating Fast Radio Burst
   {
     id: 'obj-frb-121102',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Arecibo_Observatory_Aerial_View.jpg/640px-Arecibo_Observatory_Aerial_View.jpg',
     name: 'FRB 121102',
     designation: 'FRB 121102 (The Repeater)',
     class: 'pulsar',
@@ -674,6 +680,7 @@ export const DISCOVERED_OBJECTS = [
   // 15. GLASS-z12 - Cosmic Dawn Galaxy
   {
     id: 'obj-glass-z12',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/GLASS-z12_NIRCam.png/640px-GLASS-z12_NIRCam.png',
     name: 'GLASS-z12',
     designation: 'GL-z12',
     class: 'galaxy',
@@ -882,6 +889,7 @@ export const DISCOVERED_OBJECTS = [
   // 20. TOI-700 d
   {
     id: 'obj-toi-700d',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Exoplanet_TOI_700_d_illustration.jpg/640px-Exoplanet_TOI_700_d_illustration.jpg',
     name: 'TOI-700 d',
     designation: '2MASS J06282325-6534456 d',
     class: 'exoplanet',
@@ -924,6 +932,7 @@ export const DISCOVERED_OBJECTS = [
   // 21. WASP-96 b
   {
     id: 'obj-wasp-96b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Webb_Captures_Detailed_Atmospheric_Profile_of_Exoplanet_WASP-96_b.png/640px-Webb_Captures_Detailed_Atmospheric_Profile_of_Exoplanet_WASP-96_b.png',
     name: 'WASP-96 b',
     designation: 'WASP-96 b',
     class: 'exoplanet',
@@ -963,6 +972,7 @@ export const DISCOVERED_OBJECTS = [
   // 22. LHS 475 b
   {
     id: 'obj-lhs-475b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/LHS_475_b_artist_concept.jpg/640px-LHS_475_b_artist_concept.jpg',
     name: 'LHS 475 b',
     designation: 'GJ 9304 b',
     class: 'exoplanet',
@@ -1040,6 +1050,7 @@ export const DISCOVERED_OBJECTS = [
   // 24. UHZ1
   {
     id: 'obj-uhz1',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/UHZ1_JWST_Chandra.png/640px-UHZ1_JWST_Chandra.png',
     name: 'UHZ1',
     designation: 'UHZ1 (Heavy Seed Black Hole)',
     class: 'blackhole',
@@ -1078,6 +1089,7 @@ export const DISCOVERED_OBJECTS = [
   // 25. TON 618
   {
     id: 'obj-ton-618',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Quasar_3C_273.jpg/640px-Quasar_3C_273.jpg',
     name: 'TON 618',
     designation: 'Tonantzintla 618',
     class: 'blackhole',
@@ -1197,6 +1209,7 @@ export const DISCOVERED_OBJECTS = [
   // 28. Proxima Centauri b
   {
     id: 'obj-proxima-b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Artist%27s_impression_of_Proxima_Centauri_b_shown_hypothetically_as_an_arid_rocky_planet.jpg/640px-Artist%27s_impression_of_Proxima_Centauri_b_shown_hypothetically_as_an_arid_rocky_planet.jpg',
     name: 'Proxima Centauri b',
     designation: 'Alpha Centauri C b',
     class: 'exoplanet',
@@ -1277,6 +1290,7 @@ export const DISCOVERED_OBJECTS = [
   // 30. 2I/Borisov
   {
     id: 'obj-2i-borisov',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Hubble_image_of_interstellar_comet_2I_Borisov.jpg/640px-Hubble_image_of_interstellar_comet_2I_Borisov.jpg',
     name: '2I/Borisov',
     designation: 'C/2019 Q4 (Borisov)',
     class: 'interstellar',
@@ -1354,6 +1368,7 @@ export const DISCOVERED_OBJECTS = [
   // 32. C/2014 UN271 (Bernardinelli-Bernstein)
   {
     id: 'obj-bernardinelli-bernstein',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Bernardinelli-Bernstein_Hubble_composite.jpg/640px-Bernardinelli-Bernstein_Hubble_composite.jpg',
     name: 'C/2014 UN271 (Bernardinelli-Bernstein)',
     designation: 'C/2014 UN271 (Mega-Comet)',
     class: 'interstellar',
@@ -1431,6 +1446,7 @@ export const DISCOVERED_OBJECTS = [
   // 34. GRB 221009A ("The B.O.A.T.")
   {
     id: 'obj-grb-221009a',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Swift_X-ray_Telescope_image_of_GRB_221009A.jpg/640px-Swift_X-ray_Telescope_image_of_GRB_221009A.jpg',
     name: 'GRB 221009A (The B.O.A.T.)',
     designation: 'GRB 221009A (Brightest Of All Time)',
     class: 'supernova',
@@ -1470,6 +1486,7 @@ export const DISCOVERED_OBJECTS = [
   // 35. AT2021lwx ("Scary Barbie")
   {
     id: 'obj-at2021lwx',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/AT2021lwx_ZTF_discovery_image.png/640px-AT2021lwx_ZTF_discovery_image.png',
     name: 'AT2021lwx',
     designation: 'ZTF20abrbeie ("Scary Barbie")',
     class: 'supernova',
@@ -1508,6 +1525,7 @@ export const DISCOVERED_OBJECTS = [
   // 36. SGR 1935+2154 (Milky Way Magnetar / FRB source)
   {
     id: 'obj-sgr-1935',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Chandra_X-ray_image_of_SGR_1935%2B2154.jpg/640px-Chandra_X-ray_image_of_SGR_1935%2B2154.jpg',
     name: 'SGR 1935+2154',
     designation: 'Soft Gamma Repeater 1935+2154',
     class: 'pulsar',
@@ -1546,6 +1564,7 @@ export const DISCOVERED_OBJECTS = [
   // 37. Hulse-Taylor Binary Pulsar (PSR B1913+16)
   {
     id: 'obj-hulse-taylor',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Arecibo_Radio_Telescope.jpg/640px-Arecibo_Radio_Telescope.jpg',
     name: 'PSR B1913+16 (Hulse-Taylor)',
     designation: 'PSR J1915+1606',
     class: 'pulsar',
@@ -1586,6 +1605,7 @@ export const DISCOVERED_OBJECTS = [
   // 38. GW170817 Binary Neutron Star Merger
   {
     id: 'obj-gw170817',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Hubble_and_Chandra_views_of_GW170817.jpg/640px-Hubble_and_Chandra_views_of_GW170817.jpg',
     name: 'GW170817 / AT2017gfo',
     designation: 'Binary Neutron Star Inspiral & Kilonova',
     class: 'blackhole',

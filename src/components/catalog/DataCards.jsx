@@ -189,6 +189,7 @@ function StellarSurveyStarCard({ star, onSelect, onSimulate }) {
   };
 
   const badge = getSpectralBadge(star.spectralClass);
+  const formattedStar = formatStarForObjectDetail(star);
 
   return (
     <article
@@ -197,6 +198,14 @@ function StellarSurveyStarCard({ star, onSelect, onSimulate }) {
       className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 backdrop-blur-md transition-all duration-300 flex flex-col justify-between hover:border-white/20 hover:bg-white/[0.035] hover:shadow-[0_15px_35px_rgba(0,0,0,0.6)]"
     >
       <div>
+        {/* Real Telescope Survey Photo Visual Header */}
+        <div
+          onClick={() => onSelect(formattedStar)}
+          className="mb-4 overflow-hidden rounded-xl cursor-pointer"
+        >
+          <CelestialVisual object={{ ...star, class: 'star' }} isHovered={isHovered} size="card" />
+        </div>
+
         {/* Header & Badges */}
         <div className="flex items-center justify-between gap-2">
           <div className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[10px] font-mono tracking-wider uppercase ${badge.color}`}>
@@ -209,7 +218,10 @@ function StellarSurveyStarCard({ star, onSelect, onSimulate }) {
         </div>
 
         {/* Star Name & Catalog IDs */}
-        <h3 className="mt-3 text-lg font-light text-white tracking-tight group-hover:text-cyan-300 transition-colors">
+        <h3
+          onClick={() => onSelect(formattedStar)}
+          className="mt-3 text-lg font-light text-white tracking-tight group-hover:text-cyan-300 transition-colors cursor-pointer"
+        >
           {star.name}
         </h3>
         <p className="text-xs font-mono text-white/35 truncate mt-0.5">
@@ -253,7 +265,7 @@ function StellarSurveyStarCard({ star, onSelect, onSimulate }) {
       {/* Action Buttons */}
       <div className="mt-5 pt-3.5 border-t border-white/[0.06] flex items-center justify-between gap-2">
         <button
-          onClick={() => onSelect(formatStarForObjectDetail(star))}
+          onClick={() => onSelect(formattedStar)}
           className="text-xs font-light text-white/60 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
         >
           <span>Dossier</span>
@@ -261,7 +273,10 @@ function StellarSurveyStarCard({ star, onSelect, onSimulate }) {
         </button>
 
         <button
-          onClick={() => onSimulate && onSimulate(star)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSimulate && onSimulate(star);
+          }}
           className="px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-xs font-mono flex items-center gap-1.5 transition-all shadow-[0_0_12px_rgba(6,182,212,0.1)] cursor-pointer"
           title="Load this star directly into the Gravity Simulator"
         >

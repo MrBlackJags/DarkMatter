@@ -133,7 +133,7 @@ export function formatStarForObjectDetail(star) {
       `Effective Temperature Peak at ${star.temperatureK} K`,
       `Metallicity Index [Fe/H]`
     ],
-    image: null
+    image: star.image || null
   };
 }
 
