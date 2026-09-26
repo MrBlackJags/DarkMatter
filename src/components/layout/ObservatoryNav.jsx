@@ -14,10 +14,10 @@ export default function ObservatoryNav({ activeView, onNavigate, totalObjects = 
   }, []);
 
   const navItems = [
-    { id: 'explore', label: 'Discoveries', badge: totalObjects },
-    { id: 'calculators', label: 'Calculators', badge: '14+' },
-    { id: 'simulation', label: 'Gravity & Collisions', badge: 'PHYSICS' },
-    { id: 'pipeline', label: 'Pipeline & DB', badge: 'LIVE' }
+    { id: 'explore', label: 'Stellar Discoveries', badge: '2.4M+' },
+    { id: 'calculators', label: 'Space Calculators', badge: '14+' },
+    { id: 'simulation', label: 'Gravity & Collisions', badge: 'N-BODY' },
+    { id: 'pipeline', label: 'Telemetry Pipeline', badge: 'LIVE' }
   ];
 
   return (

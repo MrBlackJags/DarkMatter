@@ -3,6 +3,7 @@ import cors from 'cors';
 import { dbRun, dbAll, dbGet, initDatabase } from './db.js';
 import { pipelineInstance } from './pipeline.js';
 import { DISCOVERED_OBJECTS } from '../src/data/discoveredObjects.js';
+import { queryStellarDiscoveries, STELLAR_SURVEYS, TOTAL_STELLAR_DISCOVERIES_COUNT } from '../src/data/stellarSurveys.js';
 import { randomUUID } from 'crypto';
 
 const app = express();
@@ -77,6 +78,8 @@ app.get('/api/stats', async (req, res) => {
 
     res.json({
       totalObjects: totalRow ? totalRow.count : 0,
+      totalStellarDiscoveries: TOTAL_STELLAR_DISCOVERIES_COUNT,
+      stellarSurveys: STELLAR_SURVEYS,
       byClass: classRows,
       topMissions: missionRows,
       recentJobs: jobRows.map(j => ({
@@ -88,6 +91,49 @@ app.get('/api/stats', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// ----------------------------------------------------
+// All-Sky Stellar Discoveries API (Millions of Stars)
+// ----------------------------------------------------
+app.get('/api/stellar-surveys', (req, res) => {
+  try {
+    const { 
+      search, 
+      spectralClass = 'all', 
+      constellation = 'all', 
+      survey = 'all', 
+      distanceRange = 'all',
+      sortBy = 'distance-asc', 
+      page = 1, 
+      pageSize = 24 
+    } = req.query;
+
+    const result = queryStellarDiscoveries({
+      searchQuery: search || '',
+      spectralClass,
+      constellation,
+      survey,
+      distanceRange,
+      sortBy,
+      page: Number(page) || 1,
+      pageSize: Number(pageSize) || 24
+    });
+
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/stellar-surveys/overview', (req, res) => {
+  res.json({
+    totalIndexedStars: TOTAL_STELLAR_DISCOVERIES_COUNT,
+    surveys: STELLAR_SURVEYS,
+    status: 'ONLINE',
+    description: 'All-Sky high-cadence stellar astrometry & photometric database'
+  });
+});
+
 
 // ----------------------------------------------------
 // Catalog Objects API

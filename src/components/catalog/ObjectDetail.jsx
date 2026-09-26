@@ -6,7 +6,7 @@ const camelToTitle = (str) => {
   return result.charAt(0).toUpperCase() + result.slice(1);
 };
 
-export default function ObjectDetail({ object, onClose }) {
+export default function ObjectDetail({ object, onClose, onSimulate }) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -72,14 +72,29 @@ export default function ObjectDetail({ object, onClose }) {
           </div>
 
           {/* OBJECT HEADER */}
-          <header className="border-b border-white/[0.06] pb-6">
-            <h1 className="text-3xl sm:text-4xl font-extralight tracking-tight text-white">
-              {object.name}
-            </h1>
-            {object.designation && object.designation !== object.name && (
-              <p className="text-sm font-mono text-white/40 mt-1">
-                {object.designation}
-              </p>
+          <header className="border-b border-white/[0.06] pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-extralight tracking-tight text-white">
+                {object.name}
+              </h1>
+              {object.designation && object.designation !== object.name && (
+                <p className="text-sm font-mono text-white/40 mt-1">
+                  {object.designation}
+                </p>
+              )}
+            </div>
+
+            {onSimulate && (
+              <button
+                onClick={() => {
+                  handleClose();
+                  onSimulate(object);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/25 text-cyan-300 text-xs font-mono tracking-wider uppercase transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)] cursor-pointer w-fit"
+              >
+                <span>Simulate Gravity</span>
+                <span className="text-sm">→</span>
+              </button>
             )}
           </header>
 

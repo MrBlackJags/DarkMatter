@@ -139,14 +139,14 @@ export default function DataPipelineDashboard({ onRefreshCatalog, totalObjects }
 
         <div className="hud-bracket-card p-4 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-1">
           <div className="flex items-center justify-between text-slate-500 text-[10px]">
-            <span>CATALOG DISCOVERIES</span>
+            <span>ALL-SKY STELLAR INDEX</span>
             <Database className="w-3.5 h-3.5 text-hud-amber" />
           </div>
           <div className="text-base font-bold text-hud-amber">
-            {totalObjects || healthState?.activeObjects || 24} Verified Records
+            2,450,812 Discoveries
           </div>
           <div className="text-[10px] text-slate-400">
-            Astrometrically Indexed
+            Gaia DR3 & All-Sky Stream
           </div>
         </div>
 

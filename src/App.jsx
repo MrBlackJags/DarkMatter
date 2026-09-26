@@ -38,6 +38,7 @@ export default function App() {
 
   const [view, setView] = useState(getInitialView); // 'landing' | 'explore' | 'calculators' | 'simulation' | 'pipeline'
   const [selectedObject, setSelectedObject] = useState(null);
+  const [simulationStar, setSimulationStar] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Sync hash changes (browser Back/Forward)
@@ -142,6 +143,10 @@ export default function App() {
           objects={objects}
           onSelectObject={setSelectedObject}
           onBack={() => handleNavigate('landing')}
+          onNavigateToSimulator={(star) => {
+            setSimulationStar(star);
+            handleNavigate('simulation');
+          }}
         />
       )}
 
@@ -153,7 +158,7 @@ export default function App() {
 
       {view === 'simulation' && (
         <main className="relative z-10 min-h-screen w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 transition-opacity duration-700">
-          <OrbitSimulator />
+          <OrbitSimulator initialStar={simulationStar} />
         </main>
       )}
 
@@ -170,6 +175,10 @@ export default function App() {
       <ObjectDetail 
         object={selectedObject}
         onClose={() => setSelectedObject(null)}
+        onSimulate={(star) => {
+          setSimulationStar(star);
+          handleNavigate('simulation');
+        }}
       />
     </div>
   );
