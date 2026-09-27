@@ -41,7 +41,7 @@ const CELESTIAL_PRESETS = [
   { name: 'M87* Black Hole', mass: 6.5e9 * 1.98847e30, radius: 1.92e13, density: 1e9 }
 ];
 
-export default function SpaceCalculators() {
+export default function SpaceCalculators({ onLaunchInSimulator }) {
   const [activeCategory, setActiveCategory] = useState('orbital'); // 'orbital', 'blackholes', 'exoplanets', 'relativity'
   const [selectedPreset, setSelectedPreset] = useState('');
   const [historyList, setHistoryList] = useState([]);
@@ -158,9 +158,9 @@ export default function SpaceCalculators() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {activeCategory === 'orbital' && (
           <>
-            <OrbitalVelocityCalculator onSave={handleSaveCalculation} />
-            <HohmannTransferCalculator onSave={handleSaveCalculation} />
-            <EscapeVelocityCalculator onSave={handleSaveCalculation} />
+            <OrbitalVelocityCalculator onSave={handleSaveCalculation} onLaunchInSimulator={onLaunchInSimulator} />
+            <HohmannTransferCalculator onSave={handleSaveCalculation} onLaunchInSimulator={onLaunchInSimulator} />
+            <EscapeVelocityCalculator onSave={handleSaveCalculation} onLaunchInSimulator={onLaunchInSimulator} />
             <RocheHillSphereCalculator onSave={handleSaveCalculation} />
           </>
         )}
@@ -258,8 +258,7 @@ export default function SpaceCalculators() {
 
 // ----------------------------------------------------
 // 1. KEPLERIAN ORBITAL VELOCITY & PERIOD CALCULATOR
-// ----------------------------------------------------
-function OrbitalVelocityCalculator({ onSave }) {
+function OrbitalVelocityCalculator({ onSave, onLaunchInSimulator }) {
   const [massExp, setMassExp] = useState(24);
   const [massVal, setMassVal] = useState(5.972); // 5.972e24 (Earth)
   const [altitudeKm, setAltitudeKm] = useState(400); // 400 km (ISS orbit)
@@ -385,14 +384,29 @@ function OrbitalVelocityCalculator({ onSave }) {
           <div className="text-[10px] text-slate-400">({periodHours.toFixed(2)} hours)</div>
         </div>
       </div>
+
+      {onLaunchInSimulator && (
+        <button
+          onClick={() => onLaunchInSimulator({
+            type: 'calculator_launch',
+            calculatorName: 'Kepler Orbit',
+            satelliteSpeed: velocityKms,
+            orbitRadiusKm: totalRadiusM / 1000,
+            centralMassKg: centralMassKg
+          })}
+          className="w-full py-2 px-3 rounded-lg border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-mono text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.12)]"
+        >
+          <Orbit className="w-3.5 h-3.5" />
+          <span>Launch Orbit in Gravity Simulator</span>
+        </button>
+      )}
     </div>
   );
 }
 
 // ----------------------------------------------------
 // 2. HOHMANN TRANSFER ORBIT CALCULATOR
-// ----------------------------------------------------
-function HohmannTransferCalculator({ onSave }) {
+function HohmannTransferCalculator({ onSave, onLaunchInSimulator }) {
   const [r1Km, setR1Km] = useState(6771); // LEO 400km above Earth (6371+400)
   const [r2Km, setR2Km] = useState(42164); // GEO radius (35,786 + 6371)
   const [centralMass, setCentralMass] = useState(5.972e24); // Earth mass
@@ -488,14 +502,30 @@ function HohmannTransferCalculator({ onSave }) {
           <div className="text-base font-bold text-hud-emerald">{transferHours.toFixed(2)} h</div>
         </div>
       </div>
+
+      {onLaunchInSimulator && (
+        <button
+          onClick={() => onLaunchInSimulator({
+            type: 'calculator_launch',
+            calculatorName: 'Hohmann Transfer',
+            satelliteSpeed: deltaV1 / 1000,
+            orbitRadiusKm: r1 / 1000,
+            targetRadiusKm: r2 / 1000,
+            centralMassKg: centralMass
+          })}
+          className="w-full py-2 px-3 rounded-lg border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-mono text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.12)]"
+        >
+          <Orbit className="w-3.5 h-3.5" />
+          <span>Simulate Transfer in Gravity Simulator</span>
+        </button>
+      )}
     </div>
   );
 }
 
 // ----------------------------------------------------
 // 3. ESCAPE VELOCITY CALCULATOR
-// ----------------------------------------------------
-function EscapeVelocityCalculator({ onSave }) {
+function EscapeVelocityCalculator({ onSave, onLaunchInSimulator }) {
   const [massKg, setMassKg] = useState(5.9722e24);
   const [radiusKm, setRadiusKm] = useState(6371);
 
@@ -573,6 +603,22 @@ function EscapeVelocityCalculator({ onSave }) {
           <div className="text-hud-cyan font-bold">{((v_esc_ms / c) * 100).toExponential(3)}% c</div>
         </div>
       </div>
+
+      {onLaunchInSimulator && (
+        <button
+          onClick={() => onLaunchInSimulator({
+            type: 'calculator_launch',
+            calculatorName: 'Escape Velocity',
+            satelliteSpeed: v_esc_kms,
+            orbitRadiusKm: radiusM / 1000,
+            centralMassKg: massKg
+          })}
+          className="w-full py-2 px-3 rounded-lg border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-mono text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.12)]"
+        >
+          <Orbit className="w-3.5 h-3.5" />
+          <span>Simulate Escape Vector in Gravity Simulator</span>
+        </button>
+      )}
     </div>
   );
 }

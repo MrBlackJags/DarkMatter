@@ -483,13 +483,13 @@ export default function CelestialVisual({ object, isHovered = false, size = 'car
   const hasImage = Boolean(object?.image && !imgError);
 
   return (
-    <div className={`relative w-full overflow-hidden rounded-xl bg-black/40 border border-white/[0.04] flex items-center justify-center ${isDetail ? 'h-72' : 'h-40'}`}>
+    <div className={`group/visual relative w-full overflow-hidden rounded-xl bg-black/60 border border-white/[0.08] hover:border-white/20 transition-colors flex items-center justify-center ${isDetail ? 'h-72' : 'h-44'}`}>
       {/* Background Starfield ambient for model */}
-      <div className="absolute inset-0 bg-radial-gradient from-transparent to-black/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-radial-gradient from-transparent to-black/90 pointer-events-none" />
 
       {/* Render Image or Model */}
       {viewMode === 'image' && hasImage ? (
-        <div className="relative w-full h-full">
+        <div className="relative w-full h-full bg-black overflow-hidden flex items-center justify-center">
           <img
             src={object.image}
             alt={object.name}
@@ -497,11 +497,12 @@ export default function CelestialVisual({ object, isHovered = false, size = 'car
               setImgError(true);
               setViewMode('model');
             }}
-            className="w-full h-full object-cover filter brightness-90 contrast-110 transition-transform duration-700 ease-out group-hover:scale-105"
+            className="w-full h-full object-cover filter brightness-95 contrast-105 transition-transform duration-700 ease-out group-hover:scale-105"
             loading="lazy"
           />
           {/* Subtle vignette overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/20 pointer-events-none" />
+          <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-xl pointer-events-none" />
         </div>
       ) : (
         <canvas
@@ -517,18 +518,19 @@ export default function CelestialVisual({ object, isHovered = false, size = 'car
             e.stopPropagation();
             setViewMode(viewMode === 'model' ? 'image' : 'model');
           }}
-          className="absolute bottom-2 right-2 z-20 px-2 py-0.5 text-[9px] font-mono uppercase tracking-wider rounded border border-white/10 bg-black/70 text-white/50 hover:text-white hover:border-white/30 backdrop-blur transition-colors"
-          title={`Switch to ${viewMode === 'model' ? 'Real Telemetry Image' : 'Interactive 3D Model'}`}
+          className="absolute bottom-2.5 right-2.5 z-20 px-2.5 py-1 text-[10px] font-mono tracking-wider rounded-lg border border-white/15 bg-black/80 hover:bg-black/95 text-white/70 hover:text-white hover:border-cyan-400/50 backdrop-blur-md transition-all shadow-lg flex items-center gap-1.5 cursor-pointer"
+          title={`Switch between real telescope photograph and 3D procedural simulation`}
         >
-          {viewMode === 'model' ? 'IMG' : '3D'}
+          <span className="text-[11px]">{viewMode === 'model' ? '📷' : '🪐'}</span>
+          <span>{viewMode === 'model' ? 'PHOTO' : '3D MODEL'}</span>
         </button>
       )}
 
-      {/* Subtle Antigravity zero-G floating particle indicator */}
-      <div className="absolute top-2 left-2.5 z-10 flex items-center gap-1.5 pointer-events-none">
-        <span className="w-1 h-1 rounded-full bg-white/40 animate-pulse" />
-        <span className="text-[9px] font-mono tracking-widest text-white/30 uppercase">
-          {viewMode === 'image' ? 'TELESCOPE' : 'ZERO-G MODEL'}
+      {/* Scientific Telemetry & Status Indicator */}
+      <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/70 border border-white/10 backdrop-blur-md pointer-events-none">
+        <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${viewMode === 'image' ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]' : 'bg-cyan-400 shadow-[0_0_6px_#22d3ee]'}`} />
+        <span className="text-[9px] font-mono tracking-widest text-white/70 uppercase">
+          {viewMode === 'image' ? 'TELESCOPE IMAGERY' : '3D SIMULATION'}
         </span>
       </div>
     </div>

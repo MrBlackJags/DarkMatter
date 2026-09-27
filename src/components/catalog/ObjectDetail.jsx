@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import CelestialVisual from './CelestialVisual';
+import { Orbit, Scale, Calculator } from 'lucide-react';
 
 const camelToTitle = (str) => {
   const result = str.replace(/([A-Z])/g, ' $1');
   return result.charAt(0).toUpperCase() + result.slice(1);
 };
 
-export default function ObjectDetail({ object, onClose, onSimulate }) {
+export default function ObjectDetail({ 
+  object, 
+  onClose, 
+  onSimulate, 
+  onCompare, 
+  isCompared = false, 
+  onOpenCalculators 
+}) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -84,18 +92,49 @@ export default function ObjectDetail({ object, onClose, onSimulate }) {
               )}
             </div>
 
-            {onSimulate && (
-              <button
-                onClick={() => {
-                  handleClose();
-                  onSimulate(object);
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/25 text-cyan-300 text-xs font-mono tracking-wider uppercase transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)] cursor-pointer w-fit"
-              >
-                <span>Simulate Gravity</span>
-                <span className="text-sm">→</span>
-              </button>
-            )}
+            <div className="flex items-center gap-2 flex-wrap">
+              {onCompare && (
+                <button
+                  onClick={() => onCompare(object)}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border text-xs font-mono transition-all cursor-pointer ${
+                    isCompared
+                      ? 'border-cyan-400 bg-cyan-400/20 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.25)]'
+                      : 'border-white/15 hover:border-white/30 bg-white/[0.03] text-white/70 hover:text-white'
+                  }`}
+                  title={isCompared ? 'Remove from comparison' : 'Add to side-by-side comparison'}
+                >
+                  <Scale className="w-3.5 h-3.5" />
+                  <span>{isCompared ? 'In Compare' : 'Compare'}</span>
+                </button>
+              )}
+
+              {onOpenCalculators && (
+                <button
+                  onClick={() => {
+                    handleClose();
+                    onOpenCalculators();
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 text-xs font-mono transition-all cursor-pointer"
+                  title="Open Space Calculators with this object"
+                >
+                  <Calculator className="w-3.5 h-3.5" />
+                  <span>Calculators</span>
+                </button>
+              )}
+
+              {onSimulate && (
+                <button
+                  onClick={() => {
+                    handleClose();
+                    onSimulate(object);
+                  }}
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/25 text-cyan-300 text-xs font-mono tracking-wider uppercase transition-all shadow-[0_0_15px_rgba(6,182,212,0.15)] cursor-pointer w-fit"
+                >
+                  <Orbit className="w-3.5 h-3.5" />
+                  <span>Simulate Gravity</span>
+                </button>
+              )}
+            </div>
           </header>
 
           {/* METADATA GRID */}

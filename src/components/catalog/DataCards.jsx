@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import CelestialVisual from './CelestialVisual';
+import SkyCoordinateRadar from '../observatory/SkyCoordinateRadar';
+import DiscoveryTimeline from '../observatory/DiscoveryTimeline';
 import { 
   queryStellarDiscoveries, 
   SPECTRAL_CLASSES, 
@@ -20,7 +22,13 @@ import {
   Zap, 
   Compass, 
   Flame,
-  ArrowRight
+  ArrowRight,
+  LayoutGrid,
+  Crosshair,
+  Calendar,
+  Scale,
+  PlusCircle,
+  BookOpen
 } from 'lucide-react';
 
 /**
@@ -28,7 +36,7 @@ import {
  * Implements interactive 3D zero-G tilt, fluid levitation,
  * and directional cosmic glow on hover.
  */
-function AntigravityCard({ object, index, onSelect }) {
+function AntigravityCard({ object, index, onSelect, onSimulate, isCompared = false, onToggleCompare }) {
   const cardRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
@@ -106,7 +114,7 @@ function AntigravityCard({ object, index, onSelect }) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={() => onSelect(object)}
-      className="group relative cursor-pointer rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 backdrop-blur-md transition-all duration-500 ease-out will-change-transform flex flex-col justify-between"
+      className="group relative cursor-pointer rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-black/40 p-5 backdrop-blur-md transition-all duration-500 ease-out will-change-transform flex flex-col justify-between"
       style={{
         transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(${isHovered ? '-6px' : '0px'})`,
         boxShadow: isHovered
@@ -163,14 +171,46 @@ function AntigravityCard({ object, index, onSelect }) {
       </div>
 
       {/* FOOTER */}
-      <div className="mt-5 flex items-center justify-between border-t border-white/[0.05] pt-3.5 text-[11px] font-light text-white/30">
-        <span>
+      <div className="mt-5 flex items-center justify-between border-t border-white/[0.05] pt-3.5 text-[11px] font-light text-white/40">
+        <span className="truncate max-w-[130px]">
           {object.distance?.lightYears ? `${object.distance.lightYears} LY` : (object.discoveryMission || 'Deep Sky')}
         </span>
-        <span className="flex items-center gap-1 transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:text-white/80">
-          Inspect
-          <ArrowRight className="w-3 h-3" />
-        </span>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {onToggleCompare && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleCompare(object);
+              }}
+              className={`p-1 sm:px-2 sm:py-1 rounded-full border text-[10px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
+                isCompared
+                  ? 'border-cyan-400 bg-cyan-400/20 text-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.3)]'
+                  : 'border-white/10 hover:border-cyan-500/30 bg-white/[0.02] hover:bg-white/[0.08] text-white/50 hover:text-white'
+              }`}
+              title={isCompared ? 'Remove from comparison' : 'Add to comparative analysis'}
+            >
+              <Scale className="w-2.5 h-2.5" />
+              <span className="hidden sm:inline">{isCompared ? 'Queued' : 'Compare'}</span>
+            </button>
+          )}
+          {onSimulate && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onSimulate(object);
+              }}
+              className="px-2 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-[10px] font-mono flex items-center gap-1 transition-all cursor-pointer shadow-[0_0_10px_rgba(6,182,212,0.15)]"
+              title="Simulate gravitational field in Orbit Simulator"
+            >
+              <Orbit className="w-2.5 h-2.5" />
+              <span className="hidden sm:inline">Simulate</span>
+            </button>
+          )}
+          <span className="flex items-center gap-1 transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:text-white/80">
+            Inspect
+            <ArrowRight className="w-3 h-3" />
+          </span>
+        </div>
       </div>
     </article>
   );
@@ -291,9 +331,20 @@ function StellarSurveyStarCard({ star, onSelect, onSimulate }) {
 /**
  * Main DataCards Component
  */
-export default function DataCards({ objects = [], onSelectObject, onBack, onNavigateToSimulator }) {
+export default function DataCards({ 
+  objects = [], 
+  onSelectObject, 
+  onBack, 
+  onNavigateToSimulator,
+  compareList = [],
+  onToggleCompare,
+  onOpenCompare,
+  onOpenLogger,
+  onOpenDictionary
+}) {
   // Master View: 'curated' | 'stellar_surveys'
   const [catalogMode, setCatalogMode] = useState('curated'); // 'curated' | 'stellar_surveys'
+  const [curatedView, setCuratedView] = useState('grid'); // 'grid' | 'radar' | 'timeline'
   
   // Curated Filters
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'stars' | 'blackholes' | 'planets'
@@ -391,32 +442,46 @@ export default function DataCards({ objects = [], onSelectObject, onBack, onNavi
           </div>
         </div>
 
-        {/* SEARCH BAR */}
-        <div className="relative w-full sm:w-80">
-          <input
-            type="text"
-            value={catalogMode === 'curated' ? searchQuery : stellarSearch}
-            onChange={(e) => {
-              if (catalogMode === 'curated') {
-                setSearchQuery(e.target.value);
-              } else {
-                setStellarSearch(e.target.value);
-                setStellarPage(1);
-              }
-            }}
-            placeholder={catalogMode === 'curated' ? 'Search deep space catalog...' : 'Search Gaia DR3, KIC, TIC, SDSS, HD...'}
-            className="w-full bg-white/[0.03] border border-white/[0.08] rounded-full px-4 py-2 pl-9 text-xs font-light text-white placeholder-white/30 focus:outline-none focus:border-cyan-400/50 focus:bg-white/[0.05] transition-all"
-          />
-          <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
-          {((catalogMode === 'curated' && searchQuery) || (catalogMode === 'stellar_surveys' && stellarSearch)) && (
-            <button
-              onClick={() => {
-                if (catalogMode === 'curated') setSearchQuery('');
-                else setStellarSearch('');
+        {/* SEARCH BAR & QUICK ACTIONS */}
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="relative w-full sm:w-72">
+            <input
+              type="text"
+              value={catalogMode === 'curated' ? searchQuery : stellarSearch}
+              onChange={(e) => {
+                if (catalogMode === 'curated') {
+                  setSearchQuery(e.target.value);
+                } else {
+                  setStellarSearch(e.target.value);
+                  setStellarPage(1);
+                }
               }}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white text-xs cursor-pointer"
+              placeholder={catalogMode === 'curated' ? 'Search deep space catalog...' : 'Search Gaia DR3, KIC, TIC, SDSS, HD...'}
+              className="w-full bg-white/[0.03] border border-white/[0.08] rounded-full px-4 py-2 pl-9 text-xs font-light text-white placeholder-white/30 focus:outline-none focus:border-cyan-400/50 focus:bg-white/[0.05] transition-all"
+            />
+            <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
+            {((catalogMode === 'curated' && searchQuery) || (catalogMode === 'stellar_surveys' && stellarSearch)) && (
+              <button
+                onClick={() => {
+                  if (catalogMode === 'curated') setSearchQuery('');
+                  else setStellarSearch('');
+                }}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white text-xs cursor-pointer"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Log Discovery Candidate Button */}
+          {catalogMode === 'curated' && onOpenLogger && (
+            <button
+              onClick={onOpenLogger}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-xs font-mono transition-all shadow-[0_0_15px_rgba(6,182,212,0.12)] cursor-pointer shrink-0"
+              title="Record and persist custom celestial observation to database"
             >
-              ✕
+              <PlusCircle className="w-3.5 h-3.5" />
+              <span>Log Discovery</span>
             </button>
           )}
         </div>
@@ -429,58 +494,138 @@ export default function DataCards({ objects = [], onSelectObject, onBack, onNavi
       {catalogMode === 'curated' && (
         <div className="space-y-8 animate-fade-in">
           
-          {/* CATEGORY SELECTOR PILLS */}
-          <div className="flex justify-center items-center gap-2 sm:gap-3 flex-wrap">
-            {[
-              { id: 'all', label: 'All Databases', count: objects.length },
-              { id: 'stars', label: 'Stars & Systems', count: starCount },
-              { id: 'blackholes', label: 'Black Holes', count: blackHoleCount },
-              { id: 'planets', label: 'Exoplanets & Worlds', count: planetCount }
-            ].map(tab => {
-              const isActive = activeTab === tab.id;
-              return (
+          {/* TOOLBAR: CATEGORY PILLS & VIEW MODE SWITCHER */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.04] pb-4">
+            
+            {/* Category Selector Pills */}
+            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+              {[
+                { id: 'all', label: 'All Databases', count: objects.length },
+                { id: 'stars', label: 'Stars & Systems', count: starCount },
+                { id: 'blackholes', label: 'Black Holes', count: blackHoleCount },
+                { id: 'planets', label: 'Exoplanets & Worlds', count: planetCount }
+              ].map(tab => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-light tracking-wide transition-all cursor-pointer whitespace-nowrap ${
+                      isActive
+                        ? 'border border-white/30 bg-white/[0.08] text-white shadow-[0_0_20px_rgba(255,255,255,0.06)]'
+                        : 'border border-transparent text-white/40 hover:text-white/70 hover:bg-white/[0.02]'
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                    <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
+                      isActive ? 'bg-white/20 text-white' : 'bg-white/5 text-white/30'
+                    }`}>
+                      {tab.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* View Mode Switcher (Grid | Radar | Timeline) & Compare Counter */}
+            <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+              {compareList.length > 0 && onOpenCompare && (
                 <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-5 py-2 rounded-full text-xs font-light tracking-wide transition-all cursor-pointer ${
-                    isActive
-                      ? 'border border-white/30 bg-white/[0.08] text-white shadow-[0_0_20px_rgba(255,255,255,0.06)]'
-                      : 'border border-transparent text-white/40 hover:text-white/70 hover:bg-white/[0.02]'
-                  }`}
+                  onClick={onOpenCompare}
+                  className="px-3 py-1.5 rounded-full border border-cyan-500/40 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs font-mono flex items-center gap-1.5 transition-all shadow-[0_0_15px_rgba(6,182,212,0.2)] cursor-pointer"
                 >
-                  <span>{tab.label}</span>
-                  <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
-                    isActive ? 'bg-white/20 text-white' : 'bg-white/5 text-white/30'
-                  }`}>
-                    {tab.count}
-                  </span>
+                  <Scale className="w-3.5 h-3.5" />
+                  <span>Compare ({compareList.length})</span>
                 </button>
-              );
-            })}
+              )}
+
+              <div className="flex items-center p-1 rounded-full border border-white/[0.08] bg-white/[0.02]">
+                <button
+                  onClick={() => setCuratedView('grid')}
+                  className={`p-1.5 px-3 rounded-full text-xs font-light flex items-center gap-1.5 transition-all cursor-pointer ${
+                    curatedView === 'grid'
+                      ? 'bg-white/10 text-white border border-white/20'
+                      : 'text-white/40 hover:text-white/80'
+                  }`}
+                  title="Card Grid View"
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Cards</span>
+                </button>
+                <button
+                  onClick={() => setCuratedView('radar')}
+                  className={`p-1.5 px-3 rounded-full text-xs font-light flex items-center gap-1.5 transition-all cursor-pointer ${
+                    curatedView === 'radar'
+                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 shadow-[0_0_12px_rgba(6,182,212,0.15)]'
+                      : 'text-white/40 hover:text-cyan-300'
+                  }`}
+                  title="All-Sky Equatorial Radar Projection"
+                >
+                  <Crosshair className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Sky Radar</span>
+                </button>
+                <button
+                  onClick={() => setCuratedView('timeline')}
+                  className={`p-1.5 px-3 rounded-full text-xs font-light flex items-center gap-1.5 transition-all cursor-pointer ${
+                    curatedView === 'timeline'
+                      ? 'bg-amber-500/20 text-amber-300 border border-amber-400/40 shadow-[0_0_12px_rgba(245,158,11,0.15)]'
+                      : 'text-white/40 hover:text-amber-300'
+                  }`}
+                  title="Chronological Discovery Timeline"
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Timeline</span>
+                </button>
+              </div>
+            </div>
+
           </div>
 
-          {/* CARDS GRID */}
-          {filteredCuratedObjects.length === 0 ? (
-            <div className="text-center py-24 text-white/30 font-light">
-              <p className="text-base">No celestial bodies match your criteria.</p>
-              <button
-                onClick={() => { setSearchQuery(''); setActiveTab('all'); }}
-                className="mt-4 text-xs font-mono text-cyan-400 hover:underline cursor-pointer"
-              >
-                Reset search & filters
-              </button>
+          {/* VIEW RENDERER */}
+          {curatedView === 'radar' && (
+            <div className="animate-fade-in">
+              <SkyCoordinateRadar 
+                objects={filteredCuratedObjects} 
+                onSelectObject={onSelectObject} 
+              />
             </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
-              {filteredCuratedObjects.map((obj, index) => (
-                <AntigravityCard
-                  key={obj.id}
-                  object={obj}
-                  index={index}
-                  onSelect={onSelectObject}
-                />
-              ))}
+          )}
+
+          {curatedView === 'timeline' && (
+            <div className="animate-fade-in max-w-4xl mx-auto">
+              <DiscoveryTimeline 
+                objects={filteredCuratedObjects} 
+                onSelectObject={onSelectObject} 
+              />
             </div>
+          )}
+
+          {curatedView === 'grid' && (
+            filteredCuratedObjects.length === 0 ? (
+              <div className="text-center py-24 text-white/30 font-light">
+                <p className="text-base">No celestial bodies match your criteria.</p>
+                <button
+                  onClick={() => { setSearchQuery(''); setActiveTab('all'); }}
+                  className="mt-4 text-xs font-mono text-cyan-400 hover:underline cursor-pointer"
+                >
+                  Reset search & filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+                {filteredCuratedObjects.map((obj, index) => (
+                  <AntigravityCard
+                    key={obj.id}
+                    object={obj}
+                    index={index}
+                    onSelect={onSelectObject}
+                    onSimulate={onNavigateToSimulator}
+                    isCompared={compareList.some(c => c.id === obj.id)}
+                    onToggleCompare={onToggleCompare}
+                  />
+                ))}
+              </div>
+            )
           )}
 
         </div>

@@ -6,16 +6,9 @@ import React, { useState, useEffect } from 'react';
  * Contains ONLY the title "Darkmatter" centered in sleek typography with subtle glow,
  * and a single "Discover" button that transitions into the catalog and observatory suite.
  */
-export default function Landing({ onDiscover }) {
-  const [isVisible, setIsVisible] = useState(false);
+export default function Landing({ onDiscover, onNavigate }) {
+  const [isVisible, setIsVisible] = useState(true);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 120);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Weightless mouse parallax inertia
   useEffect(() => {
@@ -80,13 +73,18 @@ export default function Landing({ onDiscover }) {
           Darkmatter
         </h1>
 
-        {/* PRIMARY SINGLE "Discover" BUTTON */}
+        {/* Sleek Subtitle */}
+        <p className="mt-3 text-xs sm:text-sm font-light tracking-[0.3em] uppercase text-white/40 text-center max-w-lg">
+          Deep Sky Observatory &amp; Astrodynamics Research Engine
+        </p>
+
+        {/* PRIMARY "Discover" BUTTON */}
         <button
           onClick={onDiscover}
-          className="mt-12 sm:mt-14 group relative inline-flex items-center gap-3 px-9 py-3.5 rounded-full border border-white/20 bg-white/[0.02] text-white/80 text-xs sm:text-sm font-light tracking-[0.25em] uppercase backdrop-blur-md transition-all duration-500 hover:text-white hover:border-white/50 hover:bg-white/[0.08] hover:shadow-[0_0_35px_rgba(255,255,255,0.15),0_0_15px_rgba(255,140,50,0.1)] active:scale-95 focus:outline-none cursor-pointer"
+          className="mt-10 sm:mt-12 group relative inline-flex items-center gap-3 px-9 py-3.5 rounded-full border border-white/20 bg-white/[0.02] text-white/80 text-xs sm:text-sm font-light tracking-[0.25em] uppercase backdrop-blur-md transition-all duration-500 hover:text-white hover:border-white/50 hover:bg-white/[0.08] hover:shadow-[0_0_35px_rgba(255,255,255,0.15),0_0_15px_rgba(255,140,50,0.1)] active:scale-95 focus:outline-none cursor-pointer"
           aria-label="Discover space catalog"
         >
-          <span>Discover</span>
+          <span>Discover Archive</span>
           <svg
             width="12"
             height="12"
@@ -102,6 +100,30 @@ export default function Landing({ onDiscover }) {
             <path d="m12 5 7 7-7 7" />
           </svg>
         </button>
+
+        {/* QUICK JUMP INSTRUMENT SHORTCUTS */}
+        {onNavigate && (
+          <div className="mt-12 sm:mt-14 flex items-center justify-center gap-2 sm:gap-3 flex-wrap max-w-2xl px-4">
+            <button
+              onClick={() => onNavigate('simulation')}
+              className="px-3.5 py-1.5 rounded-full border border-white/[0.08] hover:border-amber-400/40 bg-white/[0.015] hover:bg-amber-400/10 text-white/50 hover:text-amber-300 text-[11px] font-mono tracking-wider transition-all cursor-pointer backdrop-blur-sm shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+            >
+              🪐 N-Body Gravity Simulator
+            </button>
+            <button
+              onClick={() => onNavigate('calculators')}
+              className="px-3.5 py-1.5 rounded-full border border-white/[0.08] hover:border-violet-400/40 bg-white/[0.015] hover:bg-violet-400/10 text-white/50 hover:text-violet-300 text-[11px] font-mono tracking-wider transition-all cursor-pointer backdrop-blur-sm shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+            >
+              🧮 Space Calculators Suite
+            </button>
+            <button
+              onClick={() => onNavigate('pipeline')}
+              className="px-3.5 py-1.5 rounded-full border border-white/[0.08] hover:border-emerald-400/40 bg-white/[0.015] hover:bg-emerald-400/10 text-white/50 hover:text-emerald-300 text-[11px] font-mono tracking-wider transition-all cursor-pointer backdrop-blur-sm shadow-[0_0_15px_rgba(0,0,0,0.5)]"
+            >
+              📡 Telemetry Ingestion Node
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );

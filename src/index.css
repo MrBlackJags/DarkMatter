@@ -9,12 +9,12 @@
   }
 
   ::selection {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 200, 255, 0.2);
     color: white;
   }
 }
 
-/* Custom scrollbar — minimal and invisible-feeling */
+/* Custom scrollbar — cosmic themed */
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -23,16 +23,26 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0, 200, 255, 0.15);
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 200, 255, 0.3);
 }
 
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
+}
+
+/* Subtle vignette overlay on body */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%);
 }
 
 /* Gentle fade-in utility */
@@ -111,6 +121,16 @@ html {
   overflow: hidden;
 }
 
+/* ============================================
+   COSMIC UNIVERSE THEME ENHANCEMENTS
+   ============================================ */
+
+/* Scanline animation */
+@keyframes scanline {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 .hud-scanline {
   position: absolute;
   top: 0;
@@ -120,4 +140,219 @@ html {
   background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent);
   animation: scanline 6s linear infinite;
   pointer-events: none;
+}
+
+/* Nebula pulse glow */
+@keyframes nebulaPulse {
+  0%, 100% { opacity: 0.6; filter: blur(0px); }
+  50% { opacity: 1; filter: blur(1px); }
+}
+.animate-nebula-pulse {
+  animation: nebulaPulse 4s ease-in-out infinite;
+}
+
+/* Star twinkle */
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+.animate-star-twinkle {
+  animation: starTwinkle 2s ease-in-out infinite;
+}
+
+/* Orbit spin */
+@keyframes orbitSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-orbit-spin {
+  animation: orbitSpin 20s linear infinite;
+}
+
+/* Cosmic breathing */
+@keyframes cosmicBreathe {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+.animate-cosmic-breathe {
+  animation: cosmicBreathe 8s ease-in-out infinite;
+}
+
+/* Warp speed lines */
+@keyframes warpSpeed {
+  from { transform: translateZ(0) scaleX(1); opacity: 0; }
+  10% { opacity: 1; }
+  to { transform: translateZ(200px) scaleX(3); opacity: 0; }
+}
+.animate-warp-speed {
+  animation: warpSpeed 2s linear infinite;
+}
+
+/* Holographic shimmer for cards */
+@keyframes holoShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.holo-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(0,240,255,0.05), transparent);
+  background-size: 200% 100%;
+  animation: holoShimmer 6s linear infinite;
+}
+
+/* Deep space card glow */
+.card-glow-cosmic {
+  box-shadow: 
+    0 0 15px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: box-shadow 0.5s ease;
+}
+.card-glow-cosmic:hover {
+  box-shadow: 
+    0 0 20px rgba(0, 150, 255, 0.15),
+    0 0 40px rgba(0, 0, 0, 0.4),
+    0 0 60px rgba(100, 50, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Gravitational text warp */
+.text-glow-cosmic {
+  text-shadow: 
+    0 0 10px rgba(0, 200, 255, 0.3),
+    0 0 30px rgba(0, 150, 255, 0.15),
+    0 0 60px rgba(100, 50, 255, 0.1),
+    0 0 100px rgba(0, 0, 0, 0.3);
+}
+
+/* Smooth aurora border */
+@keyframes auroraBorder {
+  0% { border-color: rgba(0, 200, 255, 0.3); }
+  33% { border-color: rgba(150, 50, 255, 0.3); }
+  66% { border-color: rgba(255, 100, 50, 0.3); }
+  100% { border-color: rgba(0, 200, 255, 0.3); }
+}
+.border-aurora {
+  animation: auroraBorder 8s linear infinite;
+}
+
+/* Cosmic gradient backgrounds for sections */
+.bg-deep-space {
+  background: radial-gradient(ellipse at 20% 80%, rgba(20, 0, 50, 0.4) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(0, 30, 60, 0.3) 0%, transparent 60%),
+              linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(5,2,15,0.98) 100%);
+}
+
+/* Floating particle effect for decorative elements */
+@keyframes floatParticle {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.4; }
+  25% { transform: translate(10px, -20px) rotate(90deg); opacity: 0.8; }
+  50% { transform: translate(-5px, -40px) rotate(180deg); opacity: 0.4; }
+  75% { transform: translate(15px, -25px) rotate(270deg); opacity: 0.7; }
+}
+.animate-float-particle {
+  animation: floatParticle 12s ease-in-out infinite;
+}
+
+/* Gravitational lens distortion shimmer */
+@keyframes lensDistort {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg); }
+  25% { transform: scale(1.02) rotate(0.5deg); filter: hue-rotate(5deg); }
+  50% { transform: scale(0.98) rotate(-0.5deg); filter: hue-rotate(-5deg); }
+  75% { transform: scale(1.01) rotate(0.3deg); filter: hue-rotate(3deg); }
+}
+.animate-lens-distort {
+  animation: lensDistort 10s ease-in-out infinite;
+}
+
+/* Pulsar beam rotation */
+@keyframes pulsarBeam {
+  0% { transform: rotate(0deg); opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { transform: rotate(360deg); opacity: 0.8; }
+}
+.animate-pulsar-beam {
+  animation: pulsarBeam 3s linear infinite;
+}
+
+/* Event horizon collapse */
+@keyframes eventHorizon {
+  0% { transform: scale(1); box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+  50% { transform: scale(0.95); box-shadow: 0 0 40px rgba(100,50,255,0.3), 0 0 80px rgba(0,0,0,0.6); }
+  100% { transform: scale(1); box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+}
+.animate-event-horizon {
+  animation: eventHorizon 6s ease-in-out infinite;
+}
+
+/* Deep cosmos entry animation */
+@keyframes cosmosEntry {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.9) translateY(30px);
+    filter: blur(8px);
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+.animate-cosmos-entry {
+  animation: cosmosEntry 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Staggered children animation delays */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+.stagger-6 { animation-delay: 0.6s; }
+
+/* Accretion disk rotation */
+@keyframes accretionSpin {
+  from { transform: rotateX(75deg) rotateZ(0deg); }
+  to { transform: rotateX(75deg) rotateZ(360deg); }
+}
+.animate-accretion-spin {
+  animation: accretionSpin 12s linear infinite;
+}
+
+/* Cosmic dust trail */
+@keyframes dustTrail {
+  0% { opacity: 0; transform: translateX(-10px) scale(0.5); }
+  20% { opacity: 0.6; }
+  100% { opacity: 0; transform: translateX(100px) scale(1.5); }
+}
+.animate-dust-trail {
+  animation: dustTrail 4s ease-out infinite;
+}
+
+/* Gravity well depth indicator */
+.gravity-well {
+  background: conic-gradient(
+    from 0deg,
+    rgba(0, 200, 255, 0.1),
+    rgba(100, 50, 255, 0.08),
+    rgba(255, 100, 50, 0.06),
+    rgba(0, 200, 255, 0.1)
+  );
+}
+
+/* Simulator canvas glow border */
+.simulator-glow {
+  box-shadow: 
+    0 0 1px rgba(0, 240, 255, 0.3),
+    0 0 10px rgba(0, 240, 255, 0.05),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Telemetry card pulse on data change */
+@keyframes dataPulse {
+  0% { border-color: rgba(0, 240, 255, 0.1); }
+  50% { border-color: rgba(0, 240, 255, 0.4); }
+  100% { border-color: rgba(0, 240, 255, 0.1); }
+}
+.animate-data-pulse {
+  animation: dataPulse 2s ease-in-out;
 }

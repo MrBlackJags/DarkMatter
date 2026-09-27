@@ -19,6 +19,9 @@ export default function CosmicCanvas() {
     let width = window.innerWidth;
     let height = window.innerHeight;
 
+    const prefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const speedFactor = prefersReduced ? 0.2 : 1.0;
+
     // Mouse state with smooth inertia
     const mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000 };
     const parallax = { x: 0, y: 0, targetX: 0, targetY: 0 };
@@ -199,8 +202,8 @@ export default function CosmicCanvas() {
 
       // Render Star Drift with depth parallax
       for (const s of stars) {
-        s.x += s.vx;
-        s.y += s.vy;
+        s.x += s.vx * speedFactor;
+        s.y += s.vy * speedFactor;
 
         // Wrap around boundaries smoothly
         if (s.x < 0) s.x = width;
@@ -290,7 +293,7 @@ export default function CosmicCanvas() {
         ctx.fill();
       }
 
-      time += 1;
+      time += 1 * speedFactor;
       animationFrameId = requestAnimationFrame(render);
     };
 

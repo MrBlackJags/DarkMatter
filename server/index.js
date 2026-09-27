@@ -5,6 +5,12 @@ import { pipelineInstance } from './pipeline.js';
 import { DISCOVERED_OBJECTS } from '../src/data/discoveredObjects.js';
 import { queryStellarDiscoveries, STELLAR_SURVEYS, TOTAL_STELLAR_DISCOVERIES_COUNT } from '../src/data/stellarSurveys.js';
 import { randomUUID } from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -341,6 +347,26 @@ app.post('/api/simulation/save', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// ----------------------------------------------------
+// Static Frontend Serving (Enables launch on :3001)
+// ----------------------------------------------------
+const distPath = path.resolve(__dirname, '../dist');
+const rootPath = path.resolve(__dirname, '..');
+
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.use((req, res, next) => {
+    if (req.method !== 'GET' || req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else {
+  app.use(express.static(rootPath));
+  app.use((req, res, next) => {
+    if (req.method !== 'GET' || req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(rootPath, 'index.html'));
+  });
+}
 
 // Start Server & Initialize Database
 async function startServer() {

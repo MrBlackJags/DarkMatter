@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DISCOVERED_OBJECTS } from './data/discoveredObjects';
-import { fetchCatalogObjects } from './services/api';
+import { fetchCatalogObjects, createCatalogObject } from './services/api';
 
 // Components
 import CosmicCanvas from './components/layout/CosmicCanvas';
@@ -8,9 +8,12 @@ import ObservatoryNav from './components/layout/ObservatoryNav';
 import Landing from './components/layout/Landing';
 import DataCards from './components/catalog/DataCards';
 import ObjectDetail from './components/catalog/ObjectDetail';
+import CompareObjectsDrawer from './components/catalog/CompareObjectsDrawer';
+import CustomObjectLogger from './components/catalog/CustomObjectLogger';
 import SpaceCalculators from './components/observatory/SpaceCalculators';
 import OrbitSimulator from './components/observatory/OrbitSimulator';
 import DataPipelineDashboard from './components/reference/DataPipelineDashboard';
+import DataDictionaryBar from './components/reference/DataDictionaryBar';
 
 export default function App() {
   const [objects, setObjects] = useState(() => {
@@ -28,9 +31,10 @@ export default function App() {
 
   const getInitialView = () => {
     try {
-      const hash = window.location.hash.replace('#', '').toLowerCase();
-      if (['landing', 'explore', 'calculators', 'simulation', 'pipeline'].includes(hash)) {
-        return hash;
+      const fullHash = window.location.hash.replace('#', '').toLowerCase();
+      const baseHash = fullHash.split('?')[0];
+      if (['landing', 'explore', 'calculators', 'simulation', 'pipeline'].includes(baseHash)) {
+        return baseHash;
       }
     } catch (e) {}
     return 'landing';
@@ -39,21 +43,38 @@ export default function App() {
   const [view, setView] = useState(getInitialView); // 'landing' | 'explore' | 'calculators' | 'simulation' | 'pipeline'
   const [selectedObject, setSelectedObject] = useState(null);
   const [simulationStar, setSimulationStar] = useState(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Sync hash changes (browser Back/Forward)
+  // New research tools states
+  const [compareList, setCompareList] = useState([]);
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const [isDictionaryOpen, setIsDictionaryOpen] = useState(false);
+  const [isLoggerOpen, setIsLoggerOpen] = useState(false);
+
+  // Sync hash changes (browser Back/Forward) & deep link queries
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '').toLowerCase();
-      if (['landing', 'explore', 'calculators', 'simulation', 'pipeline'].includes(hash)) {
-        setView(hash);
-      } else if (!hash) {
+      const fullHash = window.location.hash.replace('#', '');
+      const [hashView, queryString] = fullHash.split('?');
+      const v = hashView ? hashView.toLowerCase() : 'landing';
+      if (['landing', 'explore', 'calculators', 'simulation', 'pipeline'].includes(v)) {
+        setView(v);
+      } else if (!hashView) {
         setView('landing');
+      }
+
+      if (queryString) {
+        const params = new URLSearchParams(queryString);
+        const objId = params.get('id');
+        if (objId && objects.length > 0) {
+          const found = objects.find(o => o.id === objId);
+          if (found) setSelectedObject(found);
+        }
       }
     };
     window.addEventListener('hashchange', handleHashChange);
+    handleHashChange();
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [objects]);
 
   // Load objects from backend API with fallback
   const refreshCatalog = useCallback(async () => {
@@ -78,20 +99,48 @@ export default function App() {
     } catch (e) {}
   }, [objects]);
 
-  // Smooth weightless transition between pages
+  // Compare handlers
+  const handleToggleCompare = (obj) => {
+    setCompareList(prev => {
+      const exists = prev.some(item => item.id === obj.id);
+      if (exists) {
+        return prev.filter(item => item.id !== obj.id);
+      } else {
+        if (prev.length >= 4) {
+          alert('Comparison queue maximum reached (up to 4 celestial objects).');
+          return prev;
+        }
+        return [...prev, obj];
+      }
+    });
+  };
+
+  const handleRemoveCompare = (id) => {
+    setCompareList(prev => prev.filter(item => item.id !== id));
+  };
+
+  const handleClearCompare = () => {
+    setCompareList([]);
+  };
+
+  // Custom Object Logger handler
+  const handleAddCustomObject = async (newObj) => {
+    setObjects(prev => [newObj, ...prev]);
+    try {
+      await createCatalogObject(newObj);
+    } catch (err) {
+      console.warn('Failed saving candidate to backend:', err);
+    }
+  };
+
+  // Instant snappy navigation between pages
   const handleNavigate = (targetView) => {
     if (view === targetView) return;
     if (window.location.hash.replace('#', '') !== targetView) {
       window.location.hash = targetView;
     }
-    setIsTransitioning(true);
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-      setView(targetView);
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 100);
-    }, 350);
+    setView(targetView);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Keyboard navigation: Escape key closes modal or returns to landing
@@ -100,6 +149,12 @@ export default function App() {
       if (e.key === 'Escape') {
         if (selectedObject) {
           setSelectedObject(null);
+        } else if (isCompareOpen) {
+          setIsCompareOpen(false);
+        } else if (isDictionaryOpen) {
+          setIsDictionaryOpen(false);
+        } else if (isLoggerOpen) {
+          setIsLoggerOpen(false);
         } else if (view !== 'landing') {
           handleNavigate('landing');
         }
@@ -107,19 +162,12 @@ export default function App() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedObject, view]);
+  }, [selectedObject, isCompareOpen, isDictionaryOpen, isLoggerOpen, view]);
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden selection:bg-white/20 selection:text-white">
       {/* Immersive cosmic background canvas */}
       <CosmicCanvas />
-
-      {/* Cinematic weightless transition overlay */}
-      <div 
-        className={`fixed inset-0 z-40 bg-black pointer-events-none transition-opacity ease-in-out ${
-          isTransitioning ? 'opacity-100 duration-300' : 'opacity-0 duration-500'
-        }`}
-      />
 
       {/* Persistent Glassmorphic Observatory Header (when viewing content) */}
       {view !== 'landing' && (
@@ -127,6 +175,9 @@ export default function App() {
           activeView={view} 
           onNavigate={handleNavigate} 
           totalObjects={objects.length} 
+          compareCount={compareList.length}
+          onOpenCompare={() => setIsCompareOpen(true)}
+          onOpenDictionary={() => setIsDictionaryOpen(true)}
         />
       )}
 
@@ -147,17 +198,27 @@ export default function App() {
             setSimulationStar(star);
             handleNavigate('simulation');
           }}
+          compareList={compareList}
+          onToggleCompare={handleToggleCompare}
+          onOpenCompare={() => setIsCompareOpen(true)}
+          onOpenLogger={() => setIsLoggerOpen(true)}
+          onOpenDictionary={() => setIsDictionaryOpen(true)}
         />
       )}
 
       {view === 'calculators' && (
         <main className="relative z-10 min-h-screen w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 transition-opacity duration-700">
-          <SpaceCalculators />
+          <SpaceCalculators 
+            onLaunchInSimulator={(simConfig) => {
+              setSimulationStar(simConfig);
+              handleNavigate('simulation');
+            }}
+          />
         </main>
       )}
 
       {view === 'simulation' && (
-        <main className="relative z-10 min-h-screen w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 transition-opacity duration-700">
+        <main className="relative z-10 min-h-screen w-full px-2 sm:px-4 lg:px-6 pt-16 pb-6 transition-opacity duration-700">
           <OrbitSimulator initialStar={simulationStar} />
         </main>
       )}
@@ -178,6 +239,39 @@ export default function App() {
         onSimulate={(star) => {
           setSimulationStar(star);
           handleNavigate('simulation');
+        }}
+        onCompare={handleToggleCompare}
+        isCompared={selectedObject ? compareList.some(c => c.id === selectedObject.id) : false}
+        onOpenCalculators={() => handleNavigate('calculators')}
+      />
+
+      {/* Comparative Analysis Drawer */}
+      <CompareObjectsDrawer
+        isOpen={isCompareOpen}
+        onClose={() => setIsCompareOpen(false)}
+        compareList={compareList}
+        onRemove={handleRemoveCompare}
+        onClear={handleClearCompare}
+        onSelectObject={(obj) => {
+          setIsCompareOpen(false);
+          setSelectedObject(obj);
+        }}
+      />
+
+      {/* Custom Discovery Candidate Logger Modal */}
+      <CustomObjectLogger
+        isOpen={isLoggerOpen}
+        onClose={() => setIsLoggerOpen(false)}
+        onAddObject={handleAddCustomObject}
+      />
+
+      {/* Astronomical Glossary / Data Dictionary Drawer */}
+      <DataDictionaryBar
+        isOpen={isDictionaryOpen}
+        onClose={() => setIsDictionaryOpen(false)}
+        onFilterCatalogByClass={(cls) => {
+          setIsDictionaryOpen(false);
+          handleNavigate('explore');
         }}
       />
     </div>
