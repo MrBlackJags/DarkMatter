@@ -18,11 +18,13 @@ export const CELESTIAL_CATALOG = [
     name: 'Kerr Singularity',
     type: 'blackhole',
     mass: 48000,
-    radius: 16,
+    radius: 22,
+    baseRadius: 22,
+    compactRadius: 18,
     color: '#ff6600',
     earthRadiusRatio: 4.6,
     earthMassRatio: 1300000,
-    desc: 'Supermassive Kerr black hole with relativistic photon sphere, ISCO boundary & Doppler accretion disk.',
+    desc: 'Supermassive Kerr black hole with dynamic event horizon, reactive accretion disk, relativistic polar jets & gravitational lensing.',
     defaultCore: true,
     isLarge: true
   },
@@ -32,7 +34,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Pulsar Neutron Star',
     type: 'pulsar',
     mass: 16000,
-    radius: 4.0,
+    radius: 1.8,
+    compactRadius: 3.0,
     color: '#c084fc',
     earthRadiusRatio: 0.002,
     earthMassRatio: 460000,
@@ -46,7 +49,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Sirius B White Dwarf',
     type: 'white_dwarf',
     mass: 8500,
-    radius: 4.8,
+    radius: 3.0,
+    compactRadius: 4.0,
     color: '#e0f2fe',
     earthRadiusRatio: 0.84,
     earthMassRatio: 330000,
@@ -55,18 +59,19 @@ export const CELESTIAL_CATALOG = [
     isLarge: true
   },
 
-  // 2. Luminous Stars (Stationary Gravitational Anchors)
+  // 2. Luminous Stars (Colossal True Scale: Betelgeuse 380px vs Earth 3.5px)
   {
     id: 'hypergiant',
     category: 'Stars',
     name: 'Red Hypergiant (Betelgeuse)',
     type: 'hypergiant',
-    mass: 38000,
-    radius: 84,
+    mass: 45000,
+    radius: 380,
+    compactRadius: 110,
     color: '#ea580c',
     earthRadiusRatio: 880.0,
     earthMassRatio: 5500000,
-    desc: 'Colossal convective stellar envelope spanning 880 Earth radii, driving energetic superwinds.',
+    desc: 'Colossal 880 Earth-radii convective envelope (380px titan) with boiling supergranules & explosive mass-loss.',
     defaultCore: true,
     isLarge: true
   },
@@ -75,12 +80,13 @@ export const CELESTIAL_CATALOG = [
     category: 'Stars',
     name: 'Class O Blue Supergiant',
     type: 'star_blue',
-    mass: 26000,
-    radius: 58,
+    mass: 28000,
+    radius: 210,
+    compactRadius: 65,
     color: '#60a5fa',
     earthRadiusRatio: 240.0,
     earthMassRatio: 7500000,
-    desc: 'Luminous blue supergiant radiating extreme ionizing ultraviolet flux and stellar winds.',
+    desc: 'Blazing 240 Earth-radii luminous blue supergiant radiating extreme ionizing ultraviolet flux and stellar winds.',
     defaultCore: true,
     isLarge: true
   },
@@ -89,12 +95,13 @@ export const CELESTIAL_CATALOG = [
     category: 'Stars',
     name: 'Class G Yellow Star (Sun)',
     type: 'star_yellow',
-    mass: 12000,
-    radius: 40,
+    mass: 14000,
+    radius: 125,
+    compactRadius: 42,
     color: '#facc15',
     earthRadiusRatio: 109.0,
     earthMassRatio: 333000,
-    desc: 'Standard main-sequence thermonuclear star with turbulent granulation cells and coronal loops.',
+    desc: 'Standard main-sequence thermonuclear star (109 Earth-radii) with boiling granulation cells & coronal flares.',
     defaultCore: true,
     isLarge: true
   },
@@ -104,7 +111,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Red Dwarf (Proxima Centauri)',
     type: 'star_red',
     mass: 2400,
-    radius: 28,
+    radius: 46,
+    compactRadius: 26,
     color: '#f87171',
     earthRadiusRatio: 15.4,
     earthMassRatio: 40000,
@@ -120,7 +128,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Turbulent Jovian Giant',
     type: 'jovian_giant',
     mass: 650,
-    radius: 24,
+    radius: 36,
+    compactRadius: 22,
     color: '#d97706',
     earthRadiusRatio: 11.2,
     earthMassRatio: 317.8,
@@ -134,7 +143,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Ringed Gas Giant (Kronos)',
     type: 'ringed_giant',
     mass: 220,
-    radius: 18,
+    radius: 28,
+    compactRadius: 18,
     color: '#fbbf24',
     earthRadiusRatio: 9.45,
     earthMassRatio: 95.2,
@@ -148,7 +158,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Cyan Ice Giant (Neptunian)',
     type: 'ice_giant',
     mass: 80,
-    radius: 12,
+    radius: 13,
+    compactRadius: 11,
     color: '#06b6d4',
     earthRadiusRatio: 3.88,
     earthMassRatio: 17.1,
@@ -157,18 +168,19 @@ export const CELESTIAL_CATALOG = [
     isLarge: false
   },
 
-  // 4. Terrestrial & Exotic Worlds (Standard Base: Terra = 1.0 R⊕, 1.0 M⊕)
+  // 4. Terrestrial & Exotic Worlds (Standard Base: Terra = 1.0 R⊕ = 3.5px)
   {
     id: 'terra',
     category: 'Terrestrial',
     name: 'Habitable Ocean World (Terra)',
     type: 'terra',
     mass: 6,
-    radius: 5.0,
+    radius: 3.5,
+    compactRadius: 4.5,
     color: '#38bdf8',
     earthRadiusRatio: 1.0,
     earthMassRatio: 1.0,
-    desc: 'Standard base unit (1.0 R⊕, 1.0 M⊕): Liquid oceans, continents, dynamic atmosphere & life envelope.',
+    desc: 'Standard base benchmark (1.0 R⊕ = 3.5px, 1.0 M⊕): Liquid oceans, continents, atmosphere & life.',
     defaultCore: false,
     isLarge: false
   },
@@ -178,7 +190,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Volcanic Magma World',
     type: 'lava_world',
     mass: 8,
-    radius: 5.5,
+    radius: 4.2,
+    compactRadius: 4.8,
     color: '#ef4444',
     earthRadiusRatio: 1.10,
     earthMassRatio: 1.4,
@@ -192,7 +205,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Glaciated Cryo Super-Earth',
     type: 'ice_world',
     mass: 14,
-    radius: 6.2,
+    radius: 5.0,
+    compactRadius: 5.2,
     color: '#bae6fd',
     earthRadiusRatio: 1.35,
     earthMassRatio: 2.4,
@@ -206,7 +220,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Arid Desert Planet (Ares)',
     type: 'mars_world',
     mass: 2.5,
-    radius: 3.2,
+    radius: 1.9,
+    compactRadius: 3.0,
     color: '#f97316',
     earthRadiusRatio: 0.53,
     earthMassRatio: 0.11,
@@ -222,7 +237,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Cratered Lunar Moon',
     type: 'luna',
     mass: 0.4,
-    radius: 2.2,
+    radius: 1.1,
+    compactRadius: 2.0,
     color: '#cbd5e1',
     earthRadiusRatio: 0.27,
     earthMassRatio: 0.012,
@@ -236,7 +252,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Volatile Ice Comet',
     type: 'comet',
     mass: 0.02,
-    radius: 1.2,
+    radius: 0.7,
+    compactRadius: 1.4,
     color: '#67e8f9',
     earthRadiusRatio: 0.05,
     earthMassRatio: 0.00001,
@@ -250,7 +267,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Carbonaceous Asteroid',
     type: 'asteroid',
     mass: 0.05,
-    radius: 1.4,
+    radius: 0.8,
+    compactRadius: 1.4,
     color: '#94a3b8',
     earthRadiusRatio: 0.08,
     earthMassRatio: 0.00015,
@@ -264,7 +282,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Orbital Slingshot Probe',
     type: 'satellite',
     mass: 0.005,
-    radius: 1.0,
+    radius: 0.5,
+    compactRadius: 1.0,
     color: '#00ff88',
     earthRadiusRatio: 0.02,
     earthMassRatio: 0.0000001,
@@ -278,7 +297,8 @@ export const CELESTIAL_CATALOG = [
     name: 'Antimatter Annihilator',
     type: 'antimatter',
     mass: 1.0,
-    radius: 1.8,
+    radius: 1.5,
+    compactRadius: 1.8,
     color: '#f43f5e',
     earthRadiusRatio: 0.10,
     earthMassRatio: 0.05,
@@ -333,6 +353,7 @@ export default function OrbitSimulator({ initialStar = null }) {
   const [showVectors, setShowVectors] = useState(false);
   const [showTrails, setShowTrails] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(false);
+  const [scaleMode, setScaleMode] = useState('true_astronomical'); // 'true_astronomical' | 'compact_viewport'
 
   // Custom Mass / Size Multipliers for spawner
   const [massScale, setMassScale] = useState(1.0);
@@ -426,6 +447,49 @@ export default function OrbitSimulator({ initialStar = null }) {
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
         osc.start();
         osc.stop(ctx.currentTime + 0.3);
+      } else if (type === 'gw_chirp') {
+        // Gravitational Wave Chirp (LIGO-style inspiral frequency rise)
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(65, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(720, ctx.currentTime + 0.65);
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 0.5);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.7);
+      } else if (type === 'supernova') {
+        // Massive Core-Collapse Supernova Detonation
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(28, ctx.currentTime + 0.9);
+        gain.gain.setValueAtTime(0.4, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.9);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.9);
+      } else if (type === 'flare') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(160, ctx.currentTime + 0.35);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.35);
+      } else if (type === 'energy_charge') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(840, ctx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.18, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.2);
+      } else if (type === 'swell') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(130, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(55, ctx.currentTime + 0.8);
+        gain.gain.setValueAtTime(0.28, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.8);
       }
     } catch (e) {}
   }, [soundEnabled]);
@@ -959,8 +1023,8 @@ export default function OrbitSimulator({ initialStar = null }) {
     }
   }, [initialStar, loadScenario]);
 
-  // Massive large celestial objects remain stationary anchors
-  const isStationary = useCallback((b) => Boolean(b && (b.isCore || b.isLarge || b.mass >= 1200)), []);
+  // Any celestial object can be anchored as a fixed position core, or dynamic to be slingshotted/orbited
+  const isStationary = useCallback((b) => Boolean(b && b.isCore), []);
 
   // --- N-Body Gravitational Physics Solver ---
   const computeGravitation = useCallback((bodies, G) => {
@@ -1030,16 +1094,33 @@ export default function OrbitSimulator({ initialStar = null }) {
       return;
     }
 
-    // 2. Tool: Toggle Core Anchor
+    // 2. Tool: Toggle Core Anchor (Fixed Position vs Dynamic / Slingshot Ready)
     if (activeTool === 'core') {
-      const clicked = bodiesRef.current.find(b => Math.hypot(b.x - worldCoords.x, b.y - worldCoords.y) <= b.radius + 12);
+      const clicked = bodiesRef.current.find(b => Math.hypot(b.x - worldCoords.x, b.y - worldCoords.y) <= b.radius + 16);
       if (clicked) {
         clicked.isCore = !clicked.isCore;
         if (clicked.isCore) {
           clicked.vx = 0;
           clicked.vy = 0;
+          shockwavesRef.current.push({
+            x: clicked.x, y: clicked.y,
+            r: clicked.radius * 0.8, maxR: clicked.radius * 2.8,
+            alpha: 1.0, color: '#facc15'
+          });
+        } else {
+          shockwavesRef.current.push({
+            x: clicked.x, y: clicked.y,
+            r: clicked.radius * 0.8, maxR: clicked.radius * 2.8,
+            alpha: 1.0, color: '#38bdf8'
+          });
         }
         playAudio('spawn');
+        setTelemetry(prev => ({
+          ...prev,
+          lastEvent: clicked.isCore 
+            ? `ANCHORED ${clicked.name.toUpperCase()} (FIXED IN POSITION)`
+            : `RELEASED ${clicked.name.toUpperCase()} (FREE TO MOVE / SLINGSHOT)`
+        }));
       }
       return;
     }
@@ -1054,7 +1135,16 @@ export default function OrbitSimulator({ initialStar = null }) {
       return;
     }
 
-    // 4. Tool: Slingshot Body Across Space
+    // 4. Tool: Inject Stellar Energy
+    if (activeTool === 'energy') {
+      const clicked = bodiesRef.current.find(b => Math.hypot(b.x - worldCoords.x, b.y - worldCoords.y) <= b.radius + 18);
+      if (clicked) {
+        handleInjectEnergy(clicked, 0.25);
+      }
+      return;
+    }
+
+    // 5. Tool: Slingshot Body Across Space
     if (activeTool === 'slingshot') {
       let target = bodiesRef.current.find(b => Math.hypot(b.x - worldCoords.x, b.y - worldCoords.y) <= b.radius + 18);
       if (!target) {
@@ -1124,13 +1214,13 @@ export default function OrbitSimulator({ initialStar = null }) {
     const dy = start.y - current.y;
     const dragDist = Math.hypot(dx, dy);
 
-    // Handle Active Slingshot Fling
+    // Handle Active Slingshot Fling (Applies to ANY celestial object: asteroid, planet, star, hypergiant, black hole)
     if (isSlingshot && targetBody) {
       if (dragDist > 6) {
         const impulseFactor = 0.052 * launchPower;
         targetBody.vx += dx * impulseFactor;
         targetBody.vy += dy * impulseFactor;
-        // Release stationary anchor so it can slingshot across the field
+        // Release fixed position anchor so ANY object can be slingshotted across space
         targetBody.isCore = false;
         targetBody.isLarge = false;
 
@@ -1152,6 +1242,11 @@ export default function OrbitSimulator({ initialStar = null }) {
             color: '#00f0ff', size: 2.2
           });
         }
+
+        setTelemetry(prev => ({
+          ...prev,
+          lastEvent: `SLINGSHOTTED ${targetBody.name.toUpperCase()} (VELOCITY: ${Math.hypot(targetBody.vx, targetBody.vy).toFixed(1)} km/s)`
+        }));
       }
       slingshotTargetRef.current = null;
       return;
@@ -1165,7 +1260,7 @@ export default function OrbitSimulator({ initialStar = null }) {
       vy = dy * 0.045 * launchPower;
     } else if (spawnVelocityMode === 'orbit') {
       // Find nearest Core or most massive body to orbit around
-      const cores = bodiesRef.current.filter(b => b.isCore || b.isLarge || b.mass >= 1200);
+      const cores = bodiesRef.current.filter(b => b.isCore || b.mass >= 1200);
       const attractor = cores.length > 0 ? cores[0] : (bodiesRef.current[0] || null);
 
       if (attractor) {
@@ -1178,8 +1273,13 @@ export default function OrbitSimulator({ initialStar = null }) {
       }
     }
 
+    const baseCatalogRadius = scaleMode === 'true_astronomical'
+      ? selectedCatalogItem.radius
+      : (selectedCatalogItem.compactRadius || selectedCatalogItem.radius);
     const scaledMass = Math.max(0.05, Number((selectedCatalogItem.mass * massScale).toFixed(2)));
-    const scaledRadius = Math.max(1.0, Number((selectedCatalogItem.radius * sizeScale).toFixed(1)));
+    const scaledRadius = Math.max(0.8, Number((baseCatalogRadius * sizeScale).toFixed(1)));
+
+    const shouldAnchor = Boolean(spawnAsCore);
 
     const newBody = {
       id: `body-${Date.now()}`,
@@ -1187,22 +1287,30 @@ export default function OrbitSimulator({ initialStar = null }) {
       type: selectedCatalogItem.type,
       x: start.x,
       y: start.y,
-      vx: (spawnAsCore || selectedCatalogItem.isLarge) ? 0 : vx,
-      vy: (spawnAsCore || selectedCatalogItem.isLarge) ? 0 : vy,
+      vx: shouldAnchor ? 0 : vx,
+      vy: shouldAnchor ? 0 : vy,
       ax: 0,
       ay: 0,
       mass: scaledMass,
       radius: scaledRadius,
+      baseRadius: scaledRadius,
       color: selectedCatalogItem.color,
-      isCore: spawnAsCore || selectedCatalogItem.defaultCore,
+      isCore: shouldAnchor,
       isLarge: selectedCatalogItem.isLarge || false,
       earthRadiusRatio: selectedCatalogItem.earthRadiusRatio,
       earthMassRatio: selectedCatalogItem.earthMassRatio,
+      stellarEnergy: (selectedCatalogItem.type.startsWith('star_') || selectedCatalogItem.type === 'hypergiant') ? 0.25 : 0,
+      feedingTimer: selectedCatalogItem.type === 'blackhole' ? 120 : 0,
+      accretionFlare: selectedCatalogItem.type === 'blackhole' ? 0.6 : 0,
       trail: []
     };
 
     bodiesRef.current.push(newBody);
     playAudio('spawn');
+    setTelemetry(prev => ({
+      ...prev,
+      lastEvent: `SPAWNED ${newBody.name.toUpperCase()} (${shouldAnchor ? 'ANCHORED FIXED' : 'DYNAMIC / SLINGSHOT LAUNCHED'})`
+    }));
   };
 
   const handleWheel = (e) => {
@@ -1231,54 +1339,334 @@ export default function OrbitSimulator({ initialStar = null }) {
     }
   };
 
+  // --- Probabilistic Stellar Energy Consequence System ---
+  const triggerStellarConsequence = useCallback((star, forcedType = null) => {
+    if (!star || star.dead) return;
+
+    // Consequence weights:
+    // 1. Coronal Flare Superstorm: 35% (roll < 35)
+    // 2. Photosphere Red Giant Swell: 25% (35 <= roll < 60)
+    // 3. Core-Collapse Supernova: 20% (60 <= roll < 80)
+    // 4. Wolf-Rayet Envelope Stripping: 12% (80 <= roll < 92)
+    // 5. Cepheid Variable Pulsation: 8% (roll >= 92)
+    const roll = forcedType ? 0 : Math.random() * 100;
+    const type = forcedType || (
+      roll < 35 ? 'flare_storm' :
+      roll < 60 ? 'red_giant_swell' :
+      roll < 80 ? 'supernova' :
+      roll < 92 ? 'wolf_rayet' :
+      'cepheid_pulsation'
+    );
+
+    if (type === 'flare_storm') {
+      star.flareStormTimer = 360; // 6 seconds of magnetic coronal eruption
+      star.accretionFlare = 1.0;
+      playAudio('flare');
+
+      // Radiate multiple coronal shock fronts
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: star.radius, maxR: star.radius * 3.8, alpha: 1.0, color: '#f59e0b' });
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: star.radius * 0.8, maxR: star.radius * 2.5, alpha: 0.9, color: '#ef4444' });
+
+      // Coronal mass ejection plasma burst
+      for (let i = 0; i < 70; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 8 + 3;
+        particlesRef.current.push({
+          x: star.x, y: star.y,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          life: 1.2,
+          decay: 0.02,
+          color: i % 2 === 0 ? '#ffea75' : '#f97316',
+          size: Math.random() * 3.5 + 1.5
+        });
+      }
+
+      // Relativistic solar wind impulse pushes non-stationary bodies outward
+      bodiesRef.current.forEach(other => {
+        if (other.id !== star.id && !isStationary(other)) {
+          const dx = other.x - star.x;
+          const dy = other.y - star.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 800 && dist > 10) {
+            const push = ((800 - dist) / 800) * 6.5;
+            other.vx += (dx / dist) * push;
+            other.vy += (dy / dist) * push;
+          }
+        }
+      });
+
+      star.stellarEnergy = 0.35;
+      setTelemetry(prev => ({
+        ...prev,
+        lastEvent: `[35% PROB] CORONAL FLARE SUPERSTORM - CME DETONATED ON ${star.name.toUpperCase()}`
+      }));
+
+    } else if (type === 'red_giant_swell') {
+      star.isSwelling = true;
+      star.targetRadius = Math.min(480, star.radius * 2.2);
+      star.color = '#ef4444'; // Cools to deep glowing ruby red
+      star.name = `${star.name.replace(/ \(.*\)/, '')} (Red Giant Swell)`;
+      playAudio('swell');
+
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: star.radius, maxR: star.targetRadius * 1.5, alpha: 0.85, color: '#ef4444' });
+
+      // Engulf & vaporize any inner orbiting bodies swallowed inside the expanded photosphere!
+      bodiesRef.current.forEach(other => {
+        if (other.id !== star.id && !isStationary(other)) {
+          const dist = Math.hypot(other.x - star.x, other.y - star.y);
+          if (dist <= star.targetRadius) {
+            other.dead = true;
+            triggerSolarProminence(star, other);
+          }
+        }
+      });
+
+      star.stellarEnergy = 0.4;
+      setTelemetry(prev => ({
+        ...prev,
+        lastEvent: `[25% PROB] PHOTOSPHERE SWELLS TO ${(star.targetRadius).toFixed(0)}px (RED GIANT)`
+      }));
+
+    } else if (type === 'supernova') {
+      star.dead = true;
+      playAudio('supernova');
+
+      // Multi-ring shockwaves spanning massive cosmic distances
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 10, maxR: 850, alpha: 1.0, color: '#38bdf8' });
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 25, maxR: 700, alpha: 0.95, color: '#facc15' });
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 40, maxR: 600, alpha: 0.9, color: '#ec4899' });
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 5, maxR: 450, alpha: 1.0, color: '#ffffff' });
+
+      // 160 relativistic blast particles
+      for (let i = 0; i < 160; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 12 + 4;
+        particlesRef.current.push({
+          x: star.x, y: star.y,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          life: 1.6,
+          decay: 0.015,
+          color: ['#ffffff', '#38bdf8', '#fbbf24', '#f43f5e', '#a855f7'][i % 5],
+          size: Math.random() * 4 + 2
+        });
+      }
+
+      // Vaporize or violently propel nearby bodies
+      bodiesRef.current.forEach(other => {
+        if (other.id !== star.id && !isStationary(other)) {
+          const dx = other.x - star.x;
+          const dy = other.y - star.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 280) {
+            other.dead = true;
+          } else if (dist < 850) {
+            const push = ((850 - dist) / 850) * 14.0;
+            other.vx += (dx / dist) * push;
+            other.vy += (dy / dist) * push;
+          }
+        }
+      });
+
+      // Core Collapse into Remnant: 60% Kerr Black Hole, 40% Pulsar
+      const spawnBH = Math.random() < 0.6;
+      const remnant = spawnBH ? {
+        id: `singularity-remnant-${Date.now()}`,
+        name: `Newborn Kerr Singularity (Remnant)`,
+        type: 'blackhole',
+        x: star.x,
+        y: star.y,
+        vx: 0, vy: 0, ax: 0, ay: 0,
+        mass: 52000,
+        radius: 26,
+        baseRadius: 26,
+        color: '#ff6600',
+        isCore: true,
+        isLarge: true,
+        feedingTimer: 360,
+        accretionFlare: 1.0,
+        earthRadiusRatio: 4.6,
+        earthMassRatio: 1300000,
+        trail: []
+      } : {
+        id: `pulsar-remnant-${Date.now()}`,
+        name: `Newborn Relativistic Pulsar`,
+        type: 'pulsar',
+        x: star.x,
+        y: star.y,
+        vx: 0, vy: 0, ax: 0, ay: 0,
+        mass: 18000,
+        radius: 2.2,
+        color: '#c084fc',
+        isCore: true,
+        isLarge: true,
+        earthRadiusRatio: 0.002,
+        earthMassRatio: 500000,
+        trail: []
+      };
+
+      bodiesRef.current.push(remnant);
+      if (selectedBodyId === star.id) setSelectedBodyId(remnant.id);
+
+      setTelemetry(prev => ({
+        ...prev,
+        lastEvent: `[20% PROB] CORE-COLLAPSE SUPERNOVA -> COLLAPSED INTO ${spawnBH ? 'KERR BLACK HOLE' : 'PULSAR'}!`
+      }));
+
+    } else if (type === 'wolf_rayet') {
+      // Supersonic stellar wind envelope ejection
+      playAudio('flare');
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: star.radius, maxR: star.radius * 4.8, alpha: 0.9, color: '#06b6d4' });
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: star.radius * 0.5, maxR: star.radius * 3.2, alpha: 0.8, color: '#38bdf8' });
+
+      for (let i = 0; i < 50; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 5 + 2;
+        particlesRef.current.push({
+          x: star.x, y: star.y,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          life: 1.3,
+          decay: 0.02,
+          color: '#67e8f9',
+          size: Math.random() * 3 + 1.2
+        });
+      }
+
+      star.radius = Math.max(18, star.radius * 0.45);
+      star.color = '#38bdf8'; // Electric cyan stripped core
+      star.name = `${star.name.replace(/ \(.*\)/, '')} (Wolf-Rayet Core)`;
+      star.stellarEnergy = 0.25;
+
+      setTelemetry(prev => ({
+        ...prev,
+        lastEvent: `[12% PROB] WOLF-RAYET ENVELOPE STRIPPING - EXPOSED HELIUM/CARBON CORE`
+      }));
+
+    } else if (type === 'cepheid_pulsation') {
+      star.isPulsating = true;
+      star.baseRadius = star.baseRadius || star.radius;
+      star.name = `${star.name.replace(/ \(.*\)/, '')} (Cepheid Variable)`;
+      playAudio('flare');
+
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: star.radius * 0.9, maxR: star.radius * 2.2, alpha: 0.8, color: '#fbbf24' });
+
+      star.stellarEnergy = 0.5;
+      setTelemetry(prev => ({
+        ...prev,
+        lastEvent: `[8% PROB] CEPHEID VARIABLE RADIAL PULSATION ACTIVATED (±28% RADIUS)`
+      }));
+    }
+  }, [playAudio, isStationary, selectedBodyId]);
+
+  // Inject Stellar Energy into Core
+  const handleInjectEnergy = useCallback((star, amount = 0.25) => {
+    if (!star) return;
+    star.stellarEnergy = Math.min(2.0, (star.stellarEnergy || 0.2) + amount);
+    playAudio('energy_charge');
+
+    shockwavesRef.current.push({
+      x: star.x, y: star.y,
+      r: star.radius * 0.4,
+      maxR: star.radius * 1.8,
+      alpha: 0.95,
+      color: '#facc15'
+    });
+
+    for (let i = 0; i < 24; i++) {
+      const ang = Math.random() * Math.PI * 2;
+      const dist = star.radius * 2.0;
+      const spd = Math.random() * 4 + 2;
+      particlesRef.current.push({
+        x: star.x + Math.cos(ang) * dist,
+        y: star.y + Math.sin(ang) * dist,
+        vx: -Math.cos(ang) * spd,
+        vy: -Math.sin(ang) * spd,
+        life: 0.8,
+        decay: 0.04,
+        color: i % 2 === 0 ? '#38bdf8' : '#facc15',
+        size: Math.random() * 3 + 1.5
+      });
+    }
+
+    setTelemetry(prev => ({
+      ...prev,
+      lastEvent: `ENERGY INJECTED INTO ${star.name.toUpperCase()} (CORE AT ${Math.round(star.stellarEnergy * 100)}%)`
+    }));
+
+    if (star.stellarEnergy >= 1.0) {
+      triggerStellarConsequence(star);
+    }
+  }, [playAudio, triggerStellarConsequence]);
+
   // Black Hole Relativistic Swallow & Accretion Burst
   const triggerBlackHoleSwallow = (bh, swallowed) => {
-    // Gravitational wave ripples
+    // 4 Expanding Gravitational wave spacetime ripple shockwaves
     shockwavesRef.current.push({
       x: bh.x, y: bh.y,
-      r: bh.radius * 1.2,
-      maxR: bh.radius * 6.5,
+      r: bh.radius * 1.0,
+      maxR: bh.radius * 7.5,
       alpha: 1.0,
       color: '#38bdf8'
     });
     shockwavesRef.current.push({
       x: bh.x, y: bh.y,
-      r: bh.radius * 0.8,
-      maxR: bh.radius * 4.2,
+      r: bh.radius * 0.7,
+      maxR: bh.radius * 5.2,
+      alpha: 0.95,
+      color: '#06b6d4'
+    });
+    shockwavesRef.current.push({
+      x: bh.x, y: bh.y,
+      r: bh.radius * 0.4,
+      maxR: bh.radius * 3.8,
       alpha: 0.9,
       color: '#ff6600'
     });
+    shockwavesRef.current.push({
+      x: bh.x, y: bh.y,
+      r: 4,
+      maxR: bh.radius * 2.2,
+      alpha: 1.0,
+      color: '#ffffff'
+    });
 
-    // Intense relativistic accretion flare
-    for (let i = 0; i < 45; i++) {
+    // Intense relativistic accretion flare particles
+    for (let i = 0; i < 55; i++) {
       const ang = Math.random() * Math.PI * 2;
-      const spd = Math.random() * 6 + 2;
+      const spd = Math.random() * 8 + 2.5;
       particlesRef.current.push({
         x: bh.x, y: bh.y,
         vx: Math.cos(ang) * spd,
         vy: Math.sin(ang) * spd,
-        life: 1.1,
-        decay: Math.random() * 0.03 + 0.02,
-        color: i % 2 === 0 ? '#ffeedd' : (swallowed.color || '#ff8800'),
-        size: Math.random() * 2.8 + 1.2
+        life: 1.2,
+        decay: Math.random() * 0.025 + 0.015,
+        color: i % 3 === 0 ? '#ffffff' : (i % 3 === 1 ? '#ffeedd' : (swallowed.color || '#ff8800')),
+        size: Math.random() * 3.2 + 1.2
       });
     }
 
     // Collimated relativistic polar particle jets (magnetic dynamo along spin axis)
-    for (let j = 0; j < 26; j++) {
+    for (let j = 0; j < 36; j++) {
       const dir = j % 2 === 0 ? 1 : -1;
-      const jetVy = dir * (Math.random() * 10 + 4);
-      const jetVx = (Math.random() - 0.5) * 1.6;
+      const jetVy = dir * (Math.random() * 14 + 6);
+      const jetVx = (Math.random() - 0.5) * 1.8;
       particlesRef.current.push({
         x: bh.x, y: bh.y,
         vx: jetVx,
         vy: jetVy,
-        life: 1.3,
-        decay: 0.022,
+        life: 1.5,
+        decay: 0.018,
         color: j % 3 === 0 ? '#c084fc' : '#67e8f9',
-        size: Math.random() * 3 + 1.5
+        size: Math.random() * 3.5 + 1.5
       });
     }
+
+    setTelemetry(prev => ({
+      ...prev,
+      lastEvent: `SINGULARITY DEVOURS ${swallowed.name.toUpperCase()} (r_s = ${bh.radius.toFixed(1)}px, M = ${bh.mass.toFixed(0)})`
+    }));
   };
 
   // Solar Prominence Vaporization (Asteroid / Small Body into Star)
@@ -1441,9 +1829,13 @@ export default function OrbitSimulator({ initialStar = null }) {
                     // Crossing Event Horizon / Innermost Stable Circular Orbit (ISCO)
                     if (dist <= bh.radius * 1.45 + other.radius * 0.25 || other.mass <= 0.05) {
                       other.dead = true;
+                      bh.mass += other.mass;
+                      const baseR = bh.baseRadius || 22;
+                      bh.radius = Math.min(140, Math.max(baseR, baseR * Math.cbrt(bh.mass / 48000)));
                       bh.accretionFlare = 1.0;
+                      bh.feedingTimer = 260; // Active feeding duration with continuous polar jet eruption
                       triggerBlackHoleSwallow(bh, other);
-                      playAudio('merge');
+                      playAudio('gw_chirp');
                       continue;
                     }
                   }
@@ -1472,25 +1864,32 @@ export default function OrbitSimulator({ initialStar = null }) {
                   const [bh, other] = b1.type === 'blackhole' ? [b1, b2] : [b2, b1];
                   other.dead = true;
                   bh.mass += other.mass;
-                  if (other.type === 'blackhole') {
-                    bh.radius = Math.min(32, bh.radius * 1.2);
-                  }
+                  const baseR = bh.baseRadius || 22;
+                  bh.radius = Math.min(140, Math.max(baseR, baseR * Math.cbrt(bh.mass / 48000)));
                   bh.accretionFlare = 1.0;
+                  bh.feedingTimer = 260;
                   triggerBlackHoleSwallow(bh, other);
-                  playAudio('merge');
+                  playAudio('gw_chirp');
                 } else if ((b1.type.startsWith('star_') || b1.type === 'hypergiant') && 
-                           (b2.type === 'asteroid' || b2.type === 'comet' || b2.type === 'satellite')) {
-                  // Asteroid hitting star: vaporizes into solar prominence flare without harming the star
+                           (b2.type === 'asteroid' || b2.type === 'comet' || b2.type === 'satellite' || b2.type === 'antimatter')) {
                   b2.dead = true;
                   b1.mass += b2.mass;
-                  triggerSolarProminence(b1, b2);
-                  playAudio('spawn');
+                  if (b2.type === 'antimatter') {
+                    handleInjectEnergy(b1, 0.5);
+                  } else {
+                    handleInjectEnergy(b1, 0.08);
+                    triggerSolarProminence(b1, b2);
+                  }
                 } else if ((b2.type.startsWith('star_') || b2.type === 'hypergiant') && 
-                           (b1.type === 'asteroid' || b1.type === 'comet' || b1.type === 'satellite')) {
+                           (b1.type === 'asteroid' || b1.type === 'comet' || b1.type === 'satellite' || b1.type === 'antimatter')) {
                   b1.dead = true;
                   b2.mass += b1.mass;
-                  triggerSolarProminence(b2, b1);
-                  playAudio('spawn');
+                  if (b1.type === 'antimatter') {
+                    handleInjectEnergy(b2, 0.5);
+                  } else {
+                    handleInjectEnergy(b2, 0.08);
+                    triggerSolarProminence(b2, b1);
+                  }
                 } else if (collisionBehavior === 'merge') {
                   // Merge smaller into larger
                   const [larger, smaller] = b1.mass >= b2.mass ? [b1, b2] : [b2, b1];
@@ -1557,6 +1956,46 @@ export default function OrbitSimulator({ initialStar = null }) {
           b.trail.push({ x: b.x, y: b.y, v: Math.hypot(b.vx, b.vy) });
           if (b.trail.length > 220) b.trail.shift();
           drawTrail(ctx, b);
+        }
+
+        // Continuous dynamics for feeding black holes and active stars
+        if (b.type === 'blackhole') {
+          if (b.feedingTimer && b.feedingTimer > 0) {
+            b.feedingTimer--;
+            b.accretionFlare = Math.max(b.accretionFlare || 0.8, 0.7);
+            if (b.feedingTimer % 45 === 0) {
+              shockwavesRef.current.push({
+                x: b.x, y: b.y,
+                r: b.radius * 1.1,
+                maxR: b.radius * 4.8,
+                alpha: 0.85,
+                color: '#38bdf8'
+              });
+            }
+          }
+        } else if (b.type.startsWith('star_') || b.type === 'hypergiant') {
+          if (b.isSwelling && b.targetRadius && b.radius < b.targetRadius) {
+            b.radius += (b.targetRadius - b.radius) * 0.04;
+          }
+          if (b.isPulsating && b.baseRadius) {
+            b.radius = b.baseRadius * (1.0 + 0.28 * Math.sin(frameCountRef.current * 0.06));
+          }
+          if (b.flareStormTimer && b.flareStormTimer > 0) {
+            b.flareStormTimer--;
+            if (frameCountRef.current % 15 === 0) {
+              const ang = Math.random() * Math.PI * 2;
+              particlesRef.current.push({
+                x: b.x + Math.cos(ang) * b.radius,
+                y: b.y + Math.sin(ang) * b.radius,
+                vx: Math.cos(ang) * 4.5,
+                vy: Math.sin(ang) * 4.5,
+                life: 0.8,
+                decay: 0.04,
+                color: '#ffea75',
+                size: 2.2
+              });
+            }
+          }
         }
 
         drawCelestialBody(ctx, b, frameCountRef.current, selectedBodyId === b.id);
@@ -1657,11 +2096,12 @@ export default function OrbitSimulator({ initialStar = null }) {
             </span>
           </div>
 
-          {/* Tools: Spawn, Slingshot, Pan, Core, Delete, Inspect */}
+          {/* Tools: Spawn, Slingshot, Energy, Pan, Core, Delete, Inspect */}
           <div className="flex items-center gap-1 font-mono text-xs">
             {[
               { id: 'spawn', label: 'Spawn', icon: Plus, title: 'Click & Drag to Spawn Any Body with Trajectory' },
               { id: 'slingshot', label: 'Slingshot', icon: Target, title: 'Click & Drag Any Body to Slingshot Across Space' },
+              { id: 'energy', label: 'Energy', icon: Flame, title: 'Click Star to Inject Fusion Energy & Trigger Consequences' },
               { id: 'pan', label: 'Pan', icon: Move, title: 'Drag to Move Canvas' },
               { id: 'core', label: 'Anchor Core', icon: Anchor, title: 'Click Any Body to Make Core / Anchor' },
               { id: 'delete', label: 'Obliterate', icon: Trash2, title: 'Click Any Body to Delete' },
@@ -1691,6 +2131,31 @@ export default function OrbitSimulator({ initialStar = null }) {
         {/* Center/Right: Master Playback & Sandbox Presets */}
         <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-black/85 backdrop-blur-xl border border-slate-800 shadow-2xl pointer-events-auto font-mono text-xs">
           
+          {/* Scale Mode Toggle: True Astronomical (Betelgeuse 380px) vs Compact */}
+          <button
+            onClick={() => {
+              const nextMode = scaleMode === 'true_astronomical' ? 'compact_viewport' : 'true_astronomical';
+              setScaleMode(nextMode);
+              bodiesRef.current.forEach(b => {
+                const cat = CELESTIAL_CATALOG.find(c => c.type === b.type || c.id === b.type);
+                if (cat) {
+                  b.radius = nextMode === 'true_astronomical' ? cat.radius : (cat.compactRadius || cat.radius);
+                  b.baseRadius = b.radius;
+                }
+              });
+            }}
+            className={`px-2.5 py-1.5 rounded-xl border flex items-center gap-1.5 transition cursor-pointer text-[11px] ${
+              scaleMode === 'true_astronomical'
+                ? 'bg-amber-950/40 border-amber-500/50 text-amber-300 font-bold'
+                : 'bg-black border-slate-800 text-slate-400 hover:text-white'
+            }`}
+            title="Toggle between True Proportional Scale (Betelgeuse 380px) and Compact Viewport Scale"
+          >
+            <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden lg:inline">{scaleMode === 'true_astronomical' ? 'Scale: True (Betelgeuse 380px)' : 'Scale: Compact'}</span>
+            <span className="lg:hidden">{scaleMode === 'true_astronomical' ? 'True Scale' : 'Compact'}</span>
+          </button>
+
           {/* Space Area Visual Style Selector */}
           <div className="flex items-center gap-1.5 px-2 py-1 rounded-xl bg-slate-900 border border-slate-700/80">
             <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
@@ -1939,6 +2404,117 @@ export default function OrbitSimulator({ initialStar = null }) {
             </div>
           </div>
 
+          {/* Specialized Controls for Stars: Stellar Energy Injection & Probabilistic Consequence Matrix */}
+          {(inspectedBody.type.startsWith('star_') || inspectedBody.type === 'hypergiant') && (
+            <div className="p-2.5 rounded-xl bg-amber-950/20 border border-amber-500/40 space-y-2">
+              <div className="flex items-center justify-between text-[11px] font-bold text-amber-300">
+                <span className="flex items-center gap-1">
+                  <Flame className="w-3.5 h-3.5 text-amber-400" />
+                  STELLAR CORE ENERGY:
+                </span>
+                <span className="text-amber-200">
+                  {Math.round((inspectedBody.stellarEnergy || 0.25) * 100)}%
+                </span>
+              </div>
+
+              {/* Energy Gauge Bar */}
+              <div className="w-full h-2 rounded-full bg-slate-900 overflow-hidden border border-slate-700/80">
+                <div
+                  className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 transition-all duration-300"
+                  style={{ width: `${Math.min(100, Math.round((inspectedBody.stellarEnergy || 0.25) * 100))}%` }}
+                />
+              </div>
+
+              {/* Injection Action Buttons */}
+              <div className="grid grid-cols-2 gap-1.5 pt-1">
+                <button
+                  onClick={() => handleInjectEnergy(inspectedBody, 0.25)}
+                  className="py-1.5 px-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-200 text-[10px] font-bold transition cursor-pointer flex items-center justify-center gap-1"
+                >
+                  <Zap className="w-3 h-3 text-amber-400" />
+                  +25% Energy
+                </button>
+                <button
+                  onClick={() => {
+                    inspectedBody.stellarEnergy = 1.0;
+                    triggerStellarConsequence(inspectedBody);
+                  }}
+                  className="py-1.5 px-2 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-200 text-[10px] font-bold transition cursor-pointer flex items-center justify-center gap-1"
+                >
+                  <Flame className="w-3 h-3 text-rose-400" />
+                  Overdrive Infall
+                </button>
+              </div>
+
+              {/* Consequence Probabilities Breakdown */}
+              <div className="pt-1.5 border-t border-amber-900/40 text-[10px] space-y-1 text-slate-300">
+                <div className="text-slate-400 font-bold uppercase tracking-wider text-[9px]">Astrophysical Probabilities:</div>
+                <div className="flex justify-between items-center hover:text-white cursor-pointer" onClick={() => triggerStellarConsequence(inspectedBody, 'flare_storm')}>
+                  <span>🌪️ Coronal Flare Superstorm</span>
+                  <span className="text-amber-400 font-bold">35%</span>
+                </div>
+                <div className="flex justify-between items-center hover:text-white cursor-pointer" onClick={() => triggerStellarConsequence(inspectedBody, 'red_giant_swell')}>
+                  <span>🔴 Photosphere Red Giant Swell</span>
+                  <span className="text-rose-400 font-bold">25%</span>
+                </div>
+                <div className="flex justify-between items-center hover:text-white cursor-pointer" onClick={() => triggerStellarConsequence(inspectedBody, 'supernova')}>
+                  <span>💥 Core-Collapse Supernova</span>
+                  <span className="text-cyan-400 font-bold">20%</span>
+                </div>
+                <div className="flex justify-between items-center hover:text-white cursor-pointer" onClick={() => triggerStellarConsequence(inspectedBody, 'wolf_rayet')}>
+                  <span>🌀 Wolf-Rayet Envelope Strip</span>
+                  <span className="text-emerald-400 font-bold">12%</span>
+                </div>
+                <div className="flex justify-between items-center hover:text-white cursor-pointer" onClick={() => triggerStellarConsequence(inspectedBody, 'cepheid_pulsation')}>
+                  <span>💓 Cepheid Radial Pulsation</span>
+                  <span className="text-purple-400 font-bold">8%</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Specialized Controls for Black Holes */}
+          {inspectedBody.type === 'blackhole' && (
+            <div className="p-2.5 rounded-xl bg-orange-950/25 border border-orange-500/40 space-y-2">
+              <div className="flex items-center justify-between text-[11px] font-bold text-orange-300">
+                <span className="flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5 text-orange-400" />
+                  KERR SINGULARITY TELEMETRY:
+                </span>
+                <span className={inspectedBody.feedingTimer > 0 ? 'text-cyan-300 animate-pulse' : 'text-slate-400'}>
+                  {inspectedBody.feedingTimer > 0 ? 'FEEDING JETS ACTIVE' : 'QUIESCENT HORIZON'}
+                </span>
+              </div>
+              <div className="text-[10px] text-slate-300 space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">SCHWARZSCHILD RADIUS (rs):</span>
+                  <span className="text-orange-400 font-bold">{inspectedBody.radius.toFixed(1)} px</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">FEEDING TIME REMAINING:</span>
+                  <span className="text-cyan-400 font-bold">{inspectedBody.feedingTimer || 0} frames</span>
+                </div>
+              </div>
+
+              {/* Feed Black Hole Button */}
+              <button
+                onClick={() => {
+                  inspectedBody.mass += 6000;
+                  const baseR = inspectedBody.baseRadius || 22;
+                  inspectedBody.radius = Math.min(140, Math.max(baseR, baseR * Math.cbrt(inspectedBody.mass / 48000)));
+                  inspectedBody.accretionFlare = 1.0;
+                  inspectedBody.feedingTimer = 280;
+                  triggerBlackHoleSwallow(inspectedBody, { name: 'Relativistic Infall Stream', color: '#ff8800' });
+                  playAudio('gw_chirp');
+                }}
+                className="w-full py-1.5 rounded-lg bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/50 text-orange-200 text-[10px] font-bold transition cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <Zap className="w-3 h-3 text-orange-400" />
+                Feed Infalling Plasma Stream
+              </button>
+            </div>
+          )}
+
           {/* Quick Body Commands */}
           <div className="pt-2 border-t border-slate-800 space-y-1.5">
             {/* Quick Slingshot Button */}
@@ -1949,17 +2525,70 @@ export default function OrbitSimulator({ initialStar = null }) {
               className="w-full py-1.5 rounded-xl bg-cyan-950/60 border border-cyan-500/50 hover:bg-cyan-900 text-cyan-300 font-bold transition cursor-pointer text-xs flex items-center justify-center gap-1.5"
             >
               <Target className="w-3.5 h-3.5" />
-              <span>Arm Slingshot on Body</span>
+              <span>Arm Slingshot Aim on Body</span>
             </button>
 
-            {/* Toggle Core Button */}
+            {/* Direct Slingshot Impulse Fling (+8.5 km/s) */}
+            <button
+              onClick={() => {
+                inspectedBody.isCore = false;
+                const angle = Math.random() * Math.PI * 2;
+                const boost = 8.5;
+                inspectedBody.vx += Math.cos(angle) * boost;
+                inspectedBody.vy += Math.sin(angle) * boost;
+                playAudio('slingshot');
+                shockwavesRef.current.push({
+                  x: inspectedBody.x, y: inspectedBody.y,
+                  r: inspectedBody.radius, maxR: inspectedBody.radius * 4.2,
+                  alpha: 1.0, color: '#38bdf8'
+                });
+                for (let i = 0; i < 20; i++) {
+                  const pAng = Math.random() * Math.PI * 2;
+                  particlesRef.current.push({
+                    x: inspectedBody.x, y: inspectedBody.y,
+                    vx: Math.cos(pAng) * 4 + inspectedBody.vx * 0.2,
+                    vy: Math.sin(pAng) * 4 + inspectedBody.vy * 0.2,
+                    life: 0.9, decay: 0.035,
+                    color: '#38bdf8', size: 2.2
+                  });
+                }
+                setTelemetry(prev => ({
+                  ...prev,
+                  lastEvent: `SLINGSHOT FLING BOOST ON ${inspectedBody.name.toUpperCase()} (+8.5 km/s)`
+                }));
+              }}
+              className="w-full py-1.5 rounded-xl bg-purple-950/40 border border-purple-500/50 hover:bg-purple-900 text-purple-200 font-bold transition cursor-pointer text-xs flex items-center justify-center gap-1.5"
+            >
+              <Zap className="w-3.5 h-3.5 text-purple-400" />
+              <span>Instant Slingshot Fling (+8.5 km/s)</span>
+            </button>
+
+            {/* Toggle Core Anchor Button */}
             <button
               onClick={() => {
                 inspectedBody.isCore = !inspectedBody.isCore;
                 if (inspectedBody.isCore) {
                   inspectedBody.vx = 0;
                   inspectedBody.vy = 0;
+                  shockwavesRef.current.push({
+                    x: inspectedBody.x, y: inspectedBody.y,
+                    r: inspectedBody.radius * 0.8, maxR: inspectedBody.radius * 3.0,
+                    alpha: 1.0, color: '#facc15'
+                  });
+                } else {
+                  shockwavesRef.current.push({
+                    x: inspectedBody.x, y: inspectedBody.y,
+                    r: inspectedBody.radius * 0.8, maxR: inspectedBody.radius * 3.0,
+                    alpha: 1.0, color: '#38bdf8'
+                  });
                 }
+                playAudio('spawn');
+                setTelemetry(prev => ({
+                  ...prev,
+                  lastEvent: inspectedBody.isCore 
+                    ? `ANCHORED ${inspectedBody.name.toUpperCase()} (FIXED IN POSITION)`
+                    : `RELEASED ${inspectedBody.name.toUpperCase()} (FREE TO MOVE / SLINGSHOT)`
+                }));
               }}
               className={`w-full py-2 rounded-xl border flex items-center justify-center gap-1.5 font-bold transition cursor-pointer text-xs ${
                 inspectedBody.isCore 
@@ -1968,7 +2597,7 @@ export default function OrbitSimulator({ initialStar = null }) {
               }`}
             >
               <Anchor className="w-3.5 h-3.5" />
-              <span>{inspectedBody.isCore ? 'Release Core Anchor' : 'Make as Core Anchor'}</span>
+              <span>{inspectedBody.isCore ? 'Release Fixed Anchor (Enable Motion)' : 'Fix Position (Anchor As Core)'}</span>
             </button>
 
             {/* Follow Camera Button */}
@@ -2147,15 +2776,20 @@ function drawCelestialBody(ctx, b, frameCount, isSelected) {
   ctx.save();
   ctx.translate(b.x, b.y);
 
-  // If body is anchored as a Core, render an ethereal gravitational focal halo
+  // If body is anchored as a Core, render an ethereal gravitational focal halo and anchor badge
   if (b.isCore) {
-    ctx.strokeStyle = 'rgba(251, 191, 36, 0.45)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([4, 6]);
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.7)';
+    ctx.lineWidth = 2.0;
+    ctx.setLineDash([5, 5]);
     ctx.beginPath();
-    ctx.arc(0, 0, b.radius + 12 + Math.sin(frameCount * 0.05) * 3, 0, Math.PI * 2);
+    ctx.arc(0, 0, b.radius + 14 + Math.sin(frameCount * 0.06) * 3, 0, Math.PI * 2);
     ctx.stroke();
     ctx.setLineDash([]);
+
+    // Anchor badge
+    ctx.fillStyle = '#facc15';
+    ctx.font = 'bold 9px monospace';
+    ctx.fillText('⚓ ANCHORED', -25, -b.radius - 8);
   }
 
   // Selection outline
@@ -2223,14 +2857,16 @@ function drawCelestialBody(ctx, b, frameCount, isSelected) {
       ctx.restore();
 
       // 4. Polar Relativistic Particle Jets (Active when feeding / flared)
-      if (flare > 0.03) {
-        const jetLen = b.radius * (5.0 + flare * 6.0);
-        const jetW = b.radius * 0.35;
+      const isFeeding = (b.feedingTimer && b.feedingTimer > 0) || flare > 0.03;
+      if (isFeeding) {
+        const jetIntensity = Math.min(1.0, (flare || 0.6) + (b.feedingTimer ? 0.4 : 0));
+        const jetLen = b.radius * (5.5 + jetIntensity * 7.0);
+        const jetW = b.radius * 0.38;
         // North jet
         const jGradN = ctx.createLinearGradient(0, 0, 0, -jetLen);
-        jGradN.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-        jGradN.addColorStop(0.3, 'rgba(192, 132, 252, 0.85)');
-        jGradN.addColorStop(0.8, 'rgba(56, 189, 248, 0.4)');
+        jGradN.addColorStop(0, 'rgba(255, 255, 255, 0.98)');
+        jGradN.addColorStop(0.25, 'rgba(192, 132, 252, 0.9)');
+        jGradN.addColorStop(0.7, 'rgba(56, 189, 248, 0.5)');
         jGradN.addColorStop(1, 'rgba(56, 189, 248, 0)');
         ctx.fillStyle = jGradN;
         ctx.beginPath();
@@ -2240,11 +2876,18 @@ function drawCelestialBody(ctx, b, frameCount, isSelected) {
         ctx.closePath();
         ctx.fill();
 
+        // Pulsating shock nodes inside North jet
+        const pulse = (Math.sin(frameCount * 0.2) + 1) * 0.5;
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(0, -jetLen * 0.45, jetW * 0.55, jetLen * 0.12 * (0.8 + 0.4 * pulse), 0, 0, Math.PI * 2);
+        ctx.fill();
+
         // South jet
         const jGradS = ctx.createLinearGradient(0, 0, 0, jetLen);
-        jGradS.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-        jGradS.addColorStop(0.3, 'rgba(192, 132, 252, 0.85)');
-        jGradS.addColorStop(0.8, 'rgba(56, 189, 248, 0.4)');
+        jGradS.addColorStop(0, 'rgba(255, 255, 255, 0.98)');
+        jGradS.addColorStop(0.25, 'rgba(192, 132, 252, 0.9)');
+        jGradS.addColorStop(0.7, 'rgba(56, 189, 248, 0.5)');
         jGradS.addColorStop(1, 'rgba(56, 189, 248, 0)');
         ctx.fillStyle = jGradS;
         ctx.beginPath();
@@ -2252,6 +2895,12 @@ function drawCelestialBody(ctx, b, frameCount, isSelected) {
         ctx.lineTo(0, jetLen);
         ctx.lineTo(jetW, 0);
         ctx.closePath();
+        ctx.fill();
+
+        // Pulsating shock nodes inside South jet
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.ellipse(0, jetLen * 0.45, jetW * 0.55, jetLen * 0.12 * (0.8 + 0.4 * pulse), 0, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -2325,15 +2974,39 @@ function drawCelestialBody(ctx, b, frameCount, isSelected) {
 
       // Photosphere with dynamic coronal flares (when not tidally stripped)
       if (!isStretched) {
-        const flareCount = b.type === 'hypergiant' ? 12 : 8;
+        const isFlareStorm = b.flareStormTimer && b.flareStormTimer > 0;
+        const flareCount = isFlareStorm ? 20 : (b.type === 'hypergiant' ? 14 : 8);
         for (let i = 0; i < flareCount; i++) {
-          const angle = (i * Math.PI * 2 / flareCount) + (frameCount * 0.012);
-          const len = b.radius + (b.type === 'hypergiant' ? 14 : 7) + Math.sin(frameCount * 0.08 + i) * 6;
+          const angle = (i * Math.PI * 2 / flareCount) + (frameCount * (isFlareStorm ? 0.04 : 0.012));
+          const extraLen = isFlareStorm ? 28 : (b.type === 'hypergiant' ? 16 : 8);
+          const len = b.radius + extraLen + Math.sin(frameCount * 0.1 + i) * (isFlareStorm ? 12 : 6);
           ctx.beginPath();
           ctx.moveTo(0, 0);
           ctx.lineTo(Math.cos(angle) * len, Math.sin(angle) * len);
-          ctx.strokeStyle = b.color;
-          ctx.lineWidth = b.type === 'hypergiant' ? 4.5 : 2.5;
+          ctx.strokeStyle = isFlareStorm ? (i % 2 === 0 ? '#ffea75' : '#f97316') : b.color;
+          ctx.lineWidth = isFlareStorm ? 4.5 : (b.type === 'hypergiant' ? 4.5 : 2.5);
+          ctx.stroke();
+        }
+
+        // If star has elevated stellar energy, draw active thermonuclear core aura
+        if (b.stellarEnergy && b.stellarEnergy > 0.4) {
+          ctx.strokeStyle = 'rgba(250, 204, 21, 0.4)';
+          ctx.lineWidth = 2.0;
+          ctx.setLineDash([3, 5]);
+          ctx.beginPath();
+          ctx.arc(0, 0, b.radius + 6 + Math.sin(frameCount * 0.1) * 3, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        // If Cepheid pulsating, draw expanding pulsation waves
+        if (b.isPulsating) {
+          const waveR = b.radius * (1.1 + ((frameCount * 0.03) % 1) * 0.6);
+          const waveAlpha = Math.max(0, 0.6 - ((frameCount * 0.03) % 1) * 0.6);
+          ctx.strokeStyle = `rgba(251, 191, 36, ${waveAlpha})`;
+          ctx.lineWidth = 2.0;
+          ctx.beginPath();
+          ctx.arc(0, 0, waveR, 0, Math.PI * 2);
           ctx.stroke();
         }
       }
