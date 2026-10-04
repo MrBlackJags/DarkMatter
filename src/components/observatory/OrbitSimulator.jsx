@@ -4,7 +4,8 @@ import {
   Crosshair, Radio, Layers, ChevronDown, Info, Maximize2, Minimize2,
   Sliders, Volume2, VolumeX, Eye, ShieldAlert, Activity, ArrowRight,
   Target, FastForward, SkipForward, RefreshCw, ZoomIn, ZoomOut, Move,
-  Anchor, Trash2, Plus, MousePointer, ShieldCheck, HelpCircle, X, Camera
+  Anchor, Trash2, Plus, MousePointer, ShieldCheck, HelpCircle, X, Camera,
+  BookOpen
 } from 'lucide-react';
 
 // =========================================================================
@@ -55,6 +56,21 @@ export const CELESTIAL_CATALOG = [
     earthRadiusRatio: 0.84,
     earthMassRatio: 330000,
     desc: 'Earth-sized electron-degenerate carbon-oxygen core with intense surface gravity and quantum glow.',
+    defaultCore: true,
+    isLarge: true
+  },
+  {
+    id: 'planetary_nebula',
+    category: 'Singularities',
+    name: 'Planetary Nebula & White Dwarf',
+    type: 'planetary_nebula',
+    mass: 9200,
+    radius: 120,
+    compactRadius: 45,
+    color: '#06b6d4',
+    earthRadiusRatio: 220.0,
+    earthMassRatio: 330000,
+    desc: 'Fluorescent Oxygen-III and Hydrogen-alpha ionized gas bubble expelled by an evolving star, surrounding a hot degenerate white dwarf core.',
     defaultCore: true,
     isLarge: true
   },
@@ -117,6 +133,39 @@ export const CELESTIAL_CATALOG = [
     earthRadiusRatio: 15.4,
     earthMassRatio: 40000,
     desc: 'Ultra-stable low-mass convective red dwarf with intermittent magnetic flare eruptions.',
+    defaultCore: true,
+    isLarge: true
+  },
+  {
+    id: 'gas_cloud',
+    category: 'Stars',
+    name: 'Interstellar Molecular Gas Cloud',
+    type: 'gas_cloud',
+    mass: 16000,
+    radius: 130,
+    baseRadius: 130,
+    compactRadius: 60,
+    color: '#38bdf8',
+    temperature: 20,
+    density: 0.12,
+    earthRadiusRatio: 320.0,
+    earthMassRatio: 380000,
+    desc: 'Cold molecular hydrogen cloud governed by Jeans instability. Gravitationally collapses into a star if mass > Jeans mass M_J ∝ T^(3/2) · ρ^(-1/2).',
+    defaultCore: false,
+    isLarge: true
+  },
+  {
+    id: 'protostar',
+    category: 'Stars',
+    name: 'Protostellar Accretion Core',
+    type: 'protostar',
+    mass: 14500,
+    radius: 95,
+    compactRadius: 36,
+    color: '#f97316',
+    earthRadiusRatio: 90.0,
+    earthMassRatio: 330000,
+    desc: 'Collapsing molecular cloud core with spinning circumstellar accretion disk & relativistic bipolar Herbig-Haro plasma jets undergoing Kelvin-Helmholtz contraction.',
     defaultCore: true,
     isLarge: true
   },
@@ -321,6 +370,10 @@ export const SPACE_STYLES = [
 // Sandbox Quick Scenarios
 export const SANDBOX_PRESETS = [
   { id: 'blank', label: 'Empty Free Ground', desc: 'Zero bodies — complete creative freedom' },
+  { id: 'star_birth', label: 'Witness: Protostellar Collapse & Ignition', desc: 'Jeans gravitational cloud collapse, bipolar jets & ZAMS core fusion ignition' },
+  { id: 'solar_lifecycle', label: 'Witness: Solar Red Giant & Planetary Nebula', desc: 'Sun swells, engulfs inner planets, expels glowing nebula, leaves White Dwarf' },
+  { id: 'supernova_remnant', label: 'Witness: Core-Collapse Supernova & Pulsar', desc: 'Massive star iron core collapse, Type II blastwaves, relativistic pulsar formation' },
+  { id: 'kilonova_merger', label: 'Witness: Binary Neutron Star Kilonova', desc: 'GW170817 inspiral, r-process kilonova burst, collapse into Kerr Black Hole' },
   { id: 'solar', label: 'Solar & Inner Worlds', desc: 'Yellow Sun with Earth, Mars, Comets & Belt Rocks' },
   { id: 'blackhole', label: 'Tidal Disruption (TDE)', desc: 'Star experiencing tidal spaghettification & Kerr black hole infall' },
   { id: 'binary', label: 'Binary Star Dance', desc: 'Dual stars orbiting a mutual barycenter' },
@@ -335,7 +388,7 @@ export default function OrbitSimulator({ initialStar = null }) {
   const containerRef = useRef(null);
 
   // --- Active Tool Mode ---
-  // 'spawn' (click/drag to place body) | 'slingshot' (drag to fling any body) | 'pan' (drag canvas) | 'core' (click body to toggle core anchor) | 'delete' (click body to erase) | 'inspect' (click body to inspect)
+  // 'spawn' | 'slingshot' | 'birth' | 'evolve' | 'energy' | 'pan' | 'core' | 'delete' | 'inspect'
   const [activeTool, setActiveTool] = useState('spawn');
   const [selectedCatalogItem, setSelectedCatalogItem] = useState(CELESTIAL_CATALOG[0]);
   const [spawnAsCore, setSpawnAsCore] = useState(false);
@@ -354,6 +407,8 @@ export default function OrbitSimulator({ initialStar = null }) {
   const [showTrails, setShowTrails] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [scaleMode, setScaleMode] = useState('true_astronomical'); // 'true_astronomical' | 'compact_viewport'
+  const [modelVisualScale, setModelVisualScale] = useState(1.0); // 0.25x to 3.0x continuous adjustable visual scale
+  const [isTheoryGuideOpen, setIsTheoryGuideOpen] = useState(false);
 
   // Custom Mass / Size Multipliers for spawner
   const [massScale, setMassScale] = useState(1.0);
@@ -367,7 +422,8 @@ export default function OrbitSimulator({ initialStar = null }) {
   const [selectedBodyId, setSelectedBodyId] = useState(null);
 
   // UI Drawer states
-  const [activeDrawer, setActiveDrawer] = useState('catalog'); // 'catalog' | 'environment' | 'inspector' | 'none'
+  const [activeDrawer, setActiveDrawer] = useState('none'); // 'none' | 'environment'
+  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [catalogCategory, setCatalogCategory] = useState('All');
 
   // Refs for animation loop
@@ -490,6 +546,34 @@ export default function OrbitSimulator({ initialStar = null }) {
         gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
         osc.start();
         osc.stop(ctx.currentTime + 0.8);
+      } else if (type === 'ignition') {
+        // Thermonuclear Core Ignition Flash (low bass swell followed by harmonic surge)
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(75, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(540, ctx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + 0.25);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.65);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.65);
+      } else if (type === 'nebula') {
+        // Planetary Nebula Expulsion (ethereal glowing harmonic chord)
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(260, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(420, ctx.currentTime + 0.4);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.9);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.9);
+      } else if (type === 'kilonova') {
+        // Binary Neutron Star Merger & Kilonova
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(90, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.5);
+        gain.gain.setValueAtTime(0.35, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.85);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.85);
       }
     } catch (e) {}
   }, [soundEnabled]);
@@ -911,6 +995,205 @@ export default function OrbitSimulator({ initialStar = null }) {
           trail: []
         });
       }
+    } else if (scenarioId === 'star_birth') {
+      // Witness: Jeans Gravitational Collapse & Star Birth
+      const cloudItem = CELESTIAL_CATALOG.find(c => c.id === 'gas_cloud') || {
+        mass: 16500, radius: 130, color: '#38bdf8'
+      };
+      bodiesRef.current = [
+        {
+          id: 'molecular-gas-cloud',
+          name: 'Cold Molecular Cloud (Jeans Unstable)',
+          type: 'gas_cloud',
+          x: center.x, y: center.y,
+          vx: 0, vy: 0, ax: 0, ay: 0,
+          mass: 16500,
+          radius: 130,
+          baseRadius: 130,
+          color: '#38bdf8',
+          temperature: 18, // 18 Kelvin (M > M_J ≈ 11,500)
+          density: 0.14,
+          isCore: true, isLarge: true,
+          earthRadiusRatio: 320.0,
+          earthMassRatio: 390000,
+          isCollapsing: false,
+          trail: []
+        },
+        // Infalling companion gas clump
+        {
+          id: 'companion-clump',
+          name: 'Infalling Gas Clump',
+          type: 'gas_cloud',
+          x: center.x + 190, y: center.y,
+          vx: 0, vy: Math.sqrt((1.0 * 16500) / 190),
+          ax: 0, ay: 0,
+          mass: 3200,
+          radius: 42,
+          baseRadius: 42,
+          color: '#06b6d4',
+          temperature: 25,
+          density: 0.10,
+          isCore: false, isLarge: false,
+          earthRadiusRatio: 85.0,
+          earthMassRatio: 75000,
+          isCollapsing: false,
+          trail: []
+        }
+      ];
+      // Surrounding interstellar nebular dust
+      for (let i = 0; i < 18; i++) {
+        const ang = (i / 18) * Math.PI * 2;
+        const r = 160 + Math.random() * 90;
+        const speed = Math.sqrt((1.0 * 16500) / r);
+        bodiesRef.current.push({
+          id: `nebular-dust-${i}`,
+          name: `Nebular Dust #${i+1}`,
+          type: 'asteroid',
+          x: center.x + Math.cos(ang) * r,
+          y: center.y + Math.sin(ang) * r,
+          vx: -Math.sin(ang) * speed,
+          vy: Math.cos(ang) * speed,
+          ax: 0, ay: 0,
+          mass: 0.05 + Math.random() * 0.1,
+          radius: 1.2 + Math.random() * 0.6,
+          color: '#67e8f9',
+          isCore: false, isLarge: false,
+          trail: []
+        });
+      }
+
+    } else if (scenarioId === 'solar_lifecycle') {
+      // Witness: Solar Red Giant & Planetary Nebula
+      const sun = CELESTIAL_CATALOG.find(c => c.id === 'star_yellow');
+      const terra = CELESTIAL_CATALOG.find(c => c.id === 'terra');
+      const ares = CELESTIAL_CATALOG.find(c => c.id === 'mars_world');
+      const vTerra = Math.sqrt((1.0 * sun.mass) / 180);
+      const vAres = Math.sqrt((1.0 * sun.mass) / 300);
+
+      bodiesRef.current = [
+        {
+          id: 'aging-sun',
+          name: 'Aging Solar Star (Low Fuel)',
+          type: sun.type,
+          x: center.x, y: center.y,
+          vx: 0, vy: 0, ax: 0, ay: 0,
+          mass: sun.mass,
+          radius: sun.radius,
+          baseRadius: sun.radius,
+          color: sun.color,
+          isCore: true, isLarge: true,
+          earthRadiusRatio: sun.earthRadiusRatio,
+          earthMassRatio: sun.earthMassRatio,
+          fuel: 0.08, lifecycle: 'MAIN_SEQ',
+          stellarEnergy: 0.2,
+          trail: []
+        },
+        {
+          id: 'inner-terra',
+          name: 'Inner Habitable World (Doomed)',
+          type: terra.type,
+          x: center.x, y: center.y - 180,
+          vx: vTerra, vy: 0, ax: 0, ay: 0,
+          mass: terra.mass,
+          radius: terra.radius,
+          color: terra.color,
+          isCore: false, isLarge: false,
+          trail: []
+        },
+        {
+          id: 'outer-ares',
+          name: 'Outer Desert Planet (May Survive)',
+          type: ares.type,
+          x: center.x, y: center.y + 300,
+          vx: -vAres, vy: 0, ax: 0, ay: 0,
+          mass: ares.mass,
+          radius: ares.radius,
+          color: ares.color,
+          isCore: false, isLarge: false,
+          trail: []
+        }
+      ];
+
+    } else if (scenarioId === 'supernova_remnant') {
+      // Witness: Core-Collapse Supernova & Pulsar
+      const hypergiant = CELESTIAL_CATALOG.find(c => c.id === 'hypergiant');
+      const terra = CELESTIAL_CATALOG.find(c => c.id === 'terra');
+      const vOrbit = Math.sqrt((1.0 * hypergiant.mass) / 500);
+
+      bodiesRef.current = [
+        {
+          id: 'doomed-hypergiant',
+          name: 'Doomed Red Hypergiant (Critical)',
+          type: hypergiant.type,
+          x: center.x, y: center.y,
+          vx: 0, vy: 0, ax: 0, ay: 0,
+          mass: hypergiant.mass,
+          radius: hypergiant.radius,
+          baseRadius: hypergiant.radius,
+          color: hypergiant.color,
+          isCore: true, isLarge: true,
+          earthRadiusRatio: hypergiant.earthRadiusRatio,
+          earthMassRatio: hypergiant.earthMassRatio,
+          fuel: 0.015, lifecycle: 'RED_GIANT',
+          stellarEnergy: 0.8,
+          isSwelling: true,
+          targetRadius: 480,
+          trail: []
+        },
+        {
+          id: 'nearby-world',
+          name: 'Nearby Terrestrial World',
+          type: terra.type,
+          x: center.x + 500, y: center.y,
+          vx: 0, vy: vOrbit, ax: 0, ay: 0,
+          mass: terra.mass,
+          radius: terra.radius,
+          color: terra.color,
+          isCore: false, isLarge: false,
+          trail: []
+        }
+      ];
+
+    } else if (scenarioId === 'kilonova_merger') {
+      // Witness: Binary Neutron Star Kilonova (GW170817-inspired)
+      const pulsar = CELESTIAL_CATALOG.find(c => c.id === 'pulsar');
+      const d = 80;
+      const v = Math.sqrt((1.0 * pulsar.mass) / (d * 2)) * 0.95;
+
+      bodiesRef.current = [
+        {
+          id: 'ns-alpha',
+          name: 'Neutron Star Alpha (1.4 M☉)',
+          type: pulsar.type,
+          x: center.x - d, y: center.y,
+          vx: 0, vy: v, ax: 0, ay: 0,
+          mass: 1.4 * 14000, // 1.4 solar masses
+          radius: pulsar.radius,
+          baseRadius: pulsar.radius,
+          color: '#c084fc',
+          isCore: false, isLarge: true,
+          earthRadiusRatio: pulsar.earthRadiusRatio,
+          earthMassRatio: 460000,
+          fuel: 0, lifecycle: 'REMNANT',
+          trail: []
+        },
+        {
+          id: 'ns-beta',
+          name: 'Neutron Star Beta (1.6 M☉)',
+          type: pulsar.type,
+          x: center.x + d, y: center.y,
+          vx: 0, vy: -v, ax: 0, ay: 0,
+          mass: 1.6 * 14000,
+          radius: pulsar.radius,
+          baseRadius: pulsar.radius,
+          color: '#a78bfa',
+          isCore: false, isLarge: true,
+          earthRadiusRatio: pulsar.earthRadiusRatio,
+          earthMassRatio: 530000,
+          fuel: 0, lifecycle: 'REMNANT',
+          trail: []
+        }
+      ];
     }
   }, []);
 
@@ -1027,6 +1310,9 @@ export default function OrbitSimulator({ initialStar = null }) {
   const isStationary = useCallback((b) => Boolean(b && b.isCore), []);
 
   // --- N-Body Gravitational Physics Solver ---
+  // Sim-scale "speed of light" — keeps the 1PN correction small but non-trivial at close approach
+  const SIM_C = 300;
+
   const computeGravitation = useCallback((bodies, G) => {
     // Reset accelerations
     bodies.forEach(b => {
@@ -1045,11 +1331,10 @@ export default function OrbitSimulator({ initialStar = null }) {
         const dist = Math.sqrt(distSq);
 
         if (dist > 4) {
-          // Relativistic Post-Newtonian orbital correction near black holes:
-          let relFactor = 1.0;
-          if (b1.type === 'blackhole' || b2.type === 'blackhole') {
-            relFactor = 1.0 + Math.min(2.8, 22.0 / Math.max(10, dist));
-          }
+          // Universal 1PN relativistic correction: F = GMm/r^2 * (1 + 3G(M+m)/(r*c^2))
+          // Applied to ALL body pairs — stronger effect near compact/massive objects
+          const totalMass = b1.mass + b2.mass;
+          const relFactor = 1.0 + Math.min(3.0, (3.0 * G * totalMass) / (dist * SIM_C * SIM_C));
 
           const force = (G * b1.mass * b2.mass * relFactor) / (distSq + 25); // softening factor
 
@@ -1171,8 +1456,13 @@ export default function OrbitSimulator({ initialStar = null }) {
       return;
     }
 
-    // 5. Tool: Spawn Anything
+    // 5. Tool: Spawn Anything (or click existing body to select)
     if (activeTool === 'spawn') {
+      const clicked = bodiesRef.current.find(b => Math.hypot(b.x - worldCoords.x, b.y - worldCoords.y) <= b.radius + 12);
+      if (clicked) {
+        setSelectedBodyId(clicked.id);
+        return;
+      }
       aimRef.current = {
         isAiming: true,
         isSlingshot: false,
@@ -1300,6 +1590,11 @@ export default function OrbitSimulator({ initialStar = null }) {
       earthRadiusRatio: selectedCatalogItem.earthRadiusRatio,
       earthMassRatio: selectedCatalogItem.earthMassRatio,
       stellarEnergy: (selectedCatalogItem.type.startsWith('star_') || selectedCatalogItem.type === 'hypergiant') ? 0.25 : 0,
+      fuel: (selectedCatalogItem.type.startsWith('star_') || selectedCatalogItem.type === 'hypergiant' || selectedCatalogItem.type === 'protostar') ? 1.0 : undefined,
+      lifecycle: (selectedCatalogItem.type.startsWith('star_') || selectedCatalogItem.type === 'hypergiant' || selectedCatalogItem.type === 'protostar') ? 'MAIN_SEQ' : undefined,
+      temperature: selectedCatalogItem.temperature,
+      density: selectedCatalogItem.density,
+      isCollapsing: false,
       feedingTimer: selectedCatalogItem.type === 'blackhole' ? 120 : 0,
       accretionFlare: selectedCatalogItem.type === 'blackhole' ? 0.6 : 0,
       trail: []
@@ -1693,6 +1988,331 @@ export default function OrbitSimulator({ initialStar = null }) {
     }
   };
 
+  // --- Continuous Stellar Lifecycle Engine ---
+  // Tracks fuel fraction for stars; drives main sequence → red giant → death transitions
+  // Mass thresholds use sim units: <8 M☉ ≈ <19200, 8-20 M☉ ≈ 19200-60000, >20 M☉ ≈ >60000
+  const STAR_TYPES = new Set(['star_blue', 'star_yellow', 'star_red', 'hypergiant', 'protostar']);
+  const SIM_SOLAR_MASS = 14000; // 1 M☉ in sim units (from catalog: Sun mass = 14000)
+  const JEANS_K = 50.0; // Jeans mass constant: M_J = K * T^(1.5) / rho^(0.5)
+
+  // Deterministic death outcome based on stellar mass
+  const resolveStellarDeath = useCallback((star) => {
+    if (star.dead) return;
+    const solarMasses = star.mass / SIM_SOLAR_MASS;
+
+    if (solarMasses < 8) {
+      // ── White Dwarf ── shed 40% mass as nebula
+      const shedMass = star.mass * 0.4;
+      star.dead = true;
+      playAudio('nebula');
+
+      // Spawn planetary nebula particles (mass conservation)
+      for (let i = 0; i < 50; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 3.5 + 1.5;
+        particlesRef.current.push({
+          x: star.x, y: star.y,
+          vx: Math.cos(ang) * spd + star.vx * 0.3,
+          vy: Math.sin(ang) * spd + star.vy * 0.3,
+          life: 2.5, decay: 0.008,
+          color: i % 3 === 0 ? '#06b6d4' : (i % 3 === 1 ? '#a855f7' : '#34d399'),
+          size: Math.random() * 3 + 1.5
+        });
+      }
+
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 8, maxR: 250, alpha: 0.9, color: '#06b6d4' });
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 4, maxR: 180, alpha: 0.8, color: '#a855f7' });
+
+      // Spawn white dwarf remnant
+      const remnant = {
+        id: `wd-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,
+        name: `White Dwarf Remnant`,
+        type: 'white_dwarf',
+        x: star.x, y: star.y,
+        vx: star.vx, vy: star.vy, ax: 0, ay: 0,
+        mass: star.mass - shedMass,
+        radius: 3.0,
+        baseRadius: 3.0,
+        color: '#e0f2fe',
+        isCore: false, isLarge: false,
+        earthRadiusRatio: 0.84,
+        earthMassRatio: (star.mass - shedMass) / SIM_SOLAR_MASS * 333000,
+        trail: [], fuel: 0, lifecycle: 'REMNANT'
+      };
+      bodiesRef.current.push(remnant);
+      if (selectedBodyId === star.id) setSelectedBodyId(remnant.id);
+      setTelemetry(prev => ({ ...prev, lastEvent: `${star.name} → WHITE DWARF (${solarMasses.toFixed(1)} M☉, shed planetary nebula)` }));
+
+    } else if (solarMasses <= 20) {
+      // ── Supernova → Neutron Star ──
+      star.dead = true;
+      playAudio('supernova');
+
+      // Supernova blast FX
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 10, maxR: 850, alpha: 1.0, color: '#38bdf8' });
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 25, maxR: 700, alpha: 0.95, color: '#facc15' });
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 40, maxR: 600, alpha: 0.9, color: '#ec4899' });
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 5, maxR: 450, alpha: 1.0, color: '#ffffff' });
+
+      const remnantMass = 1.4 * SIM_SOLAR_MASS; // Chandrasekhar limit ~1.4 M☉
+      const ejectaMass = star.mass - remnantMass;
+
+      // Supernova ejecta particles
+      for (let i = 0; i < 160; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 12 + 4;
+        particlesRef.current.push({
+          x: star.x, y: star.y,
+          vx: Math.cos(ang) * spd + star.vx * 0.2,
+          vy: Math.sin(ang) * spd + star.vy * 0.2,
+          life: 1.6, decay: 0.015,
+          color: ['#ffffff', '#38bdf8', '#fbbf24', '#f43f5e', '#a855f7'][i % 5],
+          size: Math.random() * 4 + 2
+        });
+      }
+
+      // Blast push on nearby bodies
+      bodiesRef.current.forEach(other => {
+        if (other.id !== star.id && !other.dead) {
+          const dx = other.x - star.x;
+          const dy = other.y - star.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 280 && !other.isCore) {
+            other.dead = true;
+          } else if (dist < 850 && !isStationary(other)) {
+            const push = ((850 - dist) / 850) * 14.0;
+            other.vx += (dx / dist) * push;
+            other.vy += (dy / dist) * push;
+          }
+        }
+      });
+
+      // Spawn neutron star
+      const remnant = {
+        id: `ns-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,
+        name: `Neutron Star Remnant`,
+        type: 'pulsar',
+        x: star.x, y: star.y,
+        vx: star.vx, vy: star.vy, ax: 0, ay: 0,
+        mass: remnantMass,
+        radius: 2.2,
+        baseRadius: 2.2,
+        color: '#c084fc',
+        isCore: false, isLarge: true,
+        earthRadiusRatio: 0.002,
+        earthMassRatio: remnantMass / SIM_SOLAR_MASS * 333000,
+        trail: [], fuel: 0, lifecycle: 'REMNANT'
+      };
+      bodiesRef.current.push(remnant);
+      if (selectedBodyId === star.id) setSelectedBodyId(remnant.id);
+      setTelemetry(prev => ({ ...prev, lastEvent: `CORE-COLLAPSE SUPERNOVA → NEUTRON STAR (${solarMasses.toFixed(1)} M☉)` }));
+
+    } else {
+      // ── Supernova → Black Hole (>20 M☉) ──
+      star.dead = true;
+      playAudio('supernova');
+
+      // Supernova blast FX
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 10, maxR: 950, alpha: 1.0, color: '#ff6600' });
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 25, maxR: 800, alpha: 0.95, color: '#38bdf8' });
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 40, maxR: 650, alpha: 0.9, color: '#facc15' });
+      shockwavesRef.current.push({ x: star.x, y: star.y, r: 5, maxR: 500, alpha: 1.0, color: '#ffffff' });
+
+      const remnantMass = star.mass * 0.4;
+      const ejectaMass = star.mass - remnantMass;
+
+      // Supernova ejecta
+      for (let i = 0; i < 180; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 14 + 5;
+        particlesRef.current.push({
+          x: star.x, y: star.y,
+          vx: Math.cos(ang) * spd + star.vx * 0.15,
+          vy: Math.sin(ang) * spd + star.vy * 0.15,
+          life: 1.8, decay: 0.012,
+          color: ['#ffffff', '#ff6600', '#fbbf24', '#f43f5e', '#a855f7'][i % 5],
+          size: Math.random() * 4.5 + 2
+        });
+      }
+
+      // Blast push
+      bodiesRef.current.forEach(other => {
+        if (other.id !== star.id && !other.dead) {
+          const dx = other.x - star.x;
+          const dy = other.y - star.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 320 && !other.isCore) {
+            other.dead = true;
+          } else if (dist < 950 && !isStationary(other)) {
+            const push = ((950 - dist) / 950) * 16.0;
+            other.vx += (dx / dist) * push;
+            other.vy += (dy / dist) * push;
+          }
+        }
+      });
+
+      // Schwarzschild radius in sim units: r_s ∝ mass^(1/3) scaled to visual
+      const bhRadius = Math.min(140, Math.max(18, 22 * Math.cbrt(remnantMass / 48000)));
+
+      const remnant = {
+        id: `bh-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,
+        name: `Newborn Kerr Singularity`,
+        type: 'blackhole',
+        x: star.x, y: star.y,
+        vx: star.vx, vy: star.vy, ax: 0, ay: 0,
+        mass: remnantMass,
+        radius: bhRadius,
+        baseRadius: bhRadius,
+        color: '#ff6600',
+        isCore: false, isLarge: true,
+        feedingTimer: 360,
+        accretionFlare: 1.0,
+        earthRadiusRatio: 4.6,
+        earthMassRatio: remnantMass / SIM_SOLAR_MASS * 333000,
+        trail: [], fuel: 0, lifecycle: 'REMNANT'
+      };
+      bodiesRef.current.push(remnant);
+      if (selectedBodyId === star.id) setSelectedBodyId(remnant.id);
+      setTelemetry(prev => ({ ...prev, lastEvent: `HYPERNOVA → BLACK HOLE (${solarMasses.toFixed(1)} M☉, r_s=${bhRadius.toFixed(1)}px)` }));
+    }
+  }, [playAudio, isStationary, selectedBodyId]);
+
+  const updateStellarLifecycle = useCallback((body, dt) => {
+    if (body.dead) return;
+
+    // ── Star Birth: Jeans Instability Gravitational Collapse ──
+    if (body.type === 'gas_cloud') {
+      const T = body.temperature !== undefined ? body.temperature : 20;
+      const rho = body.density !== undefined ? body.density : 0.12;
+      const Mj = JEANS_K * Math.pow(Math.max(1, T), 1.5) / Math.sqrt(Math.max(0.01, rho));
+      body.jeansMass = Mj;
+
+      if (body.mass > Mj) {
+        body.isCollapsing = true;
+        const targetRadius = Math.max(18, 42 * Math.pow(body.mass / SIM_SOLAR_MASS, 0.7));
+
+        if (body.radius > targetRadius * 1.08) {
+          body.radius -= Math.max(0.25, (body.radius - targetRadius) * 0.04 * dt);
+          if (Math.random() < 0.35) {
+            const ang = Math.random() * Math.PI * 2;
+            const dist = body.radius * (0.8 + Math.random() * 0.3);
+            particlesRef.current.push({
+              x: body.x + Math.cos(ang) * dist,
+              y: body.y + Math.sin(ang) * dist,
+              vx: -Math.cos(ang) * 2.8 + body.vx,
+              vy: -Math.sin(ang) * 2.8 + body.vy,
+              life: 0.8,
+              decay: 0.04,
+              color: '#38bdf8',
+              size: Math.random() * 2.5 + 1.2
+            });
+          }
+        } else {
+          // Ignition threshold reached! Collapse completes into Newborn Star
+          body.isCollapsing = false;
+          playAudio('ignition');
+          shockwavesRef.current.push({ x: body.x, y: body.y, r: 8, maxR: targetRadius * 3.5, alpha: 1.0, color: '#facc15' });
+          shockwavesRef.current.push({ x: body.x, y: body.y, r: 4, maxR: targetRadius * 2.0, alpha: 0.9, color: '#38bdf8' });
+
+          for (let i = 0; i < 40; i++) {
+            const ang = Math.random() * Math.PI * 2;
+            const spd = Math.random() * 6 + 2;
+            particlesRef.current.push({
+              x: body.x, y: body.y,
+              vx: Math.cos(ang) * spd + body.vx,
+              vy: Math.sin(ang) * spd + body.vy,
+              life: 1.2,
+              decay: 0.025,
+              color: i % 2 === 0 ? '#facc15' : '#f97316',
+              size: Math.random() * 3 + 1.5
+            });
+          }
+
+          const solarMasses = body.mass / SIM_SOLAR_MASS;
+          let starType = 'star_yellow';
+          let starColor = '#facc15';
+          let starName = 'Newborn Solar Star';
+
+          if (solarMasses < 0.6) {
+            starType = 'star_red';
+            starColor = '#f87171';
+            starName = 'Newborn Red Dwarf';
+          } else if (solarMasses <= 2.5) {
+            starType = 'star_yellow';
+            starColor = '#facc15';
+            starName = 'Newborn Solar-Class Star';
+          } else if (solarMasses <= 15) {
+            starType = 'star_blue';
+            starColor = '#60a5fa';
+            starName = 'Newborn Blue Supergiant';
+          } else {
+            starType = 'hypergiant';
+            starColor = '#ea580c';
+            starName = 'Newborn Red Hypergiant';
+          }
+
+          body.type = starType;
+          body.name = starName;
+          body.color = starColor;
+          body.radius = targetRadius;
+          body.baseRadius = targetRadius;
+          body.fuel = 1.0;
+          body.lifecycle = 'MAIN_SEQ';
+          body.stellarEnergy = 0.5;
+
+          setTelemetry(prev => ({
+            ...prev,
+            lastEvent: `JEANS INSTABILITY: Cloud collapsed & ignited into ${starName} (${solarMasses.toFixed(2)} M☉)!`
+          }));
+        }
+      } else {
+        body.isCollapsing = false;
+      }
+      return;
+    }
+
+    if (!STAR_TYPES.has(body.type)) return;
+
+    // Initialize fuel on first encounter (backwards compatible with existing bodies)
+    if (body.fuel === undefined) body.fuel = 1.0;
+    if (body.lifecycle === undefined) body.lifecycle = 'MAIN_SEQ';
+
+    // Luminosity ∝ M^3.5 → burn rate scales with mass^3.5 relative to sun
+    // Normalized so a 1 M☉ star burns through fuel in ~600 seconds of sim time at 1x speed
+    const mRatio = body.mass / SIM_SOLAR_MASS;
+    const burnRate = Math.pow(Math.max(0.1, mRatio), 3.5) * 0.00004;
+    body.fuel = Math.max(0, body.fuel - burnRate * dt);
+
+    if (body.fuel > 0.1) {
+      // Main Sequence — normal star
+      body.lifecycle = 'MAIN_SEQ';
+    } else if (body.fuel > 0) {
+      // Red Giant transition — expand and cool
+      if (body.lifecycle !== 'RED_GIANT') {
+        body.lifecycle = 'RED_GIANT';
+        body.isSwelling = true;
+        body.targetRadius = Math.min(480, (body.baseRadius || body.radius) * 3.5);
+        body.color = '#ef4444';
+        body.name = body.name.replace(/ \(.*\)/, '') + ' (Red Giant)';
+        playAudio('swell');
+        shockwavesRef.current.push({
+          x: body.x, y: body.y,
+          r: body.radius,
+          maxR: body.targetRadius * 1.3,
+          alpha: 0.7,
+          color: '#ef4444'
+        });
+        setTelemetry(prev => ({ ...prev, lastEvent: `${body.name} ENTERS RED GIANT PHASE (fuel depleting)` }));
+      }
+    } else {
+      // Fuel exhausted — resolve stellar death based on mass
+      if (body.lifecycle !== 'DEAD') {
+        body.lifecycle = 'DEAD';
+        resolveStellarDeath(body);
+      }
+    }
+  }, [playAudio, resolveStellarDeath]);
+
   // --- Main Simulation Render Loop ---
   useEffect(() => {
     let animationFrameId;
@@ -1767,6 +2387,11 @@ export default function OrbitSimulator({ initialStar = null }) {
             b.x += b.vx * dt;
             b.y += b.vy * dt;
           });
+
+          // Stellar lifecycle tick (once per frame on first substep only)
+          if (s === 0) {
+            bodies.forEach(b => updateStellarLifecycle(b, dt));
+          }
 
           const len = bodies.length;
 
@@ -1858,18 +2483,46 @@ export default function OrbitSimulator({ initialStar = null }) {
               const dist = Math.hypot(dx, dy);
 
               if (dist <= (b1.radius + b2.radius) * 0.85) {
-                // Collision Reaction
-                if (b1.type === 'blackhole' || b2.type === 'blackhole') {
-                  // A Black Hole ALWAYS absorbs infalling mass and NEVER shatters!
-                  const [bh, other] = b1.type === 'blackhole' ? [b1, b2] : [b2, b1];
+                const isBH1 = b1.type === 'blackhole';
+                const isBH2 = b2.type === 'blackhole';
+
+                // ── Black Hole + Black Hole → Merge (conserve momentum) ──
+                if (isBH1 && isBH2) {
+                  const [larger, smaller] = b1.mass >= b2.mass ? [b1, b2] : [b2, b1];
+                  const totalMass = larger.mass + smaller.mass;
+                  // Conserve momentum
+                  if (!isStationary(larger)) {
+                    larger.vx = (larger.vx * larger.mass + smaller.vx * smaller.mass) / totalMass;
+                    larger.vy = (larger.vy * larger.mass + smaller.vy * smaller.mass) / totalMass;
+                  }
+                  larger.mass = totalMass;
+                  const baseR = larger.baseRadius || 22;
+                  larger.radius = Math.min(200, Math.max(baseR, baseR * Math.cbrt(totalMass / 48000)));
+                  larger.baseRadius = larger.radius;
+                  larger.accretionFlare = 1.0;
+                  larger.feedingTimer = 400;
+                  smaller.dead = true;
+                  triggerBlackHoleSwallow(larger, smaller);
+                  playAudio('kilonova');
+                  // Gravitational wave burst
+                  shockwavesRef.current.push({ x: larger.x, y: larger.y, r: 8, maxR: 1200, alpha: 1.0, color: '#c084fc' });
+                  shockwavesRef.current.push({ x: larger.x, y: larger.y, r: 4, maxR: 900, alpha: 0.9, color: '#38bdf8' });
+                  setTelemetry(prev => ({ ...prev, lastEvent: `BLACK HOLE MERGER! M=${totalMass.toFixed(0)} (gravitational wave burst)` }));
+
+                // ── Star/Body + Black Hole → Accretion (BH momentum unchanged per spec) ──
+                } else if (isBH1 || isBH2) {
+                  const [bh, other] = isBH1 ? [b1, b2] : [b2, b1];
                   other.dead = true;
                   bh.mass += other.mass;
+                  // BH momentum unchanged — do NOT update bh.vx/bh.vy
                   const baseR = bh.baseRadius || 22;
                   bh.radius = Math.min(140, Math.max(baseR, baseR * Math.cbrt(bh.mass / 48000)));
                   bh.accretionFlare = 1.0;
                   bh.feedingTimer = 260;
                   triggerBlackHoleSwallow(bh, other);
                   playAudio('gw_chirp');
+
+                // ── Star + Small Debris → Vaporization & Energy Injection ──
                 } else if ((b1.type.startsWith('star_') || b1.type === 'hypergiant') && 
                            (b2.type === 'asteroid' || b2.type === 'comet' || b2.type === 'satellite' || b2.type === 'antimatter')) {
                   b2.dead = true;
@@ -1890,12 +2543,82 @@ export default function OrbitSimulator({ initialStar = null }) {
                     handleInjectEnergy(b2, 0.08);
                     triggerSolarProminence(b2, b1);
                   }
-                } else if (collisionBehavior === 'merge') {
-                  // Merge smaller into larger
+
+                // ── Star + Star → Astrophysical Merge ──
+                } else if ((b1.type.startsWith('star_') || b1.type === 'hypergiant' || b1.type === 'protostar') &&
+                           (b2.type.startsWith('star_') || b2.type === 'hypergiant' || b2.type === 'protostar')) {
                   const [larger, smaller] = b1.mass >= b2.mass ? [b1, b2] : [b2, b1];
+                  const totalMass = larger.mass + smaller.mass;
                   smaller.dead = true;
 
-                  // Conserve momentum (stationary anchors do not move)
+                  // Conserve momentum
+                  if (!isStationary(larger)) {
+                    larger.vx = (larger.vx * larger.mass + smaller.vx * smaller.mass) / totalMass;
+                    larger.vy = (larger.vy * larger.mass + smaller.vy * smaller.mass) / totalMass;
+                  }
+                  larger.mass = totalMass;
+                  // R ∝ M^0.7 (mass-radius relation for stars)
+                  const SIM_SOLAR_MASS = 14000;
+                  larger.radius = Math.min(480, 42 * Math.pow(totalMass / SIM_SOLAR_MASS, 0.7));
+                  larger.baseRadius = larger.radius;
+                  // Average fuel weighted by mass
+                  const fuel1 = larger.fuel !== undefined ? larger.fuel : 0.8;
+                  const fuel2 = smaller.fuel !== undefined ? smaller.fuel : 0.8;
+                  larger.fuel = (fuel1 * (totalMass - smaller.mass) + fuel2 * smaller.mass) / totalMass;
+
+                  triggerExplosion(larger.x, larger.y, larger.radius * 1.5, '#fbbf24');
+                  playAudio('merge');
+
+                  // If merged mass exceeds supernova threshold and fuel nearly spent → instant death
+                  const solarMasses = totalMass / SIM_SOLAR_MASS;
+                  if (solarMasses > 20 && larger.fuel < 0.05) {
+                    larger.fuel = 0;
+                    resolveStellarDeath(larger);
+                  }
+                  setTelemetry(prev => ({ ...prev, lastEvent: `STELLAR MERGER! ${solarMasses.toFixed(1)} M☉ (R ∝ M^0.7)` }));
+
+                // ── Gas Cloud + Gas Cloud → Merge (Conserve momentum & combine mass) ──
+                } else if (b1.type === 'gas_cloud' && b2.type === 'gas_cloud') {
+                  const [larger, smaller] = b1.mass >= b2.mass ? [b1, b2] : [b2, b1];
+                  const totalMass = larger.mass + smaller.mass;
+                  smaller.dead = true;
+                  if (!isStationary(larger)) {
+                    larger.vx = (larger.vx * larger.mass + smaller.vx * smaller.mass) / totalMass;
+                    larger.vy = (larger.vy * larger.mass + smaller.vy * smaller.mass) / totalMass;
+                  }
+                  larger.mass = totalMass;
+                  larger.radius = Math.min(240, Math.pow(Math.pow(larger.radius, 3) + Math.pow(smaller.radius, 3), 1/3));
+                  larger.baseRadius = larger.radius;
+                  // Temperature and density weighted average
+                  larger.temperature = ((larger.temperature || 20) * (totalMass - smaller.mass) + (smaller.temperature || 20) * smaller.mass) / totalMass;
+                  larger.density = ((larger.density || 0.12) * (totalMass - smaller.mass) + (smaller.density || 0.12) * smaller.mass) / totalMass;
+                  triggerExplosion(larger.x, larger.y, larger.radius * 0.8, '#38bdf8');
+                  playAudio('merge');
+                  setTelemetry(prev => ({ ...prev, lastEvent: `GAS CLOUDS MERGED: Total Mass = ${totalMass.toFixed(0)}` }));
+
+                // ── Star + Gas Cloud → Accretion (Conserve momentum, expand R ∝ M^0.7) ──
+                } else if (((b1.type.startsWith('star_') || b1.type === 'hypergiant' || b1.type === 'protostar') && b2.type === 'gas_cloud') ||
+                           ((b2.type.startsWith('star_') || b2.type === 'hypergiant' || b2.type === 'protostar') && b1.type === 'gas_cloud')) {
+                  const [star, cloud] = (b1.type.startsWith('star_') || b1.type === 'hypergiant' || b1.type === 'protostar') ? [b1, b2] : [b2, b1];
+                  cloud.dead = true;
+                  const totalMass = star.mass + cloud.mass;
+                  if (!isStationary(star)) {
+                    star.vx = (star.vx * star.mass + cloud.vx * cloud.mass) / totalMass;
+                    star.vy = (star.vy * star.mass + cloud.vy * cloud.mass) / totalMass;
+                  }
+                  star.mass = totalMass;
+                  const SIM_SOLAR_MASS = 14000;
+                  star.radius = Math.min(480, 42 * Math.pow(totalMass / SIM_SOLAR_MASS, 0.7));
+                  star.baseRadius = star.radius;
+                  star.fuel = Math.min(1.0, (star.fuel || 0.8) + (cloud.mass / totalMass) * 0.25);
+                  triggerExplosion(star.x, star.y, star.radius, '#38bdf8');
+                  playAudio('flare');
+                  setTelemetry(prev => ({ ...prev, lastEvent: `${star.name} ACCRETED GAS CLOUD (+${cloud.mass.toFixed(0)} mass)` }));
+
+                // ── Generic collision (non-star bodies) ──
+                } else if (collisionBehavior === 'merge') {
+                  const [larger, smaller] = b1.mass >= b2.mass ? [b1, b2] : [b2, b1];
+                  smaller.dead = true;
                   if (!isStationary(larger)) {
                     larger.vx = (larger.vx * larger.mass + smaller.vx * smaller.mass) / (larger.mass + smaller.mass);
                     larger.vy = (larger.vy * larger.mass + smaller.vy * smaller.mass) / (larger.mass + smaller.mass);
@@ -1905,17 +2628,14 @@ export default function OrbitSimulator({ initialStar = null }) {
                   }
                   larger.mass += smaller.mass;
                   larger.radius = Math.min(85, Math.pow(Math.pow(larger.radius, 3) + Math.pow(smaller.radius, 3), 1/3));
-
                   triggerExplosion(larger.x, larger.y, larger.radius, larger.color);
                   playAudio('merge');
                 } else if (collisionBehavior === 'shatter') {
-                  // Shatter both into fragments
                   b1.dead = true;
                   b2.dead = true;
                   triggerExplosion((b1.x + b2.x) / 2, (b1.y + b2.y) / 2, Math.max(b1.radius, b2.radius) * 2, '#ff3366');
                   playAudio('shatter');
                 } else if (collisionBehavior === 'bounce') {
-                  // Elastic rebound
                   const nx = dx / dist;
                   const ny = dy / dist;
                   const kx = b1.vx - b2.vx;
@@ -2084,208 +2804,208 @@ export default function OrbitSimulator({ initialStar = null }) {
         }`}
       />
 
-      {/* 2. TOP FLOATING COMMAND BAR (PRIMARY ACTIONS & TOOLS) */}
-      <header className="absolute top-4 inset-x-4 flex flex-wrap items-center justify-between gap-3 pointer-events-none z-20">
+      {/* 2. STREAMLINED TOP FLOATING NAVIGATION BAR */}
+      <header className="absolute top-4 inset-x-4 flex items-center justify-between gap-3 pointer-events-none z-20">
         
-        {/* Left: Brand Badge & Active Tool Selector */}
-        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-black/85 backdrop-blur-xl border border-cyan-500/30 shadow-2xl pointer-events-auto">
-          <div className="flex items-center gap-2 px-3 py-1 border-r border-slate-800">
-            <Orbit className="w-5 h-5 text-cyan-400 animate-[spin_10s_linear_infinite]" />
-            <span className="font-extrabold text-sm tracking-wider uppercase text-white font-mono">
-              Gravity Sandbox
-            </span>
-          </div>
-
-          {/* Tools: Spawn, Slingshot, Energy, Pan, Core, Delete, Inspect */}
-          <div className="flex items-center gap-1 font-mono text-xs">
-            {[
-              { id: 'spawn', label: 'Spawn', icon: Plus, title: 'Click & Drag to Spawn Any Body with Trajectory' },
-              { id: 'slingshot', label: 'Slingshot', icon: Target, title: 'Click & Drag Any Body to Slingshot Across Space' },
-              { id: 'energy', label: 'Energy', icon: Flame, title: 'Click Star to Inject Fusion Energy & Trigger Consequences' },
-              { id: 'pan', label: 'Pan', icon: Move, title: 'Drag to Move Canvas' },
-              { id: 'core', label: 'Anchor Core', icon: Anchor, title: 'Click Any Body to Make Core / Anchor' },
-              { id: 'delete', label: 'Obliterate', icon: Trash2, title: 'Click Any Body to Delete' },
-              { id: 'inspect', label: 'Inspect', icon: Eye, title: 'Click Body to Inspect Telemetry' }
-            ].map(tool => {
-              const Icon = tool.icon;
-              const isActive = activeTool === tool.id;
-              return (
-                <button
-                  key={tool.id}
-                  onClick={() => setActiveTool(tool.id)}
-                  title={tool.title}
-                  className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition cursor-pointer ${
-                    isActive 
-                      ? 'bg-cyan-500/25 border border-cyan-400 text-cyan-300 font-bold shadow-[0_0_15px_rgba(0,240,255,0.25)]' 
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span className="hidden md:inline">{tool.label}</span>
-                </button>
-              );
-            })}
-          </div>
+        {/* Left: Brand Badge & Active Body Count */}
+        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-950/80 backdrop-blur-xl border border-white/10 shadow-xl pointer-events-auto">
+          <Orbit className="w-4 h-4 text-cyan-400 animate-[spin_10s_linear_infinite]" />
+          <span className="font-bold text-xs tracking-wider uppercase text-white font-mono">
+            Gravity Sandbox
+          </span>
+          <span className="text-white/20">|</span>
+          <span className="text-cyan-300 font-mono text-[11px]">
+            {telemetry.totalBodies} {telemetry.totalBodies === 1 ? 'body' : 'bodies'}
+          </span>
         </div>
 
-        {/* Center/Right: Master Playback & Sandbox Presets */}
-        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-black/85 backdrop-blur-xl border border-slate-800 shadow-2xl pointer-events-auto font-mono text-xs">
-          
-          {/* Scale Mode Toggle: True Astronomical (Betelgeuse 380px) vs Compact */}
+        {/* Center: Playback & Scenario Presets Pill */}
+        <div className="flex items-center gap-1.5 p-1 rounded-full bg-slate-950/85 backdrop-blur-xl border border-white/10 shadow-xl pointer-events-auto text-xs font-mono">
+          {/* Play / Pause Toggle */}
           <button
-            onClick={() => {
-              const nextMode = scaleMode === 'true_astronomical' ? 'compact_viewport' : 'true_astronomical';
-              setScaleMode(nextMode);
-              bodiesRef.current.forEach(b => {
-                const cat = CELESTIAL_CATALOG.find(c => c.type === b.type || c.id === b.type);
-                if (cat) {
-                  b.radius = nextMode === 'true_astronomical' ? cat.radius : (cat.compactRadius || cat.radius);
-                  b.baseRadius = b.radius;
-                }
-              });
-            }}
-            className={`px-2.5 py-1.5 rounded-xl border flex items-center gap-1.5 transition cursor-pointer text-[11px] ${
-              scaleMode === 'true_astronomical'
-                ? 'bg-amber-950/40 border-amber-500/50 text-amber-300 font-bold'
-                : 'bg-black border-slate-800 text-slate-400 hover:text-white'
+            onClick={() => setIsRunning(!isRunning)}
+            className={`px-3 py-1 rounded-full font-bold flex items-center gap-1.5 transition cursor-pointer text-xs ${
+              isRunning
+                ? 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/30'
+                : 'bg-cyan-500 text-black font-semibold hover:bg-cyan-400 shadow-[0_0_12px_rgba(0,240,255,0.4)]'
             }`}
-            title="Toggle between True Proportional Scale (Betelgeuse 380px) and Compact Viewport Scale"
           >
-            <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden lg:inline">{scaleMode === 'true_astronomical' ? 'Scale: True (Betelgeuse 380px)' : 'Scale: Compact'}</span>
-            <span className="lg:hidden">{scaleMode === 'true_astronomical' ? 'True Scale' : 'Compact'}</span>
+            {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-current" />}
+            <span>{isRunning ? 'Pause' : 'Play'}</span>
           </button>
 
-          {/* Space Area Visual Style Selector */}
-          <div className="flex items-center gap-1.5 px-2 py-1 rounded-xl bg-slate-900 border border-slate-700/80">
+          {/* Speed Toggle Pill (cycles 0.5x, 1x, 2x, 4x) */}
+          <button
+            onClick={() => {
+              const speeds = [0.5, 1.0, 2.0, 4.0];
+              const idx = speeds.indexOf(timeStep);
+              setTimeStep(speeds[(idx + 1) % speeds.length] || 1.0);
+            }}
+            className="px-2 py-1 rounded-full bg-white/5 hover:bg-white/10 text-slate-300 text-[11px] transition cursor-pointer"
+            title="Click to cycle speed (0.5×, 1×, 2×, 4×)"
+          >
+            {timeStep.toFixed(1)}×
+          </button>
+
+          <span className="text-white/20">|</span>
+
+          {/* Scenario Preset Dropdown */}
+          <div className="flex items-center gap-1.5 px-1.5 text-xs text-slate-300">
             <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
             <select
-              value={spaceStyle}
-              onChange={e => setSpaceStyle(e.target.value)}
-              className="bg-transparent text-cyan-300 text-[11px] focus:outline-none cursor-pointer font-mono"
-              title="Change Space Area Visual Theme"
+              onChange={e => loadScenario(e.target.value)}
+              defaultValue="solar"
+              className="bg-transparent text-slate-200 text-xs focus:outline-none cursor-pointer pr-1"
             >
-              {SPACE_STYLES.map(s => (
-                <option key={s.id} value={s.id} className="bg-slate-900 text-white">
-                  Area: {s.name}
+              {SANDBOX_PRESETS.map(p => (
+                <option key={p.id} value={p.id} className="bg-slate-900 text-white">
+                  {p.label.replace('Witness: ', '')}
                 </option>
               ))}
             </select>
           </div>
 
-          {/* Play / Pause */}
-          <button
-            onClick={() => setIsRunning(!isRunning)}
-            className={`px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition cursor-pointer shadow-md ${
-              isRunning ? 'bg-amber-400 text-black hover:bg-amber-300' : 'bg-cyan-400 text-black hover:bg-cyan-300'
-            }`}
-          >
-            {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-            <span>{isRunning ? 'Pause' : 'Run'}</span>
-          </button>
-
-          {/* Time Warp Slider */}
-          <div className="hidden sm:flex items-center gap-2 px-2 text-slate-300">
-            <FastForward className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="text-[11px]">{timeStep.toFixed(1)}×</span>
-            <input
-              type="range"
-              min="0.1"
-              max="4.0"
-              step="0.1"
-              value={timeStep}
-              onChange={e => setTimeStep(Number(e.target.value))}
-              className="w-16 accent-cyan-400 cursor-pointer"
-            />
-          </div>
+          <span className="text-white/20">|</span>
 
           {/* Clear & Reset */}
           <button
-            onClick={() => { bodiesRef.current = []; particlesRef.current = []; shockwavesRef.current = []; setSelectedBodyId(null); }}
-            className="px-2.5 py-1.5 rounded-xl bg-black border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 transition cursor-pointer text-[11px]"
-            title="Wipe canvas clean"
+            onClick={() => {
+              bodiesRef.current = [];
+              particlesRef.current = [];
+              shockwavesRef.current = [];
+              setSelectedBodyId(null);
+            }}
+            className="p-1.5 rounded-full text-slate-400 hover:text-rose-400 hover:bg-white/5 transition cursor-pointer"
+            title="Wipe canvas clear"
           >
-            Clear
+            <RotateCcw className="w-3.5 h-3.5" />
           </button>
+        </div>
 
-          {/* Preset Selector Dropdown */}
-          <select
-            onChange={e => loadScenario(e.target.value)}
-            defaultValue="solar"
-            className="px-2.5 py-1.5 rounded-xl bg-black border border-slate-800 text-cyan-300 text-[11px] focus:outline-none cursor-pointer"
-          >
-            {SANDBOX_PRESETS.map(p => (
-              <option key={p.id} value={p.id} className="bg-slate-900 text-white">
-                {p.label}
-              </option>
-            ))}
-          </select>
+        {/* Right: Quick Settings, Audio, View */}
+        <div className="flex items-center gap-1 p-1 rounded-full bg-slate-950/80 backdrop-blur-xl border border-white/10 shadow-xl pointer-events-auto">
+          {/* Reset Camera View (appears only when panned/zoomed) */}
+          {(zoom !== 1.0 || pan.x !== 0 || pan.y !== 0) && (
+            <button
+              onClick={() => { setZoom(1.0); setPan({ x: 0, y: 0 }); setFollowId(null); }}
+              className="px-2.5 py-1 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-[10px] font-mono border border-cyan-500/30 transition cursor-pointer"
+            >
+              Reset View ({zoom.toFixed(1)}×)
+            </button>
+          )}
 
-          {/* Audio Synthesizer Toggle */}
+          {/* Audio Synthesizer */}
           <button
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className={`p-1.5 rounded-xl border transition cursor-pointer ${
-              soundEnabled ? 'bg-cyan-950 border-cyan-500/50 text-cyan-400' : 'bg-black border-slate-800 text-slate-500'
+            className={`p-2 rounded-full transition cursor-pointer ${
+              soundEnabled ? 'text-cyan-400 bg-cyan-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
             title={soundEnabled ? 'Sound Enabled' : 'Sound Muted'}
           >
             {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
           </button>
 
-          {/* Frame Snapshot Export */}
+          {/* Frame Snapshot */}
           <button
             onClick={handleSnapshot}
-            className="p-1.5 rounded-xl border border-slate-800 bg-black hover:border-cyan-500/50 text-slate-400 hover:text-cyan-300 transition cursor-pointer"
-            title="Export Telemetry Frame (PNG)"
+            className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 transition cursor-pointer"
+            title="Export Frame (PNG)"
           >
             <Camera className="w-3.5 h-3.5" />
           </button>
 
-          {/* Reset Zoom & Pan */}
-          {(zoom !== 1.0 || pan.x !== 0 || pan.y !== 0) && (
-            <button
-              onClick={() => { setZoom(1.0); setPan({ x: 0, y: 0 }); setFollowId(null); }}
-              className="px-2 py-1 rounded-lg bg-cyan-950/60 border border-cyan-800 text-cyan-300 text-[10px] cursor-pointer"
-            >
-              Reset Cam ({zoom.toFixed(2)}×)
-            </button>
-          )}
-
+          {/* Settings Drawer Toggle */}
+          <button
+            onClick={() => setActiveDrawer(activeDrawer === 'environment' ? 'none' : 'environment')}
+            className={`p-2 rounded-full transition cursor-pointer ${
+              activeDrawer === 'environment' ? 'bg-cyan-500 text-black' : 'text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
+            title="Physics & Display Settings"
+          >
+            <Sliders className="w-3.5 h-3.5" />
+          </button>
         </div>
-
       </header>
 
-      {/* 3. BOTTOM FLOATING CELESTIAL SPAWNER DOCK ("SPAWN ANYTHING & CORE ANYTHING") */}
-      <footer className="absolute bottom-4 inset-x-4 flex flex-col items-center gap-2 pointer-events-none z-20">
+      {/* 3. MINIMALIST FLOATING BOTTOM DOCK & EXPANDABLE CELESTIAL TRAY */}
+      <footer className="absolute bottom-4 inset-x-0 flex flex-col items-center gap-2 pointer-events-none z-20 px-4">
         
-        {/* Quick Spawn Bar */}
-        <div className="w-full max-w-4xl p-2.5 rounded-2xl bg-black/90 backdrop-blur-xl border border-cyan-500/30 shadow-2xl pointer-events-auto space-y-2">
-          
-          {/* Top category tabs & Mode Options */}
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-2 text-xs font-mono">
-            <div className="flex items-center gap-1">
-              <span className="text-cyan-400 font-bold mr-1 flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                SPAWN CELESTIAL BODY:
-              </span>
-              {['All', 'Stars', 'Singularities', 'Gas Giants', 'Terrestrial', 'Moons & Debris'].map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setCatalogCategory(cat)}
-                  className={`px-2 py-1 rounded-lg transition cursor-pointer text-[10px] ${
-                    catalogCategory === cat 
-                      ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40' 
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
+        {/* Expandable Celestial Catalog Tray */}
+        {isCatalogOpen && (
+          <div className="w-full max-w-3xl p-3.5 rounded-2xl bg-slate-950/90 backdrop-blur-2xl border border-white/10 shadow-2xl pointer-events-auto space-y-3 animate-fade-in font-mono">
+            {/* Tray Header & Category Filter */}
+            <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2 text-xs">
+              <div className="flex items-center gap-1 overflow-x-auto scrollbar-none py-0.5">
+                {['All', 'Stars', 'Singularities', 'Gas Giants', 'Terrestrial', 'Moons & Debris'].map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setCatalogCategory(cat)}
+                    className={`px-2.5 py-1 rounded-lg transition cursor-pointer text-[11px] whitespace-nowrap ${
+                      catalogCategory === cat
+                        ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40'
+                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              {/* Close Tray Button */}
+              <button
+                onClick={() => setIsCatalogOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Core Anchor & Velocity Toggles */}
-            <div className="flex items-center gap-2 text-[11px]">
-              <label className="flex items-center gap-1.5 cursor-pointer text-amber-300 bg-amber-950/40 px-2 py-0.5 rounded-lg border border-amber-800/50">
+            {/* Horizontal Body Cards Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-48 overflow-y-auto pr-1">
+              {filteredCatalog.map(item => {
+                const isSelected = selectedCatalogItem.id === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setSelectedCatalogItem(item);
+                      setActiveTool('spawn');
+                      setIsCatalogOpen(false);
+                    }}
+                    className={`p-2 rounded-xl border flex items-center gap-2.5 transition cursor-pointer text-left ${
+                      isSelected
+                        ? 'bg-cyan-500/20 border-cyan-400 text-white font-bold shadow-[0_0_12px_rgba(0,240,255,0.2)]'
+                        : 'bg-black/50 border-white/5 text-slate-300 hover:border-white/20 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <span className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: item.color }} />
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold truncate leading-tight">{item.name}</div>
+                      <div className="text-[10px] text-slate-400 font-mono mt-0.5 truncate">
+                        {item.category} • M={item.mass >= 1000 ? `${(item.mass/1000).toFixed(1)}k` : item.mass}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Launch Settings Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10 text-[11px] text-slate-300">
+              <div className="flex items-center gap-2">
+                <span className="text-slate-400">Launch Mode:</span>
+                <select
+                  value={spawnVelocityMode}
+                  onChange={e => setSpawnVelocityMode(e.target.value)}
+                  className="bg-black/60 border border-white/10 text-cyan-300 rounded-lg px-2 py-1 text-[11px] focus:outline-none cursor-pointer"
+                >
+                  <option value="drag">Click &amp; Drag (Manual Velocity)</option>
+                  <option value="orbit">Auto Circular Orbit</option>
+                  <option value="rest">Static / Zero Initial Speed</option>
+                </select>
+              </div>
+
+              <label className="flex items-center gap-1.5 cursor-pointer text-amber-300 bg-amber-950/30 px-2.5 py-1 rounded-lg border border-amber-500/30">
                 <input
                   type="checkbox"
                   checked={spawnAsCore}
@@ -2293,476 +3013,436 @@ export default function OrbitSimulator({ initialStar = null }) {
                   className="accent-amber-400"
                 />
                 <Anchor className="w-3 h-3 text-amber-400" />
-                <span>Make as Core Anchor</span>
+                <span>Anchor as Stationary Core</span>
               </label>
-
-              <select
-                value={spawnVelocityMode}
-                onChange={e => setSpawnVelocityMode(e.target.value)}
-                className="bg-black border border-slate-800 text-slate-300 rounded-lg px-2 py-0.5 text-[10px] focus:outline-none"
-              >
-                <option value="drag">Velocity: Slingshot Drag</option>
-                <option value="rest">Velocity: Zero / Static</option>
-                <option value="orbit">Velocity: Auto Orbit Core</option>
-              </select>
             </div>
           </div>
+        )}
 
-          {/* Horizontal Scrollable Celestial Body Palette */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
-            {filteredCatalog.map(item => {
-              const isSelected = selectedCatalogItem.id === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setSelectedCatalogItem(item);
-                    setActiveTool('spawn');
-                  }}
-                  className={`px-3 py-2 rounded-xl border flex items-center gap-2.5 shrink-0 transition cursor-pointer text-left ${
-                    isSelected
-                      ? 'bg-cyan-500/20 border-cyan-400 text-white font-bold shadow-[0_0_15px_rgba(0,240,255,0.2)]'
-                      : 'bg-black/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-white'
-                  }`}
-                >
-                  <span className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: item.color }} />
-                  <div className="text-xs">
-                    <div className="font-semibold text-white leading-tight">{item.name}</div>
-                    <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1.5 mt-0.5">
-                      <span className="text-cyan-400 font-bold">{item.earthRadiusRatio ? `${item.earthRadiusRatio} R⊕` : `${item.radius}px`}</span>
-                      <span>•</span>
-                      <span className="text-amber-400 font-bold">{item.earthMassRatio ? `${item.earthMassRatio >= 1000 ? `${(item.earthMassRatio/1000).toFixed(0)}k` : item.earthMassRatio} M⊕` : `M=${item.mass}`}</span>
-                      {item.isLarge && <span className="text-[9px] px-1 bg-amber-500/20 text-amber-300 rounded border border-amber-500/40">Anchor</span>}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
+        {/* Minimalist Floating Dock Pill */}
+        <div className="flex items-center gap-1.5 p-1.5 rounded-full bg-slate-950/85 backdrop-blur-xl border border-white/10 shadow-2xl pointer-events-auto text-xs font-mono">
+          {/* Add / Spawn Button */}
+          <button
+            onClick={() => {
+              setActiveTool('spawn');
+              setIsCatalogOpen(!isCatalogOpen);
+            }}
+            className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 font-semibold transition cursor-pointer ${
+              activeTool === 'spawn' || isCatalogOpen
+                ? 'bg-cyan-500 text-black shadow-[0_0_12px_rgba(0,240,255,0.3)]'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Add Body</span>
+          </button>
+
+          {/* Slingshot Tool */}
+          <button
+            onClick={() => {
+              setActiveTool('slingshot');
+              setIsCatalogOpen(false);
+            }}
+            className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 font-semibold transition cursor-pointer ${
+              activeTool === 'slingshot'
+                ? 'bg-cyan-500 text-black shadow-[0_0_12px_rgba(0,240,255,0.3)]'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Target className="w-3.5 h-3.5" />
+            <span>Slingshot</span>
+          </button>
+
+          {/* Inspect Tool */}
+          <button
+            onClick={() => {
+              setActiveTool('inspect');
+              setIsCatalogOpen(false);
+            }}
+            className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 font-semibold transition cursor-pointer ${
+              activeTool === 'inspect'
+                ? 'bg-cyan-500 text-black shadow-[0_0_12px_rgba(0,240,255,0.3)]'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Eye className="w-3.5 h-3.5" />
+            <span>Inspect</span>
+          </button>
+
+          {/* Pan Tool */}
+          <button
+            onClick={() => {
+              setActiveTool('pan');
+              setIsCatalogOpen(false);
+            }}
+            className={`px-3 py-1.5 rounded-full flex items-center gap-1.5 font-semibold transition cursor-pointer ${
+              activeTool === 'pan'
+                ? 'bg-cyan-500 text-black shadow-[0_0_12px_rgba(0,240,255,0.3)]'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Move className="w-3.5 h-3.5" />
+            <span>Pan</span>
+          </button>
+
+          <span className="text-white/20 mx-1">|</span>
+
+          {/* Active selection indicator */}
+          <div className="flex items-center gap-1.5 px-2.5 py-1 text-[11px] text-slate-400">
+            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: selectedCatalogItem.color }} />
+            <span className="hidden sm:inline text-slate-300 font-medium">{selectedCatalogItem.name}</span>
           </div>
-
         </div>
 
-        {/* Live Bottom Telemetry Banner */}
-        <div className="inline-flex items-center gap-4 px-4 py-1.5 rounded-full bg-black/80 backdrop-blur-md border border-slate-800 text-[11px] font-mono text-slate-400 pointer-events-auto">
-          <span>Active Bodies: <strong className="text-cyan-400">{telemetry.totalBodies}</strong></span>
-          <span className="text-slate-700">|</span>
-          <span>Anchored Cores: <strong className="text-amber-400">{telemetry.coresCount}</strong></span>
-          <span className="text-slate-700">|</span>
-          <span>System Mass: <strong className="text-emerald-400">{telemetry.totalSystemMass}</strong></span>
-          <span className="text-slate-700">|</span>
-          <span className="text-slate-500">{telemetry.lastEvent}</span>
-        </div>
-
+        {/* Subtle Live Notification Pill */}
+        {telemetry.lastEvent && (
+          <div className="text-[10px] font-mono text-slate-400/80 bg-black/60 px-3 py-0.5 rounded-full border border-white/5 pointer-events-auto truncate max-w-lg">
+            {telemetry.lastEvent}
+          </div>
+        )}
       </footer>
 
-      {/* 4. FLOATING RIGHT INSPECTOR & SETTINGS DRAWER */}
+      {/* 4. FLOATING RIGHT INSPECTOR DRAWER */}
       {selectedBodyId && inspectedBody && (
-        <aside className="absolute top-20 right-4 w-72 rounded-2xl bg-black/90 backdrop-blur-xl border border-cyan-500/30 p-4 shadow-2xl font-mono text-xs z-30 space-y-3 pointer-events-auto animate-fade-in">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: inspectedBody.color }} />
+        <aside className="absolute top-18 right-4 w-80 rounded-2xl bg-slate-950/90 backdrop-blur-2xl border border-white/10 p-4 shadow-2xl font-mono text-xs z-30 space-y-3 pointer-events-auto animate-fade-in">
+          {/* Header */}
+          <div className="flex items-center justify-between pb-2 border-b border-white/10">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="w-3 h-3 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: inspectedBody.color }} />
               <strong className="text-white text-sm truncate">{inspectedBody.name}</strong>
             </div>
             <button
               onClick={() => setSelectedBodyId(null)}
-              className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white"
+              className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="space-y-1.5 text-slate-300 text-[11px]">
-            <div className="flex justify-between">
-              <span className="text-slate-500">CLASSIFICATION:</span>
-              <span className="text-cyan-400 uppercase">{inspectedBody.type}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">STATUS:</span>
-              <span className={inspectedBody.isCore ? 'text-amber-400 font-bold' : 'text-emerald-400'}>
-                {inspectedBody.isCore ? 'ANCHORED CORE' : 'ORBITING BODY'}
+          {/* Quick Stats 2x2 Grid */}
+          <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+            <div className="p-2 rounded-xl bg-white/5 border border-white/5">
+              <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Mass</span>
+              <span className="text-amber-300 font-bold text-xs">
+                {inspectedBody.earthMassRatio 
+                  ? `${inspectedBody.earthMassRatio >= 1000 ? `${(inspectedBody.earthMassRatio / 1000).toFixed(0)}k` : inspectedBody.earthMassRatio} M⊕` 
+                  : `${(inspectedBody.mass / 6).toFixed(1)} M⊕`}
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">MASS (M⊕):</span>
-              <span className="text-amber-400 font-bold">
-                {inspectedBody.earthMassRatio ? `${inspectedBody.earthMassRatio >= 1000 ? `${(inspectedBody.earthMassRatio / 1000).toFixed(0)}k` : inspectedBody.earthMassRatio} M⊕` : `${(inspectedBody.mass / 6).toFixed(2)} M⊕`}
-                <span className="text-slate-500 text-[10px] ml-1">({inspectedBody.mass})</span>
+            <div className="p-2 rounded-xl bg-white/5 border border-white/5">
+              <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Radius</span>
+              <span className="text-cyan-300 font-bold text-xs">
+                {inspectedBody.earthRadiusRatio ? `${inspectedBody.earthRadiusRatio} R⊕` : `${inspectedBody.radius.toFixed(0)} px`}
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">RADIUS (R⊕):</span>
-              <span className="text-cyan-400 font-bold">
-                {inspectedBody.earthRadiusRatio ? `${inspectedBody.earthRadiusRatio} R⊕` : `${(inspectedBody.radius / 5.0).toFixed(2)} R⊕`}
-                <span className="text-slate-500 text-[10px] ml-1">({inspectedBody.radius} px)</span>
+            <div className="p-2 rounded-xl bg-white/5 border border-white/5">
+              <span className="text-slate-400 block text-[9px] uppercase tracking-wider">Velocity</span>
+              <span className="text-emerald-300 font-bold text-xs">
+                {(Math.hypot(inspectedBody.vx, inspectedBody.vy) * 4.2).toFixed(1)} km/s
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate-500">VELOCITY:</span>
-              <span className="text-emerald-400">
-                {(Math.hypot(inspectedBody.vx, inspectedBody.vy) * 4.2).toFixed(2)} km/s
+            <div className="p-2 rounded-xl bg-white/5 border border-white/5">
+              <span className="text-slate-400 block text-[9px] uppercase tracking-wider">State</span>
+              <span className={inspectedBody.isCore ? 'text-amber-400 font-bold text-xs' : 'text-slate-300 text-xs'}>
+                {inspectedBody.isCore ? 'Anchored Core' : 'Free Orbit'}
               </span>
             </div>
           </div>
 
-          {/* Specialized Controls for Stars: Stellar Energy Injection & Probabilistic Consequence Matrix */}
-          {(inspectedBody.type.startsWith('star_') || inspectedBody.type === 'hypergiant') && (
-            <div className="p-2.5 rounded-xl bg-amber-950/20 border border-amber-500/40 space-y-2">
-              <div className="flex items-center justify-between text-[11px] font-bold text-amber-300">
+          {/* Contextual Astrophysics Panel */}
+          {(STAR_TYPES.has(inspectedBody.type) || inspectedBody.type === 'gas_cloud') && (
+            <div className="p-2.5 rounded-xl bg-cyan-950/20 border border-cyan-500/30 space-y-2">
+              <div className="flex items-center justify-between text-[11px] font-bold text-cyan-300">
                 <span className="flex items-center gap-1">
-                  <Flame className="w-3.5 h-3.5 text-amber-400" />
-                  STELLAR CORE ENERGY:
+                  <Activity className="w-3.5 h-3.5 text-cyan-400" />
+                  {inspectedBody.type === 'gas_cloud' ? 'JEANS INSTABILITY' : 'STELLAR FUEL'}
                 </span>
-                <span className="text-amber-200">
-                  {Math.round((inspectedBody.stellarEnergy || 0.25) * 100)}%
+                <span className="text-cyan-200 uppercase font-mono text-[10px]">
+                  {inspectedBody.type === 'gas_cloud'
+                    ? (inspectedBody.isCollapsing ? 'COLLAPSING' : ((inspectedBody.mass > (inspectedBody.jeansMass || 11500)) ? 'UNSTABLE (M>M_J)' : 'STABLE CLOUD'))
+                    : `${Math.round((inspectedBody.fuel !== undefined ? inspectedBody.fuel : 1.0) * 100)}%`}
                 </span>
               </div>
 
-              {/* Energy Gauge Bar */}
-              <div className="w-full h-2 rounded-full bg-slate-900 overflow-hidden border border-slate-700/80">
-                <div
-                  className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 transition-all duration-300"
-                  style={{ width: `${Math.min(100, Math.round((inspectedBody.stellarEnergy || 0.25) * 100))}%` }}
-                />
-              </div>
-
-              {/* Injection Action Buttons */}
-              <div className="grid grid-cols-2 gap-1.5 pt-1">
-                <button
-                  onClick={() => handleInjectEnergy(inspectedBody, 0.25)}
-                  className="py-1.5 px-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-200 text-[10px] font-bold transition cursor-pointer flex items-center justify-center gap-1"
-                >
-                  <Zap className="w-3 h-3 text-amber-400" />
-                  +25% Energy
-                </button>
-                <button
-                  onClick={() => {
-                    inspectedBody.stellarEnergy = 1.0;
-                    triggerStellarConsequence(inspectedBody);
-                  }}
-                  className="py-1.5 px-2 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-200 text-[10px] font-bold transition cursor-pointer flex items-center justify-center gap-1"
-                >
-                  <Flame className="w-3 h-3 text-rose-400" />
-                  Overdrive Infall
-                </button>
-              </div>
-
-              {/* Consequence Probabilities Breakdown */}
-              <div className="pt-1.5 border-t border-amber-900/40 text-[10px] space-y-1 text-slate-300">
-                <div className="text-slate-400 font-bold uppercase tracking-wider text-[9px]">Astrophysical Probabilities:</div>
-                <div className="flex justify-between items-center hover:text-white cursor-pointer" onClick={() => triggerStellarConsequence(inspectedBody, 'flare_storm')}>
-                  <span>🌪️ Coronal Flare Superstorm</span>
-                  <span className="text-amber-400 font-bold">35%</span>
+              {inspectedBody.type === 'gas_cloud' ? (
+                <div className="space-y-1.5 text-[10px] text-slate-300">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Mass / Jeans Limit:</span>
+                    <span className="text-white font-mono font-bold">{inspectedBody.mass.toFixed(0)} / {(inspectedBody.jeansMass || 11500).toFixed(0)}</span>
+                  </div>
+                  <button
+                    onClick={() => { inspectedBody.temperature = 10; }}
+                    className="w-full py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-200 text-[10px] font-bold transition flex items-center justify-center gap-1 cursor-pointer"
+                  >
+                    ❄️ Trigger Jeans Collapse
+                  </button>
                 </div>
-                <div className="flex justify-between items-center hover:text-white cursor-pointer" onClick={() => triggerStellarConsequence(inspectedBody, 'red_giant_swell')}>
-                  <span>🔴 Photosphere Red Giant Swell</span>
-                  <span className="text-rose-400 font-bold">25%</span>
+              ) : (
+                <div className="space-y-1.5">
+                  <div className="w-full h-1.5 rounded-full bg-slate-900 overflow-hidden border border-slate-700/60">
+                    <div
+                      className={`h-full transition-all duration-300 ${
+                        (inspectedBody.fuel || 1.0) > 0.3
+                          ? 'bg-gradient-to-r from-cyan-400 to-emerald-400'
+                          : (inspectedBody.fuel || 1.0) > 0.1
+                            ? 'bg-gradient-to-r from-amber-400 to-orange-500'
+                            : 'bg-gradient-to-r from-rose-500 to-red-600 animate-pulse'
+                      }`}
+                      style={{ width: `${Math.min(100, Math.round((inspectedBody.fuel !== undefined ? inspectedBody.fuel : 1.0) * 100))}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-[10px] text-slate-400">
+                    <span>Phase: <strong className="text-white">{inspectedBody.lifecycle || 'MAIN_SEQ'}</strong></span>
+                    <span>Rate: <strong className="text-amber-400">∝ M^3.5</strong></span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center hover:text-white cursor-pointer" onClick={() => triggerStellarConsequence(inspectedBody, 'supernova')}>
-                  <span>💥 Core-Collapse Supernova</span>
-                  <span className="text-cyan-400 font-bold">20%</span>
-                </div>
-                <div className="flex justify-between items-center hover:text-white cursor-pointer" onClick={() => triggerStellarConsequence(inspectedBody, 'wolf_rayet')}>
-                  <span>🌀 Wolf-Rayet Envelope Strip</span>
-                  <span className="text-emerald-400 font-bold">12%</span>
-                </div>
-                <div className="flex justify-between items-center hover:text-white cursor-pointer" onClick={() => triggerStellarConsequence(inspectedBody, 'cepheid_pulsation')}>
-                  <span>💓 Cepheid Radial Pulsation</span>
-                  <span className="text-purple-400 font-bold">8%</span>
-                </div>
-              </div>
+              )}
             </div>
           )}
 
-          {/* Specialized Controls for Black Holes */}
-          {inspectedBody.type === 'blackhole' && (
-            <div className="p-2.5 rounded-xl bg-orange-950/25 border border-orange-500/40 space-y-2">
-              <div className="flex items-center justify-between text-[11px] font-bold text-orange-300">
-                <span className="flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-orange-400" />
-                  KERR SINGULARITY TELEMETRY:
-                </span>
-                <span className={inspectedBody.feedingTimer > 0 ? 'text-cyan-300 animate-pulse' : 'text-slate-400'}>
-                  {inspectedBody.feedingTimer > 0 ? 'FEEDING JETS ACTIVE' : 'QUIESCENT HORIZON'}
-                </span>
-              </div>
-              <div className="text-[10px] text-slate-300 space-y-1">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">SCHWARZSCHILD RADIUS (rs):</span>
-                  <span className="text-orange-400 font-bold">{inspectedBody.radius.toFixed(1)} px</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">FEEDING TIME REMAINING:</span>
-                  <span className="text-cyan-400 font-bold">{inspectedBody.feedingTimer || 0} frames</span>
-                </div>
-              </div>
-
-              {/* Feed Black Hole Button */}
-              <button
-                onClick={() => {
-                  inspectedBody.mass += 6000;
-                  const baseR = inspectedBody.baseRadius || 22;
-                  inspectedBody.radius = Math.min(140, Math.max(baseR, baseR * Math.cbrt(inspectedBody.mass / 48000)));
-                  inspectedBody.accretionFlare = 1.0;
-                  inspectedBody.feedingTimer = 280;
-                  triggerBlackHoleSwallow(inspectedBody, { name: 'Relativistic Infall Stream', color: '#ff8800' });
-                  playAudio('gw_chirp');
-                }}
-                className="w-full py-1.5 rounded-lg bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/50 text-orange-200 text-[10px] font-bold transition cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                <Zap className="w-3 h-3 text-orange-400" />
-                Feed Infalling Plasma Stream
-              </button>
-            </div>
-          )}
-
-          {/* Quick Body Commands */}
-          <div className="pt-2 border-t border-slate-800 space-y-1.5">
-            {/* Quick Slingshot Button */}
+          {/* Quick Actions Row */}
+          <div className="grid grid-cols-2 gap-1.5 pt-1">
             <button
-              onClick={() => {
-                setActiveTool('slingshot');
-              }}
-              className="w-full py-1.5 rounded-xl bg-cyan-950/60 border border-cyan-500/50 hover:bg-cyan-900 text-cyan-300 font-bold transition cursor-pointer text-xs flex items-center justify-center gap-1.5"
+              onClick={() => setFollowId(followId === inspectedBody.id ? null : inspectedBody.id)}
+              className={`py-1.5 px-2 rounded-xl border flex items-center justify-center gap-1.5 transition cursor-pointer text-[11px] ${
+                followId === inspectedBody.id
+                  ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold'
+                  : 'bg-white/5 border-white/10 text-slate-300 hover:text-white'
+              }`}
             >
-              <Target className="w-3.5 h-3.5" />
-              <span>Arm Slingshot Aim on Body</span>
+              <Eye className="w-3.5 h-3.5" />
+              <span>{followId === inspectedBody.id ? 'Following' : 'Track View'}</span>
             </button>
 
-            {/* Direct Slingshot Impulse Fling (+8.5 km/s) */}
-            <button
-              onClick={() => {
-                inspectedBody.isCore = false;
-                const angle = Math.random() * Math.PI * 2;
-                const boost = 8.5;
-                inspectedBody.vx += Math.cos(angle) * boost;
-                inspectedBody.vy += Math.sin(angle) * boost;
-                playAudio('slingshot');
-                shockwavesRef.current.push({
-                  x: inspectedBody.x, y: inspectedBody.y,
-                  r: inspectedBody.radius, maxR: inspectedBody.radius * 4.2,
-                  alpha: 1.0, color: '#38bdf8'
-                });
-                for (let i = 0; i < 20; i++) {
-                  const pAng = Math.random() * Math.PI * 2;
-                  particlesRef.current.push({
-                    x: inspectedBody.x, y: inspectedBody.y,
-                    vx: Math.cos(pAng) * 4 + inspectedBody.vx * 0.2,
-                    vy: Math.sin(pAng) * 4 + inspectedBody.vy * 0.2,
-                    life: 0.9, decay: 0.035,
-                    color: '#38bdf8', size: 2.2
-                  });
-                }
-                setTelemetry(prev => ({
-                  ...prev,
-                  lastEvent: `SLINGSHOT FLING BOOST ON ${inspectedBody.name.toUpperCase()} (+8.5 km/s)`
-                }));
-              }}
-              className="w-full py-1.5 rounded-xl bg-purple-950/40 border border-purple-500/50 hover:bg-purple-900 text-purple-200 font-bold transition cursor-pointer text-xs flex items-center justify-center gap-1.5"
-            >
-              <Zap className="w-3.5 h-3.5 text-purple-400" />
-              <span>Instant Slingshot Fling (+8.5 km/s)</span>
-            </button>
-
-            {/* Toggle Core Anchor Button */}
             <button
               onClick={() => {
                 inspectedBody.isCore = !inspectedBody.isCore;
                 if (inspectedBody.isCore) {
                   inspectedBody.vx = 0;
                   inspectedBody.vy = 0;
-                  shockwavesRef.current.push({
-                    x: inspectedBody.x, y: inspectedBody.y,
-                    r: inspectedBody.radius * 0.8, maxR: inspectedBody.radius * 3.0,
-                    alpha: 1.0, color: '#facc15'
-                  });
-                } else {
-                  shockwavesRef.current.push({
-                    x: inspectedBody.x, y: inspectedBody.y,
-                    r: inspectedBody.radius * 0.8, maxR: inspectedBody.radius * 3.0,
-                    alpha: 1.0, color: '#38bdf8'
-                  });
                 }
-                playAudio('spawn');
-                setTelemetry(prev => ({
-                  ...prev,
-                  lastEvent: inspectedBody.isCore 
-                    ? `ANCHORED ${inspectedBody.name.toUpperCase()} (FIXED IN POSITION)`
-                    : `RELEASED ${inspectedBody.name.toUpperCase()} (FREE TO MOVE / SLINGSHOT)`
-                }));
               }}
-              className={`w-full py-2 rounded-xl border flex items-center justify-center gap-1.5 font-bold transition cursor-pointer text-xs ${
-                inspectedBody.isCore 
-                  ? 'bg-amber-950/60 border-amber-600 text-amber-300' 
-                  : 'bg-black border-slate-800 hover:border-amber-400 text-slate-300'
+              className={`py-1.5 px-2 rounded-xl border flex items-center justify-center gap-1.5 transition cursor-pointer text-[11px] ${
+                inspectedBody.isCore
+                  ? 'bg-amber-500/20 border-amber-400 text-amber-300 font-bold'
+                  : 'bg-white/5 border-white/10 text-slate-300 hover:text-white'
               }`}
             >
               <Anchor className="w-3.5 h-3.5" />
-              <span>{inspectedBody.isCore ? 'Release Fixed Anchor (Enable Motion)' : 'Fix Position (Anchor As Core)'}</span>
+              <span>{inspectedBody.isCore ? 'Anchored' : 'Anchor'}</span>
             </button>
 
-            {/* Follow Camera Button */}
             <button
-              onClick={() => setFollowId(followId === inspectedBody.id ? null : inspectedBody.id)}
-              className={`w-full py-2 rounded-xl border flex items-center justify-center gap-1.5 transition cursor-pointer text-xs ${
-                followId === inspectedBody.id 
-                  ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold' 
-                  : 'bg-black border-slate-800 text-slate-300 hover:text-white'
-              }`}
+              onClick={() => {
+                inspectedBody.isCore = false;
+                const angle = Math.random() * Math.PI * 2;
+                inspectedBody.vx += Math.cos(angle) * 8.0;
+                inspectedBody.vy += Math.sin(angle) * 8.0;
+                playAudio('slingshot');
+              }}
+              className="py-1.5 px-2 rounded-xl bg-purple-500/20 border border-purple-500/40 hover:bg-purple-500/30 text-purple-200 transition cursor-pointer text-[11px] flex items-center justify-center gap-1.5"
             >
-              <Eye className="w-3.5 h-3.5" />
-              <span>{followId === inspectedBody.id ? 'Unlock Camera' : 'Lock Camera on Target'}</span>
+              <Zap className="w-3.5 h-3.5 text-purple-400" />
+              <span>Slingshot</span>
             </button>
 
-            {/* Delete Body */}
             <button
               onClick={() => {
                 triggerExplosion(inspectedBody.x, inspectedBody.y, inspectedBody.radius * 2, inspectedBody.color);
                 bodiesRef.current = bodiesRef.current.filter(b => b.id !== inspectedBody.id);
                 setSelectedBodyId(null);
               }}
-              className="w-full py-1.5 rounded-xl bg-rose-950/40 border border-rose-800/60 hover:bg-rose-900 text-rose-300 transition cursor-pointer text-xs flex items-center justify-center gap-1.5"
+              className="py-1.5 px-2 rounded-xl bg-rose-500/20 border border-rose-500/40 hover:bg-rose-500/30 text-rose-300 transition cursor-pointer text-[11px] flex items-center justify-center gap-1.5"
             >
               <Trash2 className="w-3.5 h-3.5" />
-              <span>Obliterate Body</span>
+              <span>Remove</span>
             </button>
           </div>
         </aside>
       )}
 
-      {/* 5. ENVIRONMENT & PHYSICS DRAWER (COLLAPSIBLE BUTTON ON LEFT) */}
-      <div className="absolute top-20 left-4 z-20 pointer-events-auto">
-        {activeDrawer !== 'environment' ? (
-          <button
-            onClick={() => setActiveDrawer('environment')}
-            className="p-2.5 rounded-2xl bg-black/85 backdrop-blur-xl border border-slate-800 hover:border-cyan-400 text-slate-400 hover:text-cyan-300 shadow-2xl transition cursor-pointer flex items-center gap-2 font-mono text-xs"
-          >
-            <Sliders className="w-4 h-4 text-cyan-400" />
-            <span className="hidden sm:inline">Physics &amp; Environment</span>
-          </button>
-        ) : (
-          <aside className="w-72 rounded-2xl bg-black/90 backdrop-blur-xl border border-cyan-500/30 p-4 shadow-2xl font-mono text-xs space-y-3.5 animate-fade-in">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-              <h4 className="font-bold text-cyan-300 flex items-center gap-1.5">
-                <Sliders className="w-4 h-4 text-cyan-400" />
-                <span>Physics Environment</span>
-              </h4>
+      {/* 5. SLIDE-OUT PHYSICS & SETTINGS PANEL */}
+      {activeDrawer === 'environment' && (
+        <aside className="absolute top-18 right-4 w-80 rounded-2xl bg-slate-950/95 backdrop-blur-2xl border border-white/10 p-4 shadow-2xl font-mono text-xs z-30 space-y-3.5 animate-fade-in pointer-events-auto">
+          {/* Header */}
+          <div className="flex items-center justify-between pb-2 border-b border-white/10">
+            <h4 className="font-bold text-white flex items-center gap-2 text-xs">
+              <Sliders className="w-4 h-4 text-cyan-400" />
+              <span>Physics &amp; Environment</span>
+            </h4>
+            <button
+              onClick={() => setActiveDrawer('none')}
+              className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Gravity Constant G */}
+          <div className="space-y-1">
+            <div className="flex justify-between text-[11px]">
+              <span className="text-slate-400">Gravity Constant (G)</span>
+              <span className="text-cyan-400 font-bold">{gravityG.toFixed(2)}×</span>
+            </div>
+            <input
+              type="range"
+              min="0.1"
+              max="3.0"
+              step="0.1"
+              value={gravityG}
+              onChange={e => setGravityG(Number(e.target.value))}
+              className="w-full accent-cyan-400 cursor-pointer"
+            />
+          </div>
+
+          {/* Collision Dynamics */}
+          <div className="space-y-1">
+            <span className="text-slate-400 block text-[11px]">Collisions</span>
+            <div className="grid grid-cols-3 gap-1">
+              {[
+                { id: 'merge', label: 'Merge' },
+                { id: 'shatter', label: 'Shatter' },
+                { id: 'bounce', label: 'Bounce' }
+              ].map(mode => (
+                <button
+                  key={mode.id}
+                  onClick={() => setCollisionBehavior(mode.id)}
+                  className={`py-1 rounded-lg border text-center transition cursor-pointer text-[10px] ${
+                    collisionBehavior === mode.id
+                      ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold'
+                      : 'bg-black/40 border-white/10 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {mode.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Space Area Visual Theme */}
+          <div className="space-y-1">
+            <span className="text-slate-400 block text-[11px]">Cosmic Background</span>
+            <div className="grid grid-cols-3 gap-1">
+              {SPACE_STYLES.map(s => (
+                <button
+                  key={s.id}
+                  onClick={() => setSpaceStyle(s.id)}
+                  className={`py-1 px-1 rounded-lg border text-center transition cursor-pointer text-[10px] truncate ${
+                    spaceStyle === s.id
+                      ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold'
+                      : 'bg-black/40 border-white/10 text-slate-400 hover:text-white'
+                  }`}
+                  title={s.desc}
+                >
+                  {s.name.replace(' Remnant', '').replace(' Deep Space', '').replace(' Observatory', '')}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Spacetime Curvature Grid */}
+          <div className="space-y-1">
+            <span className="text-slate-400 block text-[11px]">Spacetime Curvature Grid</span>
+            <div className="grid grid-cols-3 gap-1">
+              {[
+                { id: 'curvature', label: '3D Well' },
+                { id: 'rings', label: 'Rings' },
+                { id: 'off', label: 'Off' }
+              ].map(s => (
+                <button
+                  key={s.id}
+                  onClick={() => setGridStyle(s.id)}
+                  className={`py-1 rounded-lg border text-center transition cursor-pointer text-[10px] ${
+                    gridStyle === s.id
+                      ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold'
+                      : 'bg-black/40 border-white/10 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Display Scale Mode */}
+          <div className="space-y-1">
+            <span className="text-slate-400 block text-[11px]">Object Scale</span>
+            <div className="grid grid-cols-2 gap-1">
               <button
-                onClick={() => setActiveDrawer('none')}
-                className="p-1 rounded-lg hover:bg-slate-800 text-slate-400"
+                onClick={() => {
+                  setScaleMode('true_astronomical');
+                  bodiesRef.current.forEach(b => {
+                    const cat = CELESTIAL_CATALOG.find(c => c.type === b.type || c.id === b.type);
+                    if (cat) {
+                      b.radius = cat.radius;
+                      b.baseRadius = b.radius;
+                    }
+                  });
+                }}
+                className={`py-1 rounded-lg border text-center transition cursor-pointer text-[10px] ${
+                  scaleMode === 'true_astronomical'
+                    ? 'bg-amber-500/20 border-amber-400 text-amber-300 font-bold'
+                    : 'bg-black/40 border-white/10 text-slate-400'
+                }`}
               >
-                <X className="w-4 h-4" />
+                Realistic Proportions
+              </button>
+              <button
+                onClick={() => {
+                  setScaleMode('compact_viewport');
+                  bodiesRef.current.forEach(b => {
+                    const cat = CELESTIAL_CATALOG.find(c => c.type === b.type || c.id === b.type);
+                    if (cat) {
+                      b.radius = cat.compactRadius || cat.radius;
+                      b.baseRadius = b.radius;
+                    }
+                  });
+                }}
+                className={`py-1 rounded-lg border text-center transition cursor-pointer text-[10px] ${
+                  scaleMode === 'compact_viewport'
+                    ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold'
+                    : 'bg-black/40 border-white/10 text-slate-400'
+                }`}
+              >
+                Compact View
               </button>
             </div>
+          </div>
 
-            {/* Space Area Visual Theme */}
-            <div>
-              <label className="text-[10px] text-slate-400 block mb-1">SPACE AREA THEME</label>
-              <div className="grid grid-cols-2 gap-1">
-                {SPACE_STYLES.map(s => (
-                  <button
-                    key={s.id}
-                    onClick={() => setSpaceStyle(s.id)}
-                    className={`py-1 px-1.5 rounded-lg border text-left transition cursor-pointer text-[10px] truncate ${
-                      spaceStyle === s.id
-                        ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold'
-                        : 'bg-black border-slate-800 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    {s.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Gravity G Slider */}
-            <div>
-              <div className="flex justify-between text-[10px] text-slate-400 mb-1">
-                <span>GRAVITY CONSTANT (G)</span>
-                <span className="text-cyan-400 font-bold">{gravityG.toFixed(2)}×</span>
-              </div>
+          {/* Visual Toggles */}
+          <div className="space-y-2 pt-2 border-t border-white/10 text-[11px] text-slate-300">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
-                type="range"
-                min="0.1"
-                max="3.0"
-                step="0.1"
-                value={gravityG}
-                onChange={e => setGravityG(Number(e.target.value))}
-                className="w-full accent-cyan-400 cursor-pointer"
+                type="checkbox"
+                checked={showTrails}
+                onChange={e => setShowTrails(e.target.checked)}
+                className="accent-cyan-400 rounded"
               />
-            </div>
+              <span>Orbital Motion Trails</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showVectors}
+                onChange={e => setShowVectors(e.target.checked)}
+                className="accent-cyan-400 rounded"
+              />
+              <span>Velocity Vectors</span>
+            </label>
+          </div>
+        </aside>
+      )}
 
-            {/* Collision Dynamics */}
-            <div>
-              <label className="text-[10px] text-slate-400 block mb-1">COLLISION BEHAVIOR</label>
-              <div className="grid grid-cols-3 gap-1">
-                {[
-                  { id: 'merge', label: 'Merge' },
-                  { id: 'shatter', label: 'Shatter' },
-                  { id: 'bounce', label: 'Bounce' }
-                ].map(mode => (
-                  <button
-                    key={mode.id}
-                    onClick={() => setCollisionBehavior(mode.id)}
-                    className={`py-1 rounded-lg border text-center transition cursor-pointer text-[10px] ${
-                      collisionBehavior === mode.id
-                        ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold'
-                        : 'bg-black border-slate-800 text-slate-400'
-                    }`}
-                  >
-                    {mode.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Spacetime Grid */}
-            <div>
-              <label className="text-[10px] text-slate-400 block mb-1">SPACETIME CURVATURE GRID</label>
-              <div className="grid grid-cols-3 gap-1">
-                {[
-                  { id: 'curvature', label: '3D Well' },
-                  { id: 'rings', label: 'Rings' },
-                  { id: 'off', label: 'Void' }
-                ].map(s => (
-                  <button
-                    key={s.id}
-                    onClick={() => setGridStyle(s.id)}
-                    className={`py-1 rounded-lg border text-center transition cursor-pointer text-[10px] ${
-                      gridStyle === s.id
-                        ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold'
-                        : 'bg-black border-slate-800 text-slate-400'
-                    }`}
-                  >
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Toggles */}
-            <div className="space-y-1.5 pt-2 border-t border-slate-800 text-[11px] text-slate-300">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={showTrails}
-                  onChange={e => setShowTrails(e.target.checked)}
-                  className="accent-cyan-400"
-                />
-                <span>Orbital Motion Trails</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={showVectors}
-                  onChange={e => setShowVectors(e.target.checked)}
-                  className="accent-cyan-400"
-                />
-                <span>Velocity Vectors</span>
-              </label>
-            </div>
-          </aside>
-        )}
-      </div>
+      {/* 6. SUBTLE EMPTY STATE PROMPT */}
+      {telemetry.totalBodies === 0 && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center p-6 space-y-2">
+          <Orbit className="w-10 h-10 text-cyan-400/30 animate-pulse" />
+          <h3 className="text-xs font-mono text-slate-400 tracking-wider">CANVAS IS EMPTY</h3>
+          <p className="text-xs text-slate-500 max-w-sm">
+            Select a preset above or click <strong className="text-cyan-400">+ Add Body</strong> below to spawn celestial objects into space.
+          </p>
+        </div>
+      )}
 
     </div>
   );
@@ -3049,6 +3729,54 @@ function drawCelestialBody(ctx, b, frameCount, isSelected) {
       }
 
       ctx.restore();
+      break;
+    }
+
+    case 'gas_cloud': {
+      const isCol = b.isCollapsing;
+      const t = frameCount * 0.03;
+
+      // Outer diffuse gaseous envelope
+      const cloudGrad = ctx.createRadialGradient(0, 0, b.radius * 0.1, 0, 0, b.radius);
+      cloudGrad.addColorStop(0, isCol ? 'rgba(250, 204, 21, 0.7)' : 'rgba(56, 189, 248, 0.55)');
+      cloudGrad.addColorStop(0.4, isCol ? 'rgba(249, 115, 22, 0.45)' : 'rgba(6, 182, 212, 0.35)');
+      cloudGrad.addColorStop(0.75, 'rgba(59, 130, 246, 0.15)');
+      cloudGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      ctx.fillStyle = cloudGrad;
+      ctx.beginPath();
+      ctx.arc(0, 0, b.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Turbulent clump nodes rotating within cloud
+      for (let k = 0; k < 5; k++) {
+        const ang = (k / 5) * Math.PI * 2 + t * (k % 2 === 0 ? 0.4 : -0.3);
+        const dist = b.radius * (0.3 + 0.15 * Math.sin(t + k));
+        const nr = b.radius * (0.22 + 0.08 * Math.cos(t * 1.5 + k));
+        const nGrad = ctx.createRadialGradient(
+          Math.cos(ang) * dist, Math.sin(ang) * dist, 0,
+          Math.cos(ang) * dist, Math.sin(ang) * dist, nr
+        );
+        nGrad.addColorStop(0, isCol ? 'rgba(253, 224, 71, 0.5)' : 'rgba(103, 232, 249, 0.4)');
+        nGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = nGrad;
+        ctx.beginPath();
+        ctx.arc(Math.cos(ang) * dist, Math.sin(ang) * dist, nr, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // If collapsing, render central condensing protostellar core
+      if (isCol) {
+        const coreR = Math.max(4, b.radius * 0.22);
+        const coreGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, coreR);
+        coreGrad.addColorStop(0, '#ffffff');
+        coreGrad.addColorStop(0.5, '#facc15');
+        coreGrad.addColorStop(1, 'rgba(249, 115, 22, 0)');
+        ctx.fillStyle = coreGrad;
+        ctx.beginPath();
+        ctx.arc(0, 0, coreR, 0, Math.PI * 2);
+        ctx.fill();
+      }
       break;
     }
 

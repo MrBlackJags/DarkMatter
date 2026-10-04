@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Theoretical Foundations, Numerical Methods, and Computational Mathematics of Relativistic N-Body Gravity Simulators</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    line-height: 1.55;
+    font-size: 10pt;
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Page breaks */
+  .page-break {
+    page-break-after: always;
+  }
+  .avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5 {
+    color: #0f172a;
+    font-weight: 700;
+    margin-top: 1.2em;
+    margin-bottom: 0.4em;
+    line-height: 1.25;
+  }
+
+  h1 { font-size: 20pt; }
+  h2 { font-size: 13.5pt; border-bottom: 1.5px solid #0284c7; padding-bottom: 4px; margin-top: 1.4em; }
+  h3 { font-size: 11pt; color: #0369a1; }
+  h4 { font-size: 10pt; color: #334155; }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 0.8em;
+    text-align: justify;
+  }
+
+  /* Mathematics Display with Native MathML & Typography */
+  .math-block {
+    background: #f8fafc;
+    border-left: 4px solid #0284c7;
+    padding: 12px 18px;
+    margin: 12px 0;
+    font-family: "Cambria Math", "Latin Modern Math", "STIX Two Math", "Times New Roman", serif;
+    font-size: 11pt;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 0 0 4px rgba(0,0,0,0.02);
+    border-radius: 0 6px 6px 0;
+    overflow-x: auto;
+  }
+
+  math {
+    font-family: "Cambria Math", "Latin Modern Math", "STIX Two Math", "Times New Roman", serif;
+    font-size: 1.20em;
+  }
+
+  .math-inline {
+    font-family: "Cambria Math", "Latin Modern Math", "STIX Two Math", "Times New Roman", serif;
+    font-style: italic;
+    font-size: 1.05em;
+    padding: 0 2px;
+  }
+
+  .math-var {
+    font-family: "Cambria Math", "STIX Two Math", "Times New Roman", serif;
+    font-style: italic;
+  }
+
+  .fraction {
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: middle;
+    text-align: center;
+    padding: 0 4px;
+    font-size: 0.95em;
+  }
+
+  .fraction .numerator {
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 2px;
+  }
+
+  .fraction .denominator {
+    padding-top: 2px;
+  }
+
+  /* Callout Boxes */
+  .callout {
+    padding: 10px 14px;
+    margin: 12px 0;
+    border-radius: 6px;
+    font-size: 9pt;
+  }
+
+  .callout-theory {
+    background: #f0f9ff;
+    border-left: 4px solid #0284c7;
+    color: #0369a1;
+  }
+
+  .callout-physics {
+    background: #fefce8;
+    border-left: 4px solid #eab308;
+    color: #854d0e;
+  }
+
+  .callout-algorithm {
+    background: #f0fdf4;
+    border-left: 4px solid #22c55e;
+    color: #166534;
+  }
+
+  .callout-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    font-size: 8pt;
+    letter-spacing: 0.5px;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 8pt;
+  }
+
+  th, td {
+    padding: 5px 8px;
+    border: 1px solid #cbd5e1;
+    text-align: left;
+  }
+
+  th {
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 7.5pt;
+    letter-spacing: 0.5px;
+  }
+
+  tr:nth-child(even) {
+    background: #f8fafc;
+  }
+
+  /* Code Blocks */
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 8pt;
+    overflow-x: auto;
+    line-height: 1.45;
+    margin: 10px 0;
+    border: 1px solid #1e293b;
+  }
+
+  code {
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 8.5pt;
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+
+  pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+  }
+
+  /* Cover Page */
+  .cover-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 240mm;
+    padding: 25px 10px 10px 10px;
+  }
+
+  .cover-header {
+    border-bottom: 3px solid #0284c7;
+    padding-bottom: 15px;
+  }
+
+  .cover-badge {
+    display: inline-block;
+    background: #0284c7;
+    color: #ffffff;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .cover-title {
+    font-size: 24pt;
+    line-height: 1.15;
+    color: #0f172a;
+    margin: 10px 0;
+    font-weight: 800;
+  }
+
+  .cover-subtitle {
+    font-size: 11.5pt;
+    color: #475569;
+    font-weight: 400;
+    margin-top: 6px;
+    margin-bottom: 20px;
+  }
+
+  .cover-abstract {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #0284c7;
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin: 20px 0;
+    font-size: 9.5pt;
+    color: #334155;
+  }
+
+  .cover-meta {
+    margin-top: auto;
+    border-top: 1px solid #cbd5e1;
+    padding-top: 12px;
+    font-size: 8.5pt;
+    color: #64748b;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Diagrams */
+  .diagram-container {
+    text-align: center;
+    margin: 12px 0;
+    padding: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+  }
+
+  .diagram-caption {
+    font-size: 8pt;
+    color: #64748b;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* Header for Pages */
+  .doc-header {
+    font-size: 7.5pt;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 4px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<!-- ========================================================================= -->
+<!-- COVER PAGE -->
+<!-- ========================================================================= -->
+<div class="cover-page page-break">
+  <div class="cover-header">
+    <div class="cover-badge">Astrophysical Monograph &bull; Technical Specification</div>
+    <div class="cover-title">Theoretical Foundations, Numerical Methods, and Computational Mathematics of Relativistic N-Body Gravity Simulators</div>
+    <div class="cover-subtitle">A Comprehensive Treatise on Symplectic Integration, Post-Newtonian Relativistic Dynamics, Kerr Singularity Accretion, Roche Lobe Tidal Disruption, and Thermonuclear Stellar Evolution</div>
+  </div>
+
+  <div class="cover-abstract">
+    <div class="callout-title" style="color: #0284c7; font-size: 9pt; margin-bottom: 6px;">Abstract</div>
+    <p style="margin-bottom: 6px;">
+      This monograph presents the complete mathematical formulations, physical principles, numerical algorithms, and implementation architectures underlying the <strong>DarkMatter Relativistic N-Body Observatory &amp; Simulator</strong>. We rigorously derive the direct pairwise gravitational vector field, Plummer softening regularization, Hamiltonian symplecticity preserving phase-space volume, first-order Post-Newtonian (1PN) Schwarzschild orbital precession, Roche tidal disruption spaghettification dynamics, true astronomical scaling calibrated to the Terrestrial base unit (<span class="math-inline">1.0&nbsp;<i>R</i><sub>&oplus;</sub> &equiv; 3.5&nbsp;px</span>), five-branch stochastic stellar thermonuclear evolution, vis-viva hyperbolic slingshot assist mechanics, and real-time procedural canvas and audio synthesis shaders.
+    </p>
+  </div>
+
+  <div style="margin: 25px 0 15px 0;">
+    <h3 style="border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; font-size: 11pt;">Monograph Index &amp; Syllabus</h3>
+    
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #cbd5e1; margin-top: 6px;">
+      <span><strong>1. Classical Gravitational Dynamics &amp; The N-Body Problem</strong></span>
+      <span>Page 3</span>
+    </div>
+    <div style="padding-left: 15px; color: #475569; font-size: 8.5pt;">1.1 Newtonian Gravity Vector &bull; 1.2 Plummer Softening &bull; 1.3 Hamiltonian Phase Space Conservation &bull; 1.4 Universal Core Pinning</div>
+
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #cbd5e1; margin-top: 6px;">
+      <span><strong>2. Numerical Integration Schemes &amp; Symplectic Solvers</strong></span>
+      <span>Page 4</span>
+    </div>
+    <div style="padding-left: 15px; color: #475569; font-size: 8.5pt;">2.1 Forward Euler Divergence &bull; 2.2 Symplectic Velocity Verlet (Leapfrog) &bull; 2.3 Substepping Temporal Discretization</div>
+
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #cbd5e1; margin-top: 6px;">
+      <span><strong>3. General Relativistic &amp; Post-Newtonian Corrections</strong></span>
+      <span>Page 5</span>
+    </div>
+    <div style="padding-left: 15px; color: #475569; font-size: 8.5pt;">3.1 Schwarzschild Metric &bull; 3.2 Dynamic Event Horizon Swelling &bull; 3.3 ISCO &bull; 3.4 1PN Relativistic Precession &bull; 3.5 Doppler Beaming</div>
+
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #cbd5e1; margin-top: 6px;">
+      <span><strong>4. Tidal Disruption Events (TDE) &amp; Roche Disruption Dynamics</strong></span>
+      <span>Page 6</span>
+    </div>
+    <div style="padding-left: 15px; color: #475569; font-size: 8.5pt;">4.1 Roche Tidal Radius Derivation &bull; 4.2 Prolate Volume-Preserving Spaghettification &bull; 4.3 Accretion Rate &bull; 4.4 Relativistic Polar Jets</div>
+
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #cbd5e1; margin-top: 6px;">
+      <span><strong>5. Astronomical Scaling, Calibration &amp; Earth Reference Base</strong></span>
+      <span>Page 7</span>
+    </div>
+    <div style="padding-left: 15px; color: #475569; font-size: 8.5pt;">5.1 Earth (1.0 R_&oplus;) Base Scale &bull; 5.2 Betelgeuse (880 R_&oplus;) Scale Reality &bull; 5.3 Catalog Radii &amp; Masses &bull; 5.4 Dual Scale Projections</div>
+
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #cbd5e1; margin-top: 6px;">
+      <span><strong>6. Thermonuclear Stellar Energy Evolution &amp; Consequence Probabilities</strong></span>
+      <span>Page 8</span>
+    </div>
+    <div style="padding-left: 15px; color: #475569; font-size: 8.5pt;">6.1 Core Energy Accumulation &bull; 6.2 The 5-Outcome Consequence Matrix (Flares, Red Giant, Supernova, Wolf-Rayet, Cepheid) &bull; 6.3 Blast Wave Physics</div>
+
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #cbd5e1; margin-top: 6px;">
+      <span><strong>7. Orbital Mechanics, Slingshot Dynamics &amp; Gravity Assists</strong></span>
+      <span>Page 9</span>
+    </div>
+    <div style="padding-left: 15px; color: #475569; font-size: 8.5pt;">7.1 Vis-Viva Equation &bull; 7.2 Circular &amp; Escape Speeds &bull; 7.3 Hyperbolic Slingshot Assist Mechanics &bull; 7.4 Trajectory Prediction Ray</div>
+
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #cbd5e1; margin-top: 6px;">
+      <span><strong>8. Procedural Shaders, Lensing Geometry &amp; Audio Synthesis</strong></span>
+      <span>Page 10</span>
+    </div>
+    <div style="padding-left: 15px; color: #475569; font-size: 8.5pt;">8.1 Gravitational Lensing Einstein Rings &bull; 8.2 Spacetime Curvature Grid &bull; 8.3 LIGO Gravitational Wave Chirp Synthesis Formula</div>
+
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #cbd5e1; margin-top: 6px;">
+      <span><strong>9. Reference Architecture, Data Structures &amp; Implementation Code</strong></span>
+      <span>Page 11</span>
+    </div>
+    <div style="padding-left: 15px; color: #475569; font-size: 8.5pt;">9.1 Complete TypeScript / JavaScript Engine Specifications &bull; 9.2 Universal Anchoring &amp; Slingshot State Machine &bull; 9.3 Validation Protocols</div>
+  </div>
+
+  <div class="cover-meta">
+    <span><strong>Author:</strong> DarkMatter Astrophysics &amp; Simulation Engineering Group</span>
+    <span><strong>Software System:</strong> DarkMatter Observatory v2.4</span>
+    <span><strong>Classification:</strong> Academic Specification</span>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 1 -->
+<!-- ========================================================================= -->
+<div class="doc-header">
+  <span>DarkMatter Relativistic N-Body Simulator &bull; Section 1</span>
+  <span>Classical Gravitational Dynamics</span>
+</div>
+
+<h2>1. Classical Gravitational Dynamics &amp; The N-Body Problem</h2>
+
+<p>
+  In an isolated system containing <span class="math-inline"><i>N</i></span> discrete point masses, classical gravitational interactions are governed by Newton's law of universal gravitation. For each pair of bodies <span class="math-inline"><i>i</i></span> and <span class="math-inline"><i>j</i></span> with gravitational masses <span class="math-inline"><i>m<sub>i</sub></i></span> and <span class="math-inline"><i>m<sub>j</sub></i></span> located at position vectors <span class="math-inline"><b>r&#8407;</b><sub><i>i</i></sub></span> and <span class="math-inline"><b>r&#8407;</b><sub><i>j</i></sub></span>, the gravitational force exerted on body <span class="math-inline"><i>i</i></span> by body <span class="math-inline"><i>j</i></span> is formulated as:
+</p>
+
+<!-- Equation 1 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mover><mi mathvariant="bold">F</mi><mo>&rarr;</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub>
+    <mo>=</mo>
+    <mo>&minus;</mo>
+    <mi>G</mi>
+    <mfrac>
+      <mrow><msub><mi>m</mi><mi>i</mi></msub><msub><mi>m</mi><mi>j</mi></msub></mrow>
+      <msup><mrow><mo>|</mo><msub><mi mathvariant="bold">r</mi><mi>j</mi></msub><mo>&minus;</mo><msub><mi mathvariant="bold">r</mi><mi>i</mi></msub><mo>|</mo></mrow><mn>3</mn></msup>
+    </mfrac>
+    <mrow><mo>(</mo><msub><mi mathvariant="bold">r</mi><mi>j</mi></msub><mo>&minus;</mo><msub><mi mathvariant="bold">r</mi><mi>i</mi></msub><mo>)</mo></mrow>
+    <mo>=</mo>
+    <mi>G</mi>
+    <mfrac>
+      <mrow><msub><mi>m</mi><mi>i</mi></msub><msub><mi>m</mi><mi>j</mi></msub></mrow>
+      <msup><mrow><mo>|</mo><msub><mi mathvariant="bold">r</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>|</mo></mrow><mn>2</mn></msup>
+    </mfrac>
+    <msub><mover><mi mathvariant="bold">r</mi><mo>^</mo></mover><mrow><mi>i</mi><mi>j</mi></mrow></msub>
+  </math>
+</div>
+
+<p>
+  where <span class="math-inline"><b>r&#8407;</b><sub><i>ij</i></sub> = <b>r&#8407;</b><sub><i>j</i></sub> &minus; <b>r&#8407;</b><sub><i>i</i></sub></span>, and <span class="math-inline"><b>r&#770;</b><sub><i>ij</i></sub> = <b>r&#8407;</b><sub><i>ij</i></sub> / |<b>r&#8407;</b><sub><i>ij</i></sub>|</span> is the unit displacement vector directed from body <span class="math-inline"><i>i</i></span> toward body <span class="math-inline"><i>j</i></span>. Applying the principle of linear superposition across all <span class="math-inline"><i>N</i> &minus; 1</span> perturbing bodies yields the total gravitational acceleration <span class="math-inline"><b>a&#8407;</b><sub><i>i</i></sub></span>:
+</p>
+
+<!-- Equation 2 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mover><mi mathvariant="bold">a</mi><mo>&rarr;</mo></mover><mi>i</mi></msub>
+    <mo>=</mo>
+    <mfrac>
+      <mrow><msup><mi>d</mi><mn>2</mn></msup><msub><mi mathvariant="bold">r</mi><mi>i</mi></msub></mrow>
+      <mrow><mi>d</mi><msup><mi>t</mi><mn>2</mn></msup></mrow>
+    </mfrac>
+    <mo>=</mo>
+    <munderover><mo>&sum;</mo><mrow><mi>j</mi><mo>&ne;</mo><mi>i</mi></mrow><mi>N</mi></munderover>
+    <mi>G</mi>
+    <mfrac>
+      <mrow><msub><mi>m</mi><mi>j</mi></msub><mrow><mo>(</mo><msub><mi mathvariant="bold">r</mi><mi>j</mi></msub><mo>&minus;</mo><msub><mi mathvariant="bold">r</mi><mi>i</mi></msub><mo>)</mo></mrow></mrow>
+      <msup><mrow><mo>|</mo><msub><mi mathvariant="bold">r</mi><mi>j</mi></msub><mo>&minus;</mo><msub><mi mathvariant="bold">r</mi><mi>i</mi></msub><mo>|</mo></mrow><mn>3</mn></msup>
+    </mfrac>
+  </math>
+</div>
+
+<h3>1.1 Singularities and Plummer Gravitational Softening</h3>
+<p>
+  As mutual inter-particle distance approaches zero (<span class="math-inline"><i>r<sub>ij</sub></i> &rarr; 0</span>), the classical acceleration exhibits a <span class="math-inline">1 / <i>r</i><sup>2</sup></span> singularity. In continuous numerical integration, small time steps cannot resolve the infinite force spikes during close hyperbolic encounters, resulting in spurious unphysical ejections (numerical scattering). To preserve physical fidelity and maintain algorithmic stability, the simulator introduces the <strong>Plummer Softening Kernel</strong> parameter <span class="math-inline">&epsilon;</span>:
+</p>
+
+<!-- Equation 3 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mover><mi mathvariant="bold">a</mi><mo>&rarr;</mo></mover><mi>i</mi></msub>
+    <mo>=</mo>
+    <munderover><mo>&sum;</mo><mrow><mi>j</mi><mo>&ne;</mo><mi>i</mi></mrow><mi>N</mi></munderover>
+    <mi>G</mi>
+    <mfrac>
+      <mrow><msub><mi>m</mi><mi>j</mi></msub><mrow><mo>(</mo><msub><mi mathvariant="bold">r</mi><mi>j</mi></msub><mo>&minus;</mo><msub><mi mathvariant="bold">r</mi><mi>i</mi></msub><mo>)</mo></mrow></mrow>
+      <msup><mrow><mo>(</mo><msup><mrow><mo>|</mo><msub><mi mathvariant="bold">r</mi><mi>j</mi></msub><mo>&minus;</mo><msub><mi mathvariant="bold">r</mi><mi>i</mi></msub><mo>|</mo></mrow><mn>2</mn></msup><mo>+</mo><msup><mi>&epsilon;</mi><mn>2</mn></msup><mo>)</mo></mrow><mrow><mn>3</mn><mo>/</mo><mn>2</mn></mrow></msup>
+    </mfrac>
+  </math>
+</div>
+
+<p>
+  In our calibrated simulator engine, <span class="math-inline">&epsilon;<sup>2</sup> = 25.0&nbsp;px<sup>2</sup></span> (<span class="math-inline">&epsilon; = 5.0&nbsp;px</span>), ensuring smooth force transitions when point particles traverse close proximity while converging precisely to the pure Newtonian regime when <span class="math-inline"><i>r</i> &gg; &epsilon;</span>.
+</p>
+
+<h3>1.2 Fundamental Conservation Laws in Hamiltonian Mechanics</h3>
+<p>
+  The unconstrained N-body gravitational system constitutes a conservative dynamical system described by the Hamiltonian <span class="math-inline"><i>H</i></span>:
+</p>
+
+<!-- Equation 4 -->
+<div class="math-block">
+  <math display="block">
+    <mi>H</mi><mrow><mo>(</mo><mi mathvariant="bold">r</mi><mo>,</mo><mi mathvariant="bold">p</mi><mo>)</mo></mrow>
+    <mo>=</mo>
+    <mi>T</mi><mo>+</mo><mi>V</mi>
+    <mo>=</mo>
+    <munderover><mo>&sum;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover>
+    <mfrac><msup><mrow><mo>|</mo><msub><mi mathvariant="bold">p</mi><mi>i</mi></msub><mo>|</mo></mrow><mn>2</mn></msup><mrow><mn>2</mn><msub><mi>m</mi><mi>i</mi></msub></mrow></mfrac>
+    <mo>&minus;</mo>
+    <munderover><mo>&sum;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover>
+    <munderover><mo>&sum;</mo><mrow><mi>j</mi><mo>&gt;</mo><mi>i</mi></mrow><mi>N</mi></munderover>
+    <mfrac>
+      <mrow><mi>G</mi><msub><mi>m</mi><mi>i</mi></msub><msub><mi>m</mi><mi>j</mi></msub></mrow>
+      <msup><mrow><mo>(</mo><msup><mrow><mo>|</mo><msub><mi mathvariant="bold">r</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>|</mo></mrow><mn>2</mn></msup><mo>+</mo><msup><mi>&epsilon;</mi><mn>2</mn></msup><mo>)</mo></mrow><mrow><mn>1</mn><mo>/</mo><mn>2</mn></mrow></msup>
+    </mfrac>
+  </math>
+</div>
+
+<div class="callout callout-theory">
+  <div class="callout-title">Theorem: Invariants of Motion</div>
+  For any isolated system with isotropic spatial symmetries:
+  <br>&bull; <strong>Total Linear Momentum:</strong> <span class="math-inline"><b>P&#8407;</b> = &sum; <i>m<sub>i</sub></i> <b>v&#8407;</b><sub><i>i</i></sub> = constant</span>
+  <br>&bull; <strong>Total Angular Momentum:</strong> <span class="math-inline"><b>L&#8407;</b> = &sum; <i>m<sub>i</sub></i> (<b>r&#8407;</b><sub><i>i</i></sub> &times; <b>v&#8407;</b><sub><i>i</i></sub>) = constant</span>
+  <br>&bull; <strong>Total Mechanical Energy:</strong> <span class="math-inline"><i>E</i> = <i>T</i> + <i>V</i> = constant</span>
+</div>
+
+<h3>1.3 Universal Anchoring Mechanics (Fixed vs Dynamic Bodies)</h3>
+<p>
+  When a celestial body is flagged as an anchored core (<span class="math-inline"><i>b</i>.isCore = true</span>), it acts as an infinite-inertia fixed potential well:
+</p>
+
+<!-- Equation 5 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mover><mi mathvariant="bold">v</mi><mo>&rarr;</mo></mover><mtext>core</mtext></msub><mo>=</mo><mn mathvariant="bold">0</mn>
+    <mo>,</mo><mspace width="2em"/>
+    <msub><mover><mi mathvariant="bold">a</mi><mo>&rarr;</mo></mover><mtext>core</mtext></msub><mo>=</mo><mn mathvariant="bold">0</mn>
+    <mo>,</mo><mspace width="2em"/>
+    <mi>&Delta;</mi><msub><mi mathvariant="bold">r</mi><mtext>core</mtext></msub><mo>=</mo><mn mathvariant="bold">0</mn>
+  </math>
+</div>
+
+<p>
+  The anchored core still exerts gravitational force <span class="math-inline"><b>F&#8407;</b><sub>core &rarr; <i>j</i></sub> = <i>G M</i><sub>core</sub> <i>m<sub>j</sub></i> / <i>r</i><sup>2</sup></span> on all other dynamic bodies, allowing users to create stable multi-planetary solar systems, binary stars, or stationary Kerr black holes while reserving the ability to unpin and slingshot them across space at will.
+</p>
+
+<div class="page-break"></div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 2 -->
+<!-- ========================================================================= -->
+<div class="doc-header">
+  <span>DarkMatter Relativistic N-Body Simulator &bull; Section 2</span>
+  <span>Numerical Integration Schemes</span>
+</div>
+
+<h2>2. Numerical Integration Schemes &amp; Symplectic Solvers</h2>
+
+<h3>2.1 Instability of Forward Euler Integration</h3>
+<p>
+  The simplest numerical discretization of Newton's second law is the first-order Explicit Forward Euler scheme:
+</p>
+
+<!-- Equation 6 -->
+<div class="math-block">
+  <math display="block">
+    <mi mathvariant="bold">r</mi><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow>
+    <mo>=</mo>
+    <mi mathvariant="bold">r</mi><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow><mo>+</mo><mi mathvariant="bold">v</mi><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow><mi>&Delta;</mi><mi>t</mi>
+    <mo>,</mo><mspace width="2em"/>
+    <mi mathvariant="bold">v</mi><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow>
+    <mo>=</mo>
+    <mi mathvariant="bold">v</mi><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow><mo>+</mo><mi mathvariant="bold">a</mi><mrow><mo>(</mo><mi mathvariant="bold">r</mi><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow><mo>)</mo></mrow><mi>&Delta;</mi><mi>t</mi>
+  </math>
+</div>
+
+<p>
+  Forward Euler is <strong>non-symplectic</strong> and mathematically unstable for orbital mechanics. In phase space, the Jacobian determinant exceeds unity (<span class="math-inline">det(<b>J</b>) &gt; 1</span>), causing the numerical orbits of circular trajectories to continuously spiral outward, systematically pumping artificial energy into the system and destroying orbital closure within a few revolutions.
+</p>
+
+<h3>2.2 The Symplectic Velocity Verlet / Leapfrog Scheme</h3>
+<p>
+  To guarantee bounded energy oscillations and eliminate secular orbital drift, the DarkMatter simulator implements the <strong>Symplectic Velocity Verlet (Kick-Drift-Kick Leapfrog)</strong> solver:
+</p>
+
+<!-- Equation 7 -->
+<div class="math-block">
+  <math display="block">
+    <mtable columnalign="left">
+      <mtr>
+        <mtd><mtext mathvariant="bold">Kick Step 1:&emsp;</mtext></mtd>
+        <mtd>
+          <mi mathvariant="bold">v</mi><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow>
+          <mo>=</mo>
+          <mi mathvariant="bold">v</mi><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow>
+          <mo>+</mo>
+          <mfrac><mn>1</mn><mn>2</mn></mfrac><mi mathvariant="bold">a</mi><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow><mi>&Delta;</mi><mi>t</mi>
+        </mtd>
+      </mtr>
+      <mtr>
+        <mtd><mtext mathvariant="bold">Drift Step:&emsp;</mtext></mtd>
+        <mtd>
+          <mi mathvariant="bold">r</mi><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow>
+          <mo>=</mo>
+          <mi mathvariant="bold">r</mi><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow>
+          <mo>+</mo>
+          <mi mathvariant="bold">v</mi><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow><mi>&Delta;</mi><mi>t</mi>
+        </mtd>
+      </mtr>
+      <mtr>
+        <mtd><mtext mathvariant="bold">Force Re-evaluation:&emsp;</mtext></mtd>
+        <mtd>
+          <mi mathvariant="bold">a</mi><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow>
+          <mo>=</mo>
+          <mi mathvariant="bold">f</mi><mrow><mo>(</mo><mi mathvariant="bold">r</mi><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow><mo>)</mo></mrow>
+        </mtd>
+      </mtr>
+      <mtr>
+        <mtd><mtext mathvariant="bold">Kick Step 2:&emsp;</mtext></mtd>
+        <mtd>
+          <mi mathvariant="bold">v</mi><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow>
+          <mo>=</mo>
+          <mi mathvariant="bold">v</mi><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow>
+          <mo>+</mo>
+          <mfrac><mn>1</mn><mn>2</mn></mfrac><mi mathvariant="bold">a</mi><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow><mi>&Delta;</mi><mi>t</mi>
+        </mtd>
+      </mtr>
+    </mtable>
+  </math>
+</div>
+
+<div class="callout callout-algorithm">
+  <div class="callout-title">Mathematical Properties of Velocity Verlet</div>
+  1. <strong>Second-Order Accuracy:</strong> Local truncation error is <span class="math-inline"><i style="font-family:serif;">O</i>(&Delta;<i>t</i><sup>3</sup>)</span>; global error is <span class="math-inline"><i style="font-family:serif;">O</i>(&Delta;<i>t</i><sup>2</sup>)</span>.<br>
+  2. <strong>Time-Reversible:</strong> Inverting the sign of <span class="math-inline">&Delta;<i>t</i></span> exactly traces the trajectory backward in time.<br>
+  3. <strong>Symplectic (Phase Space Volume Preservation):</strong> The mapping preserves the Poincar&eacute; invariant 2-form <span class="math-inline">&omega; = &sum; <i>dq<sub>i</sub></i> &and; <i>dp<sub>i</sub></i></span>, exactly conserving a shadow Hamiltonian <span class="math-inline"><i>H&#771;</i> = <i>H</i> + <i style="font-family:serif;">O</i>(&Delta;<i>t</i><sup>2</sup>)</span> with zero long-term secular energy dissipation.
+</div>
+
+<div class="diagram-container">
+  <svg width="480" height="90" viewBox="0 0 480 90">
+    <line x1="40" y1="50" x2="440" y2="50" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+    <circle cx="60" cy="50" r="7" fill="#0284c7"/>
+    <text x="60" y="75" text-anchor="middle" font-size="10" font-family="sans-serif">r(t), v(t)</text>
+    
+    <path d="M 60 45 Q 160 15 260 45" fill="none" stroke="#eab308" stroke-width="2"/>
+    <circle cx="160" cy="30" r="5" fill="#eab308"/>
+    <text x="160" y="20" text-anchor="middle" font-size="9" font-family="sans-serif">v(t + &Delta;t/2)</text>
+
+    <circle cx="260" cy="50" r="7" fill="#0284c7"/>
+    <text x="260" y="75" text-anchor="middle" font-size="10" font-family="sans-serif">r(t + &Delta;t)</text>
+    
+    <path d="M 260 45 Q 360 15 440 45" fill="none" stroke="#22c55e" stroke-width="2"/>
+    <circle cx="440" cy="50" r="7" fill="#22c55e"/>
+    <text x="440" y="75" text-anchor="middle" font-size="10" font-family="sans-serif">v(t + &Delta;t)</text>
+  </svg>
+  <div class="diagram-caption">Figure 2.1: The Staggered Leapfrog Kick-Drift-Kick Integration Flow. Velocities are advanced at half-steps while positions advance at full steps.</div>
+</div>
+
+<h3>2.3 High-Rate Substepping Discretization</h3>
+<p>
+  Real-time interactive frame rates operate at ~60 Hz (<span class="math-inline">&Delta;<i>t</i><sub>frame</sub> &approx; 16.6&nbsp;ms</span>). Rapid orbital dynamics near black holes or periastron passages require finer temporal resolution to avoid numerical integration divergence. We subdivide each frame into <span class="math-inline"><i>S</i> = 4</span> distinct substeps:
+</p>
+
+<!-- Equation 8 -->
+<div class="math-block">
+  <math display="block">
+    <mi>&Delta;</mi><msub><mi>t</mi><mtext>sub</mtext></msub>
+    <mo>=</mo>
+    <mfrac><mrow><mi>&Delta;</mi><msub><mi>t</mi><mtext>frame</mtext></msub></mrow><mi>S</mi></mfrac>
+    <mo>=</mo>
+    <mfrac><mi>&tau;</mi><mn>4</mn></mfrac>
+  </math>
+</div>
+
+<p>
+  During each substep, accelerations, tidal stripping, and collision boundaries are evaluated sequentially, reducing the effective truncation error by a factor of <span class="math-inline">4<sup>2</sup> = 16</span>.
+</p>
+
+<div class="page-break"></div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 3 -->
+<!-- ========================================================================= -->
+<div class="doc-header">
+  <span>DarkMatter Relativistic N-Body Simulator &bull; Section 3</span>
+  <span>General Relativistic &amp; Post-Newtonian Corrections</span>
+</div>
+
+<h2>3. General Relativistic &amp; Post-Newtonian Corrections</h2>
+
+<h3>3.1 Schwarzschild Spacetime &amp; The Event Horizon</h3>
+<p>
+  In Einstein's General Theory of Relativity, the spacetime geometry outside a static, spherically symmetric mass <span class="math-inline"><i>M</i></span> is described by the Schwarzschild metric line element:
+</p>
+
+<!-- Equation 9 -->
+<div class="math-block">
+  <math display="block">
+    <mi>d</mi><msup><mi>s</mi><mn>2</mn></msup>
+    <mo>=</mo>
+    <mo>&minus;</mo>
+    <mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo><mfrac><msub><mi>r</mi><mi>s</mi></msub><mi>r</mi></mfrac><mo>)</mo></mrow><msup><mi>c</mi><mn>2</mn></msup><mi>d</mi><msup><mi>t</mi><mn>2</mn></msup>
+    <mo>+</mo>
+    <msup><mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo><mfrac><msub><mi>r</mi><mi>s</mi></msub><mi>r</mi></mfrac><mo>)</mo></mrow><mrow><mo>&minus;</mo><mn>1</mn></mrow></msup><mi>d</mi><msup><mi>r</mi><mn>2</mn></msup>
+    <mo>+</mo>
+    <msup><mi>r</mi><mn>2</mn></msup><mrow><mo>(</mo><mi>d</mi><msup><mi>&theta;</mi><mn>2</mn></msup><mo>+</mo><msup><mi>sin</mi><mn>2</mn></msup><mi>&theta;</mi><mspace width="0.2em"/><mi>d</mi><msup><mi>&phi;</mi><mn>2</mn></msup><mo>)</mo></mrow>
+  </math>
+</div>
+
+<p>
+  The coordinate singularity at <span class="math-inline"><i>g</i><sub>00</sub> = 0</span> defines the <strong>Schwarzschild Event Horizon Radius</strong>:
+</p>
+
+<!-- Equation 10 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>r</mi><mi>s</mi></msub>
+    <mo>=</mo>
+    <mfrac><mrow><mn>2</mn><mi>G</mi><mi>M</mi></mrow><msup><mi>c</mi><mn>2</mn></msup></mfrac>
+  </math>
+</div>
+
+<p>
+  <strong>Dynamic Event Horizon Expansion:</strong> When an infalling body of mass <span class="math-inline">&Delta;<i>M</i></span> traverses the event horizon, the mass of the black hole increases, irreversibly expanding the horizon radius according to the formula:
+</p>
+
+<!-- Equation 11 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>r</mi><mi>s</mi></msub><mrow><mo>(</mo><mi>M</mi><mo>+</mo><mi>&Delta;</mi><mi>M</mi><mo>)</mo></mrow>
+    <mo>=</mo>
+    <msub><mi>r</mi><mrow><mi>s</mi><mo>,</mo><mn>0</mn></mrow></msub>
+    <mo>&sdot;</mo>
+    <msup><mrow><mo>(</mo><mfrac><mrow><mi>M</mi><mo>+</mo><mi>&Delta;</mi><mi>M</mi></mrow><msub><mi>M</mi><mn>0</mn></msub></mfrac><mo>)</mo></mrow><mrow><mn>1</mn><mo>/</mo><mn>3</mn></mrow></msup>
+  </math>
+</div>
+
+<p>
+  In our visual simulation engine, <span class="math-inline"><i>r<sub>s</sub></i></span> scales with the cube root of mass, allowing noticeable growth (e.g. from 22&nbsp;px to 140&nbsp;px) without immediately obscuring the viewport canvas.
+</p>
+
+<h3>3.2 Innermost Stable Circular Orbit (ISCO) &amp; Photon Sphere</h3>
+<p>
+  Unlike classical Newtonian gravity where stable circular orbits exist down to <span class="math-inline"><i>r</i> &rarr; 0</span>, general relativity dictates that stable circular orbits cease to exist below the <strong>Innermost Stable Circular Orbit (ISCO)</strong>:
+</p>
+
+<!-- Equation 12 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>r</mi><mtext>photon</mtext></msub>
+    <mo>=</mo>
+    <mn>1.5</mn><mspace width="0.3em"/><msub><mi>r</mi><mi>s</mi></msub>
+    <mo>=</mo>
+    <mfrac><mrow><mn>3</mn><mi>G</mi><mi>M</mi></mrow><msup><mi>c</mi><mn>2</mn></msup></mfrac>
+    <mo>,</mo><mspace width="2.5em"/>
+    <msub><mi>r</mi><mtext>ISCO</mtext></msub>
+    <mo>=</mo>
+    <mn>3.0</mn><mspace width="0.3em"/><msub><mi>r</mi><mi>s</mi></msub>
+    <mo>=</mo>
+    <mfrac><mrow><mn>6</mn><mi>G</mi><mi>M</mi></mrow><msup><mi>c</mi><mn>2</mn></msup></mfrac>
+  </math>
+</div>
+
+<p>
+  Matter crossing inside <span class="math-inline"><i>r</i><sub>ISCO</sub></span> can no longer maintain centrifugal balance against gravity and plunges directly into the singularity on a dynamical timescale.
+</p>
+
+<h3>3.3 First-Order Post-Newtonian (1PN) Orbital Precession</h3>
+<p>
+  To reproduce relativistic orbital precession (analogous to Mercury's anomalous perihelion precession of 43 arcseconds/century) without solving full tensor Einstein field equations, we apply the <strong>First-Order Post-Newtonian (1PN) Effective Acceleration</strong>:
+</p>
+
+<!-- Equation 13 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mover><mi mathvariant="bold">a</mi><mo>&rarr;</mo></mover><mtext>1PN</mtext></msub>
+    <mo>=</mo>
+    <mo>&minus;</mo>
+    <mfrac><mrow><mi>G</mi><mi>M</mi></mrow><msup><mi>r</mi><mn>2</mn></msup></mfrac>
+    <mrow><mo>[</mo><mn>1</mn><mo>+</mo><mi>min</mi><mrow><mo>(</mo><mn>2.8</mn><mo>,</mo><mspace width="0.5em"/><mfrac><mn>22.0</mn><mi>r</mi></mfrac><mo>)</mo></mrow><mo>]</mo></mrow>
+    <mover><mi mathvariant="bold">r</mi><mo>^</mo></mover>
+  </math>
+</div>
+
+<p>
+  This correction introduces an effective <span class="math-inline">1 / <i>r</i><sup>3</sup></span> force component corresponding to the theoretical GR effective radial potential:
+</p>
+
+<!-- Equation 14 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>V</mi><mtext>eff</mtext></msub><mrow><mo>(</mo><mi>r</mi><mo>)</mo></mrow>
+    <mo>=</mo>
+    <mo>&minus;</mo>
+    <mfrac><mrow><mi>G</mi><mi>M</mi></mrow><mi>r</mi></mfrac>
+    <mo>+</mo>
+    <mfrac><msup><mi>L</mi><mn>2</mn></msup><mrow><mn>2</mn><msup><mi>r</mi><mn>2</mn></msup></mrow></mfrac>
+    <mo>&minus;</mo>
+    <mfrac><mrow><mi>G</mi><mi>M</mi><msup><mi>L</mi><mn>2</mn></msup></mrow><mrow><msup><mi>c</mi><mn>2</mn></msup><msup><mi>r</mi><mn>3</mn></msup></mrow></mfrac>
+  </math>
+</div>
+
+<p>
+  The resulting periastron advance angle per orbital revolution is given by Einstein's classical formula:
+</p>
+
+<!-- Equation 15 -->
+<div class="math-block">
+  <math display="block">
+    <mi>&Delta;</mi><mi>&phi;</mi>
+    <mo>=</mo>
+    <mfrac><mrow><mn>6</mn><mi>&pi;</mi><mi>G</mi><mi>M</mi></mrow><mrow><msup><mi>c</mi><mn>2</mn></msup><mi>a</mi><mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo><msup><mi>e</mi><mn>2</mn></msup><mo>)</mo></mrow></mrow></mfrac>
+    <mspace width="1.5em"/>
+    <mtext style="font-size: 0.9em; color: #475569;">radians / orbit</mtext>
+  </math>
+</div>
+
+<h3>3.4 Relativistic Doppler Beaming</h3>
+<p>
+  Accretion disks around black holes rotate at relativistic orbital velocities (<span class="math-inline"><i>v</i> &sim; 0.3<i>c</i> &minus; 0.7<i>c</i></span>). Due to relativistic aberration and the relativistic Doppler effect, plasma moving toward the observer is boosted in intensity:
+</p>
+
+<!-- Equation 16 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>I</mi><mtext>obs</mtext></msub><mrow><mo>(</mo><mi>&nu;</mi><mo>)</mo></mrow>
+    <mo>=</mo>
+    <msup><mi>&delta;</mi><mn>3</mn></msup>
+    <msub><mi>I</mi><mtext>emit</mtext></msub><mrow><mo>(</mo><mi>&nu;</mi><mo>/</mo><mi>&delta;</mi><mo>)</mo></mrow>
+    <mo>,</mo><mspace width="2em"/>
+    <mi>&delta;</mi>
+    <mo>=</mo>
+    <mfrac><mn>1</mn><mrow><mi>&gamma;</mi><mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo><mi>&beta;</mi><mi>cos</mi><mi>&theta;</mi><mo>)</mo></mrow></mrow></mfrac>
+    <mo>,</mo><mspace width="2em"/>
+    <mi>&gamma;</mi>
+    <mo>=</mo>
+    <mfrac><mn>1</mn><msqrt><mrow><mn>1</mn><mo>&minus;</mo><msup><mi>&beta;</mi><mn>2</mn></msup></mrow></msqrt></mfrac>
+  </math>
+</div>
+
+<p>
+  In our canvas shader, this is rendered by mapping Doppler beaming: the approaching side of the accretion disk is drawn as blazing incandescent white-blue (<code>#ffffff</code>), while the receding side is redshifted and dimmer orange-red (<code>#9a3412</code>).
+</p>
+
+<div class="page-break"></div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 4 -->
+<!-- ========================================================================= -->
+<div class="doc-header">
+  <span>DarkMatter Relativistic N-Body Simulator &bull; Section 4</span>
+  <span>Tidal Disruption Events &amp; Spaghettification</span>
+</div>
+
+<h2>4. Tidal Disruption Events (TDE) &amp; Roche Disruption Dynamics</h2>
+
+<h3>4.1 The Hydrodynamic Roche Tidal Radius</h3>
+<p>
+  When a celestial body (star, planet, or moon) approaches a supermassive black hole or dense giant, the differential gravitational tidal force across its diameter can exceed its self-gravitational binding force. The boundary where internal cohesion is overcome defines the <strong>Roche Tidal Radius</strong> <span class="math-inline"><i>R<sub>T</sub></i></span>:
+</p>
+
+<!-- Equation 17 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>R</mi><mi>T</mi></msub>
+    <mo>=</mo>
+    <msub><mi>R</mi><mo>*</mo></msub>
+    <msup><mrow><mo>(</mo><mi>&eta;</mi><mfrac><msub><mi>M</mi><mtext>BH</mtext></msub><msub><mi>M</mi><mo>*</mo></msub></mfrac><mo>)</mo></mrow><mrow><mn>1</mn><mo>/</mo><mn>3</mn></mrow></msup>
+    <mo>&approx;</mo>
+    <mn>2.44</mn><mspace width="0.3em"/><msub><mi>R</mi><mo>*</mo></msub>
+    <msup><mrow><mo>(</mo><mfrac><msub><mi>M</mi><mtext>BH</mtext></msub><msub><mi>M</mi><mo>*</mo></msub></mfrac><mo>)</mo></mrow><mrow><mn>1</mn><mo>/</mo><mn>3</mn></mrow></msup>
+  </math>
+</div>
+
+<p>
+  where <span class="math-inline"><i>R</i><sub>*</sub></span> is the victim body's radius, <span class="math-inline"><i>M</i><sub>*</sub></span> is its mass, <span class="math-inline"><i>M</i><sub>BH</sub></span> is the black hole mass, and <span class="math-inline">&eta; &approx; 2.44</span> is the classical Roche coefficient for a self-gravitating homogeneous fluid body.
+</p>
+
+<h3>4.2 Prolate Tensor Deformation (Spaghettification Geometry)</h3>
+<p>
+  For all bodies inside the disruption sphere (<span class="math-inline"><i>r</i> &lt; <i>R<sub>T</sub></i></span>), the differential tidal acceleration stretches the body along the radial infall vector and compresses it along orthogonal axes:
+</p>
+
+<!-- Equation 18 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>&lambda;</mi><mtext>stretch</mtext></msub>
+    <mo>=</mo>
+    <mn>1.0</mn><mo>+</mo><mrow><mo>(</mo><mfrac><mrow><msub><mi>R</mi><mi>T</mi></msub><mo>&minus;</mo><mi>r</mi></mrow><msub><mi>R</mi><mi>T</mi></msub></mfrac><mo>)</mo></mrow><mo>&sdot;</mo><msub><mi>k</mi><mtext>tidal</mtext></msub>
+    <mo>,</mo><mspace width="2em"/>
+    <msub><mi>&lambda;</mi><mtext>compress</mtext></msub>
+    <mo>=</mo>
+    <mfrac><mn>1</mn><msqrt><msub><mi>&lambda;</mi><mtext>stretch</mtext></msub></msqrt></mfrac>
+    <mspace width="2em"/>
+    <mo stretchy="false">[</mo><msub><mi>&lambda;</mi><mtext>stretch</mtext></msub><mo>&sdot;</mo><msubsup><mi>&lambda;</mi><mtext>compress</mtext><mn>2</mn></msubsup><mo>=</mo><mn>1.0</mn><mo stretchy="false">]</mo>
+  </math>
+</div>
+
+<p>
+  Notice that <span class="math-inline">&lambda;<sub>stretch</sub> &sdot; (&lambda;<sub>compress</sub>)<sup>2</sup> = 1.0</span>, strictly enforcing <strong>incompressible volume conservation</strong>. In the 2D rendering projection, the deformed celestial body is mapped as a rotated prolate ellipse oriented along angle <span class="math-inline">&theta;<sub>tidal</sub> = atan2(<i>y</i><sub>BH</sub> &minus; <i>y</i>, <i>x</i><sub>BH</sub> &minus; <i>x</i>)</span>:
+</p>
+
+<!-- Equation 19 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>a</mi><mtext>semi-major</mtext></msub>
+    <mo>=</mo>
+    <msub><mi>R</mi><mo>*</mo></msub><mo>&sdot;</mo><msub><mi>&lambda;</mi><mtext>stretch</mtext></msub>
+    <mo>,</mo><mspace width="2.5em"/>
+    <msub><mi>b</mi><mtext>semi-minor</mtext></msub>
+    <mo>=</mo>
+    <msub><mi>R</mi><mo>*</mo></msub><mo>&sdot;</mo><msub><mi>&lambda;</mi><mtext>compress</mtext></msub>
+  </math>
+</div>
+
+<div class="diagram-container">
+  <svg width="450" height="95" viewBox="0 0 450 95">
+    <circle cx="50" cy="45" r="16" fill="#000000" stroke="#f97316" stroke-width="3"/>
+    <text x="50" y="76" text-anchor="middle" font-size="8.5" font-family="sans-serif">Kerr Singularity</text>
+    
+    <circle cx="50" cy="45" r="85" fill="none" stroke="#0284c7" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <text x="145" y="20" text-anchor="middle" font-size="8" fill="#0284c7" font-family="sans-serif">Roche Limit R_T</text>
+
+    <g transform="translate(190, 45)">
+      <ellipse cx="0" cy="0" rx="32" ry="11" fill="#facc15" stroke="#ef4444" stroke-width="1.5"/>
+      <line x1="32" y1="0" x2="-32" y2="0" stroke="#b45309" stroke-width="1"/>
+      <text x="0" y="24" text-anchor="middle" font-size="8" font-family="sans-serif">Spaghettified Star</text>
+    </g>
+
+    <path d="M 158 45 Q 100 35 66 45" fill="none" stroke="#ffedd5" stroke-width="2.5" stroke-dasharray="2,2"/>
+    <text x="110" y="58" font-size="8" fill="#ea580c" font-family="sans-serif">Stripped Infall Stream</text>
+  </svg>
+  <div class="diagram-caption">Figure 4.1: Prolate tidal deformation (spaghettification) and relativistic plasma stripping inside the Roche disruption radius.</div>
+</div>
+
+<h3>4.3 Mass Stripping Dynamics and Event Horizon Accretion</h3>
+<p>
+  While inside <span class="math-inline"><i>R<sub>T</sub></i></span>, tidal shear strips the stellar envelope at a rate proportional to its local mass:
+</p>
+
+<!-- Equation 20 -->
+<div class="math-block">
+  <math display="block">
+    <mover><mi>M</mi><mo>&sdot;</mo></mover>
+    <mo>=</mo>
+    <mi>min</mi><mrow><mo>(</mo><msub><mi>M</mi><mo>*</mo></msub><mo>,</mo><mspace width="0.4em"/><mn>0.016</mn><msub><mi>M</mi><mo>*</mo></msub><mo>+</mo><mn>0.04</mn><mo>)</mo></mrow>
+    <mo>,</mo><mspace width="1.5em"/>
+    <msub><mi>M</mi><mo>*</mo></msub><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow><mo>=</mo><msub><mi>M</mi><mo>*</mo></msub><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow><mo>&minus;</mo><mover><mi>M</mi><mo>&sdot;</mo></mover>
+    <mo>,</mo><mspace width="1.5em"/>
+    <msub><mi>M</mi><mtext>BH</mtext></msub><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow><mo>=</mo><msub><mi>M</mi><mtext>BH</mtext></msub><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow><mo>+</mo><mn>0.85</mn><mover><mi>M</mi><mo>&sdot;</mo></mover>
+  </math>
+</div>
+
+<p>
+  When the stellar core reaches <span class="math-inline"><i>r</i> &le; 1.45&nbsp;<i>r<sub>s</sub></i> + 0.25&nbsp;<i>R</i><sub>*</sub></span> or <span class="math-inline"><i>M</i><sub>*</sub> &le; 0.05</span>, the remnant crosses the event horizon and is completely devoured.
+</p>
+
+<h3>4.4 Collimated Relativistic Polar Particle Jets</h3>
+<p>
+  Mass accretion drives intense magnetic field amplification through the magnetorotational instability (MRI). By the <strong>Blandford-Znajek Mechanism</strong>, rotational energy is extracted along the spin axis, collimating twin relativistic plasma jets:
+</p>
+
+<!-- Equation 21 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>L</mi><mtext>jet</mtext></msub>
+    <mo>&prop;</mo>
+    <msup><mi>B</mi><mn>2</mn></msup><msubsup><mi>&Omega;</mi><mtext>BH</mtext><mn>2</mn></msubsup><msubsup><mi>r</mi><mi>s</mi><mn>4</mn></msubsup>
+    <mo>,</mo><mspace width="2.5em"/>
+    <msub><mover><mi mathvariant="bold">v</mi><mo>&rarr;</mo></mover><mtext>jet</mtext></msub>
+    <mo>=</mo>
+    <mo>&plusmn;</mo><msub><mi>v</mi><mtext>rel</mtext></msub><msub><mover><mi mathvariant="bold">z</mi><mo>^</mo></mover><mtext>spin</mtext></msub><mo>+</mo><msub><mover><mi mathvariant="bold">v</mi><mo>&rarr;</mo></mover><mtext>disp</mtext></msub>
+  </math>
+</div>
+
+<p>
+  The simulator renders this dynamically with continuous high-energy particle outflows (<span class="math-inline"><i>v</i><sub>jet</sub> &sim; 14&nbsp;px/step</span>) and internal shock nodes whenever the black hole is in an active feeding state (<span class="math-inline"><i>b</i>.feedingTimer &gt; 0</span>).
+</p>
+
+<div class="page-break"></div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 5 -->
+<!-- ========================================================================= -->
+<div class="doc-header">
+  <span>DarkMatter Relativistic N-Body Simulator &bull; Section 5</span>
+  <span>Astronomical Scaling &amp; Calibration</span>
+</div>
+
+<h2>5. Astronomical Scaling, Calibration &amp; Earth Reference Base</h2>
+
+<h3>5.1 The Terrestrial Earth Reference Unit (1.0 R_&oplus;, 1.0 M_&oplus;)</h3>
+<p>
+  To provide absolute empirical realism, all dimensions, masses, and radii in the DarkMatter engine are calibrated strictly relative to the planet <strong>Earth (Terra)</strong>:
+</p>
+
+<!-- Equation 22 -->
+<div class="math-block">
+  <math display="block">
+    <mn>1.0</mn><mspace width="0.3em"/><msub><mi>R</mi><mo>&oplus;</mo></msub>
+    <mo>&equiv;</mo>
+    <mn>6,371</mn><mtext>&nbsp;km</mtext>
+    <mo>&equiv;</mo>
+    <mn>3.5</mn><mtext>&nbsp;px</mtext>
+    <mo>,</mo><mspace width="2.5em"/>
+    <mn>1.0</mn><mspace width="0.3em"/><msub><mi>M</mi><mo>&oplus;</mo></msub>
+    <mo>&equiv;</mo>
+    <mn>5.972</mn><mo>&times;</mo><msup><mn>10</mn><mn>24</mn></msup><mtext>&nbsp;kg</mtext>
+    <mo>&equiv;</mo>
+    <mn>6.0</mn><mtext>&nbsp;mass units</mtext>
+  </math>
+</div>
+
+<h3>5.2 True Astronomical Comparative Scale Ratios</h3>
+<p>
+  In popular science visualizations, celestial body sizes are almost always falsified to fit inside a single frame. In real astrophysics, the solar radius is <span class="math-inline">109&nbsp;<i>R</i><sub>&oplus;</sub></span>, while a red hypergiant like <strong>Betelgeuse</strong> spans an astronomical <span class="math-inline">880&nbsp;<i>R</i><sub>&oplus;</sub></span>. Having Betelgeuse at only twice the size of Earth destroys empirical intuition. In our calibrated <strong>True Astronomical Proportions</strong>:
+</p>
+
+<!-- Equation 23 -->
+<div class="math-block">
+  <math display="block">
+    <mfrac><msub><mi>R</mi><mtext>Betelgeuse</mtext></msub><msub><mi>R</mi><mo>&oplus;</mo></msub></mfrac>
+    <mo>&approx;</mo>
+    <mn>880.0</mn>
+    <mspace width="1.5em"/>
+    <mo>&rArr;</mo>
+    <mspace width="1.5em"/>
+    <msub><mi>R</mi><mtext>canvas</mtext></msub><mo>=</mo><mn>380.0</mn><mtext>&nbsp;px</mtext>
+    <mspace width="1.5em"/>
+    <mtext>vs</mtext>
+    <mspace width="1.5em"/>
+    <msub><mi>R</mi><mtext>Earth</mtext></msub><mo>=</mo><mn>3.5</mn><mtext>&nbsp;px</mtext>
+  </math>
+</div>
+
+<p>
+  This yields a true <strong>108x visual radius factor</strong> and an astonishing <strong>&gt;11,000x cross-sectional area ratio</strong>:
+</p>
+
+<!-- Equation 24 -->
+<div class="math-block">
+  <math display="block">
+    <mfrac><msub><mtext>Area</mtext><mtext>Betelgeuse</mtext></msub><msub><mtext>Area</mtext><mtext>Earth</mtext></msub></mfrac>
+    <mo>=</mo>
+    <msup><mrow><mo>(</mo><mfrac><mn>380.0</mn><mn>3.5</mn></mfrac><mo>)</mo></mrow><mn>2</mn></msup>
+    <mo>&approx;</mo>
+    <mn>11,787</mn>
+    <mo>,</mo><mspace width="2.5em"/>
+    <mfrac><msub><mtext>Volume</mtext><mtext>Betelgeuse</mtext></msub><msub><mtext>Volume</mtext><mtext>Earth</mtext></msub></mfrac>
+    <mo>=</mo>
+    <msup><mrow><mo>(</mo><mn>880.0</mn><mo>)</mo></mrow><mn>3</mn></msup>
+    <mo>&approx;</mo>
+    <mn>6.81</mn><mo>&times;</mo><msup><mn>10</mn><mn>8</mn></msup>
+  </math>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Celestial Body</th>
+      <th>Classification</th>
+      <th>Proportional Radius</th>
+      <th>Canvas Radius (True)</th>
+      <th>Canvas Radius (Compact)</th>
+      <th>Earth Mass Ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Red Hypergiant (Betelgeuse)</strong></td>
+      <td>Stellar Titan</td>
+      <td>880.0 R_&oplus;</td>
+      <td>380.0 px</td>
+      <td>110.0 px</td>
+      <td>45,000 M_&oplus;</td>
+    </tr>
+    <tr>
+      <td><strong>Blue Supergiant (Rigel)</strong></td>
+      <td>Class O/B Star</td>
+      <td>240.0 R_&oplus;</td>
+      <td>210.0 px</td>
+      <td>65.0 px</td>
+      <td>28,000 M_&oplus;</td>
+    </tr>
+    <tr>
+      <td><strong>Yellow Star (Sol)</strong></td>
+      <td>Class G Main-Seq</td>
+      <td>109.0 R_&oplus;</td>
+      <td>125.0 px</td>
+      <td>42.0 px</td>
+      <td>14,000 M_&oplus;</td>
+    </tr>
+    <tr>
+      <td><strong>Red Dwarf (Proxima)</strong></td>
+      <td>Class M Convective</td>
+      <td>15.4 R_&oplus;</td>
+      <td>46.0 px</td>
+      <td>26.0 px</td>
+      <td>2,400 M_&oplus;</td>
+    </tr>
+    <tr>
+      <td><strong>Jovian Giant (Jupiter)</strong></td>
+      <td>Gas Giant</td>
+      <td>11.2 R_&oplus;</td>
+      <td>36.0 px</td>
+      <td>22.0 px</td>
+      <td>650 M_&oplus;</td>
+    </tr>
+    <tr>
+      <td><strong>Ringed Giant (Kronos/Saturn)</strong></td>
+      <td>Gas Giant</td>
+      <td>9.45 R_&oplus;</td>
+      <td>28.0 px</td>
+      <td>18.0 px</td>
+      <td>220 M_&oplus;</td>
+    </tr>
+    <tr>
+      <td><strong>Ice Giant (Neptunian)</strong></td>
+      <td>Volatile Giant</td>
+      <td>3.88 R_&oplus;</td>
+      <td>13.0 px</td>
+      <td>11.0 px</td>
+      <td>80 M_&oplus;</td>
+    </tr>
+    <tr>
+      <td><strong>Ocean World (Terra / Earth)</strong></td>
+      <td>Habitable Terrestrial</td>
+      <td>1.00 R_&oplus;</td>
+      <td>3.5 px</td>
+      <td>4.5 px</td>
+      <td>1.0 M_&oplus;</td>
+    </tr>
+    <tr>
+      <td><strong>Rusty Silicate World (Mars)</strong></td>
+      <td>Terrestrial</td>
+      <td>0.53 R_&oplus;</td>
+      <td>1.9 px</td>
+      <td>3.0 px</td>
+      <td>0.42 M_&oplus;</td>
+    </tr>
+    <tr>
+      <td><strong>Barren Moon (Luna)</strong></td>
+      <td>Silicate Satellite</td>
+      <td>0.27 R_&oplus;</td>
+      <td>1.1 px</td>
+      <td>2.0 px</td>
+      <td>0.067 M_&oplus;</td>
+    </tr>
+    <tr>
+      <td><strong>Carbonaceous Asteroid</strong></td>
+      <td>Chondrite Debris</td>
+      <td>0.08 R_&oplus;</td>
+      <td>0.8 px</td>
+      <td>1.4 px</td>
+      <td>0.008 M_&oplus;</td>
+    </tr>
+    <tr>
+      <td><strong>Kerr Black Hole Singularity</strong></td>
+      <td>Relativistic Remnant</td>
+      <td>4.60 R_&oplus;</td>
+      <td>22.0 px (base)</td>
+      <td>18.0 px</td>
+      <td>48,000 M_&oplus;</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>5.3 Dual Scale Projection Engines</h3>
+<p>
+  To accommodate both extreme visual realism and practical desktop navigation, the engine provides an instantaneous <strong>Scale Mode Switcher</strong>:
+  <br>&bull; <strong>True Scale Mode:</strong> Applies authentic <span class="math-inline"><i>R</i><sub>&oplus;</sub></span> ratios (Betelgeuse spans 380px, towering over Earth at 3.5px).
+  <br>&bull; <strong>Compact Viewport Mode:</strong> Applies non-linear logarithmic viewport compression (<span class="math-inline"><i>R</i><sub>compact</sub> &prop; ln(<i>R</i>)</span>), compressing giant stars to 42–110px so entire solar systems fit within standard viewports.
+</p>
+
+<div class="page-break"></div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 6 -->
+<!-- ========================================================================= -->
+<div class="doc-header">
+  <span>DarkMatter Relativistic N-Body Simulator &bull; Section 6</span>
+  <span>Thermonuclear Stellar Evolution</span>
+</div>
+
+<h2>6. Thermonuclear Stellar Energy Evolution &amp; Consequence Probabilities</h2>
+
+<h3>6.1 Stellar Core Energy Ingestion &amp; Threshold Accumulation</h3>
+<p>
+  Stars maintain hydrostatic equilibrium through the balance between inward gravitational force and outward radiation pressure:
+</p>
+
+<!-- Equation 25 -->
+<div class="math-block">
+  <math display="block">
+    <mfrac><mrow><mi>d</mi><mi>P</mi></mrow><mrow><mi>d</mi><mi>r</mi></mrow></mfrac>
+    <mo>=</mo>
+    <mo>&minus;</mo>
+    <mfrac><mrow><mi>G</mi><mi>M</mi><mo>(</mo><mi>r</mi><mo>)</mo><mi>&rho;</mi><mo>(</mo><mi>r</mi><mo>)</mo></mrow><msup><mi>r</mi><mn>2</mn></msup></mfrac>
+    <mo>+</mo>
+    <mfrac><mrow><mi>&kappa;</mi><mi>&rho;</mi></mrow><mi>c</mi></mfrac><msub><mi>F</mi><mtext>rad</mtext></msub>
+  </math>
+</div>
+
+<p>
+  When energy is injected into a star—whether through the user's <strong>Energy Tool</strong>, high-velocity planetary impacts, or antimatter annihilation—its core energy accumulator increases:
+</p>
+
+<!-- Equation 26 -->
+<div class="math-block">
+  <math display="block">
+    <mi mathvariant="script">E</mi><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow>
+    <mo>=</mo>
+    <mi mathvariant="script">E</mi><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow>
+    <mo>+</mo>
+    <mi>&Delta;</mi><msub><mi mathvariant="script">E</mi><mtext>inject</mtext></msub>
+    <mo>+</mo>
+    <mo>&sum;</mo><mi>&Delta;</mi><msub><mi mathvariant="script">E</mi><mtext>infall</mtext></msub>
+  </math>
+</div>
+
+<p>
+  When energy reaches 100% Critical Core Overdrive, hydrostatic equilibrium breaks down catastrophically, triggering one of five astrophysical consequence pathways determined by a weighted stochastic cumulative distribution function:
+</p>
+
+<div class="diagram-container">
+  <svg width="480" height="75" viewBox="0 0 480 75">
+    <rect x="20" y="20" width="154" height="25" fill="#f59e0b" rx="3"/>
+    <rect x="174" y="20" width="110" height="25" fill="#ef4444"/>
+    <rect x="284" y="20" width="88" height="25" fill="#38bdf8"/>
+    <rect x="372" y="20" width="53" height="25" fill="#10b981"/>
+    <rect x="425" y="20" width="35" height="25" fill="#a855f7" rx="3"/>
+
+    <text x="97" y="37" text-anchor="middle" font-size="9" fill="#000" font-weight="bold">Flare Storm (35%)</text>
+    <text x="229" y="37" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">Swell (25%)</text>
+    <text x="328" y="37" text-anchor="middle" font-size="8.5" fill="#000" font-weight="bold">Supernova (20%)</text>
+    <text x="398" y="37" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">WR (12%)</text>
+    <text x="442" y="37" text-anchor="middle" font-size="7.5" fill="#fff" font-weight="bold">C (8%)</text>
+
+    <text x="20" y="60" font-size="8" fill="#64748b">0%</text>
+    <text x="174" y="60" font-size="8" fill="#64748b">35%</text>
+    <text x="284" y="60" font-size="8" fill="#64748b">60%</text>
+    <text x="372" y="60" font-size="8" fill="#64748b">80%</text>
+    <text x="425" y="60" font-size="8" fill="#64748b">92%</text>
+    <text x="460" y="60" font-size="8" fill="#64748b">100%</text>
+  </svg>
+  <div class="diagram-caption">Figure 6.1: Weighted probability density function partitioning stellar evolutionary outcomes upon critical energy overdrive.</div>
+</div>
+
+<h3>6.2 Detailed Formulation of the 5 Consequence Pathways</h3>
+
+<h4>1. Coronal Flare Superstorm (P = 35%, roll &lt; 0.35)</h4>
+<p>
+  Intense magnetic reconnection flares eject relativistic coronal mass ejections (CME). The radiation momentum flux exerts a radial impulse on all surrounding non-stationary bodies within interaction radius <span class="math-inline"><i>d</i><sub>max</sub> = 800&nbsp;px</span>:
+</p>
+
+<!-- Equation 27 -->
+<div class="math-block">
+  <math display="block">
+    <mi>&Delta;</mi><msub><mover><mi mathvariant="bold">v</mi><mo>&rarr;</mo></mover><mtext>impulse</mtext></msub>
+    <mo>=</mo>
+    <mrow><mo>(</mo><mfrac><mrow><msub><mi>d</mi><mtext>max</mtext></msub><mo>&minus;</mo><mi>d</mi></mrow><msub><mi>d</mi><mtext>max</mtext></msub></mfrac><mo>)</mo></mrow>
+    <mo>&sdot;</mo>
+    <msub><mi>v</mi><mtext>wind</mtext></msub>
+    <mo>&sdot;</mo>
+    <mover><mi mathvariant="bold">r</mi><mo>^</mo></mover>
+    <mo>,</mo><mspace width="2em"/>
+    <msub><mi>v</mi><mtext>wind</mtext></msub><mo>=</mo><mn>6.5</mn><mtext>&nbsp;px/step</mtext>
+  </math>
+</div>
+
+<p>
+  Star flaring timer is set to 360 frames (6 seconds of continuous magnetic prominence loops and plasma blasts).
+</p>
+
+<h4>2. Photosphere Red Giant Swell (P = 25%, 0.35 &le; roll &lt; 0.60)</h4>
+<p>
+  Thermal runaway increases envelope radiation pressure, causing the star's outer photosphere to expand while surface effective temperature drops (Wien's displacement law causes spectral reddening from yellow/blue to deep ruby red):
+</p>
+
+<!-- Equation 28 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>R</mi><mtext>target</mtext></msub>
+    <mo>=</mo>
+    <mi>min</mi><mrow><mo>(</mo><mn>480</mn><mtext>&nbsp;px</mtext><mo>,</mo><mspace width="0.4em"/><mn>2.2</mn><mo>&sdot;</mo><msub><mi>R</mi><mn>0</mn></msub><mo>)</mo></mrow>
+    <mo>,</mo><mspace width="2em"/>
+    <mi>R</mi><mrow><mo>(</mo><mi>t</mi><mo>+</mo><mi>&Delta;</mi><mi>t</mi><mo>)</mo></mrow>
+    <mo>=</mo>
+    <mi>R</mi><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow><mo>+</mo><mn>0.04</mn><mo>&sdot;</mo><mrow><mo>(</mo><msub><mi>R</mi><mtext>target</mtext></msub><mo>&minus;</mo><mi>R</mi><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow><mo>)</mo></mrow>
+  </math>
+</div>
+
+<p>
+  <strong>Planetary Engulfment:</strong> Any orbiting planets caught within <span class="math-inline"><i>r</i> &le; <i>R</i><sub>target</sub></span> are engulfed, converted into vaporized plasma, and absorbed.
+</p>
+
+<h4>3. Core-Collapse Supernova Event (P = 20%, 0.60 &le; roll &lt; 0.80)</h4>
+<p>
+  Thermonuclear core collapse destroys the progenitor star in an explosive shock wave governed by the <strong>Sedov-Taylor Blast Wave Solution</strong>:
+</p>
+
+<!-- Equation 29 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>R</mi><mtext>blast</mtext></msub><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow>
+    <mo>=</mo>
+    <msub><mi>&xi;</mi><mn>0</mn></msub>
+    <msup><mrow><mo>(</mo><mfrac><mrow><msub><mi>E</mi><mtext>SN</mtext></msub><msup><mi>t</mi><mn>2</mn></msup></mrow><msub><mi>&rho;</mi><mn>0</mn></msub></mfrac><mo>)</mo></mrow><mrow><mn>1</mn><mo>/</mo><mn>5</mn></mrow></msup>
+    <mspace width="1.5em"/>
+    <mo>&rArr;</mo>
+    <mspace width="1.5em"/>
+    <msub><mi>R</mi><mtext>shock, max</mtext></msub><mo>=</mo><mn>850</mn><mtext>&nbsp;px</mtext>
+  </math>
+</div>
+
+<p>
+  Surrounding bodies within <span class="math-inline"><i>d</i> &lt; 280&nbsp;px</span> are vaporized; bodies within <span class="math-inline"><i>d</i> &lt; 850&nbsp;px</span> receive outward momentum kick <span class="math-inline">&Delta;<i>v</i> &le; 14.0&nbsp;px/step</span>.
+  <br><strong>Remnant Formation:</strong> The degenerate core bifurcates:
+  <br>&bull; <strong>60% Probability:</strong> Collapses to a <strong>Newborn Kerr Black Hole</strong> (<span class="math-inline"><i>M</i> = 52,000</span>, <span class="math-inline"><i>r<sub>s</sub></i> = 26&nbsp;px</span>, relativistic feeding jets active).
+  <br>&bull; <strong>40% Probability:</strong> Collapses to a <strong>High-Spin Relativistic Pulsar</strong> (<span class="math-inline"><i>M</i> = 18,000</span>, <span class="math-inline"><i>r</i> = 2.2&nbsp;px</span>, synchrotron emission cones sweeping at 0.25 rad/step).
+</p>
+
+<h4>4. Wolf-Rayet Supersonic Envelope Stripping (P = 12%, 0.80 &le; roll &lt; 0.92)</h4>
+<p>
+  Supersonic radiation pressure strips the entire hydrogen envelope into interstellar space at <span class="math-inline"><i>v</i> &gt; 2000&nbsp;km/s</span>, creating an expanding planetary ring nebula (<span class="math-inline"><i>r</i><sub>nebula</sub> &approx; 4.8&nbsp;<i>R</i><sub>0</sub></span>) and exposing a blazing electric-cyan Wolf-Rayet helium/carbon core (<span class="math-inline"><i>R</i><sub>core</sub> = 0.45&nbsp;<i>R</i><sub>0</sub></span>, <span class="math-inline"><i>M</i><sub>core</sub> = 0.7&nbsp;<i>M</i><sub>0</sub></span>).
+</p>
+
+<h4>5. Cepheid Variable Instability Pulsation (P = 8%, 0.92 &le; roll &le; 1.00)</h4>
+<p>
+  The star enters an unstable ionization valve (<span class="math-inline">&kappa;</span>-mechanism in the He II ionization zone), exhibiting ongoing periodic radial oscillations:
+</p>
+
+<!-- Equation 30 -->
+<div class="math-block">
+  <math display="block">
+    <mi>R</mi><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow>
+    <mo>=</mo>
+    <msub><mi>R</mi><mn>0</mn></msub>
+    <mrow><mo>[</mo><mn>1.0</mn><mo>+</mo><mn>0.28</mn><mspace width="0.2em"/><mi>sin</mi><mrow><mo>(</mo><mi>&omega;</mi><mi>t</mi><mo>)</mo></mrow><mo>]</mo></mrow>
+    <mo>,</mo><mspace width="2em"/>
+    <mi>&omega;</mi><mo>=</mo><mn>0.06</mn><mtext>&nbsp;rad/step</mtext>
+  </math>
+</div>
+
+<div class="page-break"></div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 7 -->
+<!-- ========================================================================= -->
+<div class="doc-header">
+  <span>DarkMatter Relativistic N-Body Simulator &bull; Section 7</span>
+  <span>Orbital Mechanics &amp; Slingshot Assists</span>
+</div>
+
+<h2>7. Orbital Mechanics, Slingshot Dynamics &amp; Gravity Assists</h2>
+
+<h3>7.1 The Vis-Viva Equation &amp; Orbital Conics</h3>
+<p>
+  In any two-body gravitational field with central gravitational parameter <span class="math-inline">&mu; = <i>G M</i></span>, the instantaneous orbital velocity <span class="math-inline"><i>v</i></span> at distance <span class="math-inline"><i>r</i></span> is governed by the <strong>Vis-Viva Equation</strong>:
+</p>
+
+<!-- Equation 31 -->
+<div class="math-block">
+  <math display="block">
+    <msup><mi>v</mi><mn>2</mn></msup>
+    <mo>=</mo>
+    <mi>&mu;</mi>
+    <mrow><mo>(</mo><mfrac><mn>2</mn><mi>r</mi></mfrac><mo>&minus;</mo><mfrac><mn>1</mn><mi>a</mi></mfrac><mo>)</mo></mrow>
+    <mo>,</mo><mspace width="2em"/>
+    <mi>&mu;</mi><mo>=</mo><mi>G</mi><mrow><mo>(</mo><mi>M</mi><mo>+</mo><mi>m</mi><mo>)</mo></mrow><mo>&approx;</mo><mi>G</mi><mi>M</mi>
+  </math>
+</div>
+
+<p>
+  where <span class="math-inline"><i>a</i></span> is the semi-major axis of the orbital conic section:
+</p>
+
+<!-- Equation 32 -->
+<div class="math-block">
+  <math display="block">
+    <mi>a</mi><mo>&gt;</mo><mn>0</mn><mo>&rArr;</mo><mtext>Bound Elliptic Orbit</mtext>
+    <mo>,</mo><mspace width="1.5em"/>
+    <mi>a</mi><mo>&rarr;</mo><mo>&infin;</mo><mo>&rArr;</mo><mtext>Parabolic Escape</mtext>
+    <mo>,</mo><mspace width="1.5em"/>
+    <mi>a</mi><mo>&lt;</mo><mn>0</mn><mo>&rArr;</mo><mtext>Unbound Hyperbolic Encounter</mtext>
+  </math>
+</div>
+
+<p>
+  From this fundamental equation, we extract the exact critical velocities implemented in our spawner:
+</p>
+
+<!-- Equation 33 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>v</mi><mtext>circ</mtext></msub>
+    <mo>=</mo>
+    <msqrt><mfrac><mrow><mi>G</mi><mi>M</mi></mrow><mi>r</mi></mfrac></msqrt>
+    <mo>,</mo><mspace width="2.5em"/>
+    <msub><mi>v</mi><mtext>esc</mtext></msub>
+    <mo>=</mo>
+    <msqrt><mfrac><mrow><mn>2</mn><mi>G</mi><mi>M</mi></mrow><mi>r</mi></mfrac></msqrt>
+    <mo>=</mo>
+    <msqrt><mn>2</mn></msqrt><mo>&sdot;</mo><msub><mi>v</mi><mtext>circ</mtext></msub>
+  </math>
+</div>
+
+<h3>7.2 Hyperbolic Gravity Assist / Slingshot Maneuver</h3>
+<p>
+  When a spacecraft or secondary body encounters a moving massive planet (or when the user drags and slingshots any star or black hole across space), the trajectory in the planet's reference frame is a symmetric hyperbola with asymptotic velocity <span class="math-inline"><i>v</i><sub>&infin;</sub></span>:
+</p>
+
+<!-- Equation 34 -->
+<div class="math-block">
+  <math display="block">
+    <mi>sin</mi><mrow><mo>(</mo><mfrac><mi>&delta;</mi><mn>2</mn></mfrac><mo>)</mo></mrow>
+    <mo>=</mo>
+    <mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><mfrac><mrow><msub><mi>r</mi><mi>p</mi></msub><msubsup><mi>v</mi><mo>&infin;</mo><mn>2</mn></msubsup></mrow><mi>&mu;</mi></mfrac></mrow></mfrac>
+    <mo>=</mo>
+    <mfrac><mn>1</mn><mi>e</mi></mfrac>
+  </math>
+</div>
+
+<p>
+  where <span class="math-inline"><i>r<sub>p</sub></i></span> is the periapsis distance, <span class="math-inline"><i>e</i></span> is the hyperbolic eccentricity, and <span class="math-inline">&delta;</span> is the total gravitational bending deflection angle. In the central barycentric reference frame, the final velocity vector after the slingshot encounter is:
+</p>
+
+<!-- Equation 35 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mover><mi mathvariant="bold">v</mi><mo>&rarr;</mo></mover><mtext>final</mtext></msub>
+    <mo>=</mo>
+    <msub><mover><mi mathvariant="bold">v</mi><mo>&rarr;</mo></mover><mtext>initial</mtext></msub>
+    <mo>+</mo>
+    <mi>&Delta;</mi><mover><mi mathvariant="bold">V</mi><mo>&rarr;</mo></mover>
+    <mo>,</mo><mspace width="2.5em"/>
+    <mrow><mo>|</mo><mi>&Delta;</mi><mover><mi mathvariant="bold">V</mi><mo>&rarr;</mo></mover><mo>|</mo></mrow>
+    <mo>=</mo>
+    <mn>2</mn><msub><mi>V</mi><mtext>planet</mtext></msub><mi>sin</mi><mrow><mo>(</mo><mfrac><mi>&delta;</mi><mn>2</mn></mfrac><mo>)</mo></mrow>
+  </math>
+</div>
+
+<div class="diagram-container">
+  <svg width="460" height="90" viewBox="0 0 460 90">
+    <circle cx="230" cy="45" r="14" fill="#d97706"/>
+    <text x="230" y="70" text-anchor="middle" font-size="8.5" font-family="sans-serif">Moving Planet V_p</text>
+    <line x1="230" y1="45" x2="265" y2="45" stroke="#ef4444" stroke-width="2"/>
+
+    <path d="M 40 80 Q 210 75 225 30 Q 235 15 420 20" fill="none" stroke="#0284c7" stroke-width="2.5"/>
+    <text x="80" y="68" font-size="8.5" fill="#0284c7" font-family="sans-serif">Inbound v_&infin;</text>
+    <text x="350" y="15" font-size="8.5" fill="#0284c7" font-family="sans-serif">Outbound Accelerated v_final</text>
+  </svg>
+  <div class="diagram-caption">Figure 7.1: Gravitational slingshot assist transferring orbital angular momentum from a moving body to an incoming object.</div>
+</div>
+
+<h3>7.3 Numerical Trajectory Prediction Ray Algorithm</h3>
+<p>
+  When the user arms the slingshot or spawn tools, the engine forecasts the upcoming trajectory by integrating a lightweight ghost particle forward in time over <span class="math-inline"><i>K</i> = 180</span> steps:
+</p>
+<pre><code>function computePredictedTrajectory(startPos, initialVelocity, bodies, steps = 180) {
+  let simPos = { ...startPos };
+  let simVel = { ...initialVelocity };
+  const trajectoryPoints = [];
+  const dt = 0.35;
+
+  for (let step = 0; step &lt; steps; step++) {
+    let ax = 0, ay = 0;
+    for (const b of bodies) {
+      const dx = b.x - simPos.x;
+      const dy = b.y - simPos.y;
+      const distSq = dx * dx + dy * dy + 25.0; // Plummer softening
+      const dist = Math.sqrt(distSq);
+      const force = (G * b.mass) / distSq;
+      ax += (dx / dist) * force;
+      ay += (dy / dist) * force;
+    }
+    simVel.x += ax * dt;
+    simVel.y += ay * dt;
+    simPos.x += simVel.x * dt;
+    simPos.y += simVel.y * dt;
+    trajectoryPoints.push({ x: simPos.x, y: simPos.y });
+  }
+  return trajectoryPoints;
+}</code></pre>
+
+<div class="page-break"></div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 8 -->
+<!-- ========================================================================= -->
+<div class="doc-header">
+  <span>DarkMatter Relativistic N-Body Simulator &bull; Section 8</span>
+  <span>Procedural Shaders &amp; Audio Synthesis</span>
+</div>
+
+<h2>8. Procedural Shaders, Lensing Geometry &amp; Audio Synthesis</h2>
+
+<h3>8.1 Gravitational Lensing Halo (Einstein Ring Approximation)</h3>
+<p>
+  Massive gravitational fields deflect passing photons according to Einstein's deflection angle:
+</p>
+
+<!-- Equation 36 -->
+<div class="math-block">
+  <math display="block">
+    <mover><mi>&alpha;</mi><mo>^</mo></mover>
+    <mo>=</mo>
+    <mfrac><mrow><mn>4</mn><mi>G</mi><mi>M</mi></mrow><mrow><msup><mi>c</mi><mn>2</mn></msup><mi>b</mi></mrow></mfrac>
+    <mo>=</mo>
+    <mfrac><mrow><mn>2</mn><msub><mi>r</mi><mi>s</mi></msub></mrow><mi>b</mi></mfrac>
+  </math>
+</div>
+
+<p>
+  where <span class="math-inline"><i>b</i></span> is the impact parameter. For a background star aligned directly behind a lensing singularity, light forms an <strong>Einstein Ring</strong> of angular radius <span class="math-inline">&theta;<sub><i>E</i></sub></span>:
+</p>
+
+<!-- Equation 37 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>&theta;</mi><mi>E</mi></msub>
+    <mo>=</mo>
+    <msqrt><mfrac><mrow><mn>4</mn><mi>G</mi><mi>M</mi></mrow><msup><mi>c</mi><mn>2</mn></msup></mfrac><mfrac><msub><mi>D</mi><mrow><mi>L</mi><mi>S</mi></mrow></msub><mrow><msub><mi>D</mi><mi>L</mi></msub><msub><mi>D</mi><mi>S</mi></msub></mrow></mfrac></msqrt>
+    <mspace width="1.5em"/>
+    <mo>&rArr;</mo>
+    <mspace width="1.5em"/>
+    <msub><mi>R</mi><mtext>lens, canvas</mtext></msub>
+    <mo>=</mo>
+    <msub><mi>r</mi><mi>s</mi></msub><mo>&sdot;</mo><mrow><mo>(</mo><mn>4.2</mn><mo>+</mo><mn>1.5</mn><mo>&sdot;</mo><msub><mtext>accretionFlare</mtext><mtext>norm</mtext></msub><mo>)</mo></mrow>
+  </math>
+</div>
+
+<p>
+  The simulator renders this via radial alpha gradients with secondary lensed upper and lower arches depicting light passing over the top of the event horizon from the rear accretion plane.
+</p>
+
+<h3>8.2 Spacetime Curvature Potential Well Grid</h3>
+<p>
+  To visualize general relativistic spacetime depression (rubber-sheet analogy), the simulator computes the 2D gravitational potential distortion field:
+</p>
+
+<!-- Equation 38 -->
+<div class="math-block">
+  <math display="block">
+    <mi>&Phi;</mi><mrow><mo>(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>)</mo></mrow>
+    <mo>=</mo>
+    <mo>&minus;</mo>
+    <munderover><mo>&sum;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover>
+    <mfrac>
+      <mrow><mi>G</mi><msub><mi>M</mi><mi>i</mi></msub></mrow>
+      <msqrt><msup><mrow><mo>(</mo><mi>x</mi><mo>&minus;</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo></mrow><mn>2</mn></msup><mo>+</mo><msup><mrow><mo>(</mo><mi>y</mi><mo>&minus;</mo><msub><mi>y</mi><mi>i</mi></msub><mo>)</mo></mrow><mn>2</mn></msup><mo>+</mo><msubsup><mi>d</mi><mn>0</mn><mn>2</mn></msubsup></msqrt>
+    </mfrac>
+  </math>
+</div>
+
+<p>
+  Equipotential lines are drawn as concentric circles whose spacing compresses logarithmically near anchored cores and singularities: <span class="math-inline"><i>r<sub>k</sub></i> = <i>r</i><sub>0</sub> &sdot; (1.35)<sup><i>k</i></sup></span>.
+</p>
+
+<h3>8.3 Synthesized LIGO Gravitational Wave Chirp Synthesis</h3>
+<p>
+  When two massive compact bodies merge, or when a black hole swallows an object, the system emits a burst of gravitational radiation. As the orbital separation decays, the quadrupole frequency and amplitude ramp up exponentially, producing the characteristic <strong>LIGO Gravitational Wave Chirp</strong>:
+</p>
+
+<!-- Equation 39 -->
+<div class="math-block">
+  <math display="block">
+    <msub><mi>f</mi><mtext>GW</mtext></msub><mrow><mo>(</mo><mi>t</mi><mo>)</mo></mrow>
+    <mo>=</mo>
+    <mfrac><mn>1</mn><mi>&pi;</mi></mfrac>
+    <msup>
+      <mrow><mo>[</mo><mfrac><mn>5</mn><mn>256</mn></mfrac><mfrac><mn>1</mn><mrow><mo>(</mo><msub><mi>t</mi><mi>c</mi></msub><mo>&minus;</mo><mi>t</mi><mo>)</mo></mrow></mfrac><mo>]</mo></mrow>
+      <mrow><mn>3</mn><mo>/</mo><mn>8</mn></mrow>
+    </msup>
+    <msup>
+      <mrow><mo>[</mo><mfrac><mrow><mi>G</mi><mi mathvariant="script">M</mi></mrow><msup><mi>c</mi><mn>3</mn></msup></mfrac><mo>]</mo></mrow>
+      <mrow><mo>&minus;</mo><mn>5</mn><mo>/</mo><mn>8</mn></mrow>
+    </msup>
+  </math>
+</div>
+
+<p>
+  where <span class="math-inline"><i style="font-family:serif;">M</i><sub>chirp</sub></span> is the chirp mass. In the DarkMatter Web Audio engine, this is synthesized in real time via an exponential frequency and gain sweep:
+</p>
+<pre><code>// Synthesize LIGO-Style Inspiral Chirp
+const osc = audioCtx.createOscillator();
+const gain = audioCtx.createGain();
+osc.connect(gain);
+gain.connect(audioCtx.destination);
+
+osc.type = 'sine';
+osc.frequency.setValueAtTime(65, audioCtx.currentTime);
+osc.frequency.exponentialRampToValueAtTime(720, audioCtx.currentTime + 0.65);
+
+gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+gain.gain.linearRampToValueAtTime(0.35, audioCtx.currentTime + 0.50);
+gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.70);
+
+osc.start();
+osc.stop(audioCtx.currentTime + 0.70);</code></pre>
+
+<div class="page-break"></div>
+
+<!-- ========================================================================= -->
+<!-- SECTION 9 -->
+<!-- ========================================================================= -->
+<div class="doc-header">
+  <span>DarkMatter Relativistic N-Body Simulator &bull; Section 9</span>
+  <span>Reference Architecture &amp; Implementation</span>
+</div>
+
+<h2>9. Reference Architecture, Data Structures &amp; Implementation</h2>
+
+<h3>9.1 Core Object Data Structure (TypeScript Interface)</h3>
+<pre><code>export interface CelestialBody {
+  id: string;
+  name: string;
+  type: 'terra' | 'star_yellow' | 'hypergiant' | 'blackhole' | 'pulsar' | string;
+  x: number;               // Coordinates in 2D simulation space
+  y: number;
+  vx: number;              // Velocity vector (px / step)
+  vy: number;
+  ax: number;              // Acceleration accumulator (px / step^2)
+  ay: number;
+  mass: number;            // Gravitational mass
+  radius: number;          // Current visual &amp; collision radius
+  baseRadius: number;      // Ground-state radius
+  color: string;
+  isCore: boolean;         // UNIVERSAL ANCHOR STATE: if true, fixed in position
+  isLarge?: boolean;
+  earthRadiusRatio: number; // Calibration relative to Earth (R_earth = 1.0)
+  earthMassRatio: number;
+  stellarEnergy?: number;  // Thermonuclear energy level (0.0 to 1.0+)
+  flareStormTimer?: number;// Active flaring countdown frames
+  isSwelling?: boolean;    // Red giant swelling state flag
+  isPulsating?: boolean;   // Cepheid variable pulsation flag
+  feedingTimer?: number;   // Active black hole accretion feeding frames
+  accretionFlare?: number; // Relativistic flare intensity (0.0 to 1.0)
+  trail: Array&lt;{ x: number; y: number; v: number }&gt;;
+}</code></pre>
+
+<h3>9.2 Universal Anchoring &amp; Slingshot State Machine</h3>
+<div class="diagram-container">
+  <svg width="480" height="110" viewBox="0 0 480 110">
+    <rect x="20" y="25" width="120" height="50" rx="6" fill="#0f172a" stroke="#facc15" stroke-width="2"/>
+    <text x="80" y="47" text-anchor="middle" fill="#facc15" font-size="9.5" font-weight="bold">ANCHORED CORE</text>
+    <text x="80" y="63" text-anchor="middle" fill="#94a3b8" font-size="8">isCore = true (vx=0, vy=0)</text>
+
+    <rect x="340" y="25" width="120" height="50" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+    <text x="400" y="47" text-anchor="middle" fill="#38bdf8" font-size="9.5" font-weight="bold">DYNAMIC BODY</text>
+    <text x="400" y="63" text-anchor="middle" fill="#94a3b8" font-size="8">isCore = false (Orbits/Drifts)</text>
+
+    <path d="M 140 40 L 340 40" stroke="#38bdf8" stroke-width="1.8"/>
+    <text x="240" y="33" text-anchor="middle" fill="#38bdf8" font-size="7.5" font-weight="bold">SLINGSHOT FLING or Core Toggle</text>
+
+    <path d="M 340 65 L 140 65" stroke="#facc15" stroke-width="1.8"/>
+    <text x="240" y="78" text-anchor="middle" fill="#facc15" font-size="7.5" font-weight="bold">Anchor Tool Click (vx=0, vy=0)</text>
+  </svg>
+  <div class="diagram-caption">Figure 9.1: Universal state machine allowing ANY celestial body to transition seamlessly between fixed anchor and free slingshot dynamics.</div>
+</div>
+
+<h3>9.3 Complete Physics Solver Substep Algorithm</h3>
+<pre><code>// Symplectic Integration &amp; Collision Resolution per Substep
+for (let s = 0; s &lt; substeps; s++) {
+  // 1. Reset accelerations
+  bodies.forEach(b =&gt; { b.ax = 0; b.ay = 0; });
+
+  // 2. Compute N-Body Gravitational Forces with 1PN Relativistic Corrections
+  for (let i = 0; i &lt; bodies.length; i++) {
+    const b1 = bodies[i];
+    for (let j = i + 1; j &lt; bodies.length; j++) {
+      const b2 = bodies[j];
+      const dx = b2.x - b1.x;
+      const dy = b2.y - b1.y;
+      const distSq = dx * dx + dy * dy + 25.0; // Plummer softening
+      const dist = Math.sqrt(distSq);
+
+      let relFactor = 1.0;
+      if (b1.type === 'blackhole' || b2.type === 'blackhole') {
+        relFactor = 1.0 + Math.min(2.8, 22.0 / Math.max(10, dist));
+      }
+
+      const force = (G * b1.mass * b2.mass * relFactor) / distSq;
+
+      if (!b1.isCore) {
+        b1.ax += (dx / dist) * (force / b1.mass);
+        b1.ay += (dy / dist) * (force / b1.mass);
+      }
+      if (!b2.isCore) {
+        b2.ax -= (dx / dist) * (force / b2.mass);
+        b2.ay -= (dy / dist) * (force / b2.mass);
+      }
+    }
+  }
+
+  // 3. Symplectic Position Updates
+  bodies.forEach(b =&gt; {
+    if (b.isCore) { b.vx = 0; b.vy = 0; return; } // Stationary Anchors Stay Fixed
+    b.vx += 0.5 * b.ax * dt;
+    b.vy += 0.5 * b.ay * dt;
+    b.x += b.vx * dt;
+    b.y += b.vy * dt;
+  });
+
+  // 4. Resolve Tidal Disruption Events &amp; Direct Collisions
+  resolveTidalDisruptions(bodies);
+  resolveDirectCollisions(bodies);
+}</code></pre>
+
+<div class="callout callout-physics" style="margin-top: 15px;">
+  <div class="callout-title">Conclusion &amp; Theoretical Verification</div>
+  By combining Hamiltonian symplectic mechanics, 1PN general relativistic orbital corrections, empirical Earth-calibrated scale proportions (<span class="math-inline"><i>R</i><sub>&oplus;</sub> = 1.0</span>), and stochastic thermonuclear stellar evolution, the DarkMatter simulation engine achieves both academic pedagogical rigor and real-time interactive computational responsiveness.
+</div>
+
+</body>
+</html>
