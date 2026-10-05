@@ -4825,5 +4825,257 @@ export const DISCOVERED_OBJECTS = [
       "He I 4471 Å",
       "Mg II 4481 Å"
     ]
+  },
+
+  // 89. Cassiopeia A (Cas A Supernova Remnant)
+  {
+    "id": "obj-cas-a",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Cassiopeia_A_by_JWST.jpg/800px-Cassiopeia_A_by_JWST.jpg",
+    "name": "Cassiopeia A (Cas A)",
+    "designation": "3C 461 / G111.7-2.1 (Youngest Milky Way Supernova)",
+    "class": "supernova",
+    "subType": "Type IIb Core-Collapse Supernova Remnant",
+    "discoveryYear": 1948,
+    "discoveryMission": "Chandra / JWST / VLA",
+    "discoveryInstrument": "NIRCam & Chandra X-ray ACIS",
+    "discoveryMethod": "Multi-Wavelength Radio, X-ray & Infrared Imaging",
+    "constellation": "Cassiopeia",
+    "coordinates": {
+      "ra": "23h 23m 27.77s",
+      "dec": "+58° 48′ 42.4″",
+      "raDeg": 350.8657,
+      "decDeg": 58.8118
+    },
+    "distance": {
+      "lightYears": "11,000 Light Years",
+      "parsecs": "3,400 pc",
+      "redshift": -0.0001
+    },
+    "physics": {
+      "mass": "Progenitor ~16 M☉ (Collapsing to 1.4 M☉ Neutron Star)",
+      "expansionVelocity": "4,000 – 6,000 km/s",
+      "angularSize": "5 arcminutes (10 Light-Year diameter)",
+      "remnantAge": "Approx. 345 Years (Exploded ~1680 AD)",
+      "temperature": "10 – 30 Million Kelvin (X-ray emitting shock)"
+    },
+    "spectralBands": { "radio": 98, "infrared": 95, "optical": 75, "ultraviolet": 40, "xray": 99, "gamma": 45, "gravitational": 0 },
+    "keyDiscoveries": [
+      "The youngest confirmed core-collapse supernova remnant in the Milky Way galaxy.",
+      "JWST NIRCam revealed the enigmatic 'Green Monster' loop of pristine shocked ejecta in the central cavity.",
+      "Chandra X-ray identified the isolated central compact object (CCO): an ultra-dense neutron star with a carbon atmosphere."
+    ],
+    "researchPapers": [
+      {
+        "title": "A high-resolution infrared view of the Cassiopeia A supernova remnant with JWST",
+        "authors": "Milisavljevic, D., et al.",
+        "journal": "The Astrophysical Journal",
+        "year": 2024,
+        "doi": "10.3847/1538-4357/ad1a07",
+        "bibcode": "2024ApJ...965...27M",
+        "openAccessUrl": "https://arxiv.org/abs/2311.08488"
+      }
+    ],
+    "spectralLines": ["[Ar II] 6.98 µm", "[Fe II] 25.99 µm", "Si XIII He-like triplet", "S XV X-ray complex"]
+  },
+
+  // 90. Tycho's Supernova (SN 1572)
+  {
+    "id": "obj-sn-1572-tycho",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Tycho_supernova_remnant_Chandra.jpg/800px-Tycho_supernova_remnant_Chandra.jpg",
+    "name": "Tycho's Supernova (SN 1572)",
+    "designation": "SN 1572 / B Cassiopeiae / 3C 10",
+    "class": "supernova",
+    "subType": "Historical Type Ia Thermonuclear Supernova Remnant",
+    "discoveryYear": 1572,
+    "discoveryMission": "Tycho Brahe (1572) // Chandra / Hubble",
+    "discoveryInstrument": "Naked-Eye Astrometry // Chandra X-ray Observatory",
+    "discoveryMethod": "Historical Optical Transient & X-ray Imaging",
+    "constellation": "Cassiopeia",
+    "coordinates": {
+      "ra": "00h 25m 19.9s",
+      "dec": "+64° 08′ 14″",
+      "raDeg": 6.3329,
+      "decDeg": 64.1372
+    },
+    "distance": {
+      "lightYears": "8,000 – 9,800 Light Years",
+      "parsecs": "2,800 pc",
+      "redshift": 0.00002
+    },
+    "physics": {
+      "peakMagnitude": "-4.0 (Visible in broad daylight for 2 weeks in Nov 1572)",
+      "shockVelocity": "4,700 km/s",
+      "remnantRadius": "28 Light Years (3.7 arcmin angular radius)",
+      "mechanism": "Single/Double Degenerate Carbon-Oxygen White Dwarf Deflagration"
+    },
+    "spectralBands": { "radio": 85, "infrared": 70, "optical": 65, "ultraviolet": 30, "xray": 96, "gamma": 20, "gravitational": 0 },
+    "keyDiscoveries": [
+      "Observed by Tycho Brahe in November 1572, overthrowing the Aristotelian dogma of immutable celestial heavens.",
+      "Modern optical light echo spectroscopy confirmed it as a normal Type Ia thermonuclear runaway.",
+      "Chandra revealed intricate turbulent synchrotron stripes tracing cosmic-ray proton acceleration."
+    ],
+    "researchPapers": [
+      {
+        "title": "Tycho Brahe's 1572 supernova as a standard type Ia as revealed by its light-echo spectrum",
+        "authors": "Krause, O., Tanaka, M., Usuda, T., et al.",
+        "journal": "Nature",
+        "year": 2008,
+        "doi": "10.1038/nature07608",
+        "bibcode": "2008Natur.456..617K",
+        "openAccessUrl": "https://arxiv.org/abs/0812.0632"
+      }
+    ],
+    "spectralLines": ["Fe K-alpha 6.4 keV", "Si XIII K-shell emission", "S XV 2.46 keV"]
+  },
+
+  // 91. Kepler's Supernova (SN 1604)
+  {
+    "id": "obj-sn-1604-kepler",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Kepler%27s_supernova.jpg/800px-Kepler%27s_supernova.jpg",
+    "name": "Kepler's Supernova (SN 1604)",
+    "designation": "SN 1604 / De Stella Nova / 3C 358",
+    "class": "supernova",
+    "subType": "Historical Type Ia Supernova in Circumstellar Medium",
+    "discoveryYear": 1604,
+    "discoveryMission": "Johannes Kepler (1604) // NASA Great Observatories",
+    "discoveryInstrument": "Naked Eye / Chandra / Hubble / Spitzer",
+    "discoveryMethod": "Historical Optical Transient & Multi-Wavelength Synthesis",
+    "constellation": "Ophiuchus",
+    "coordinates": {
+      "ra": "17h 30m 42.0s",
+      "dec": "-21° 29′ 00″",
+      "raDeg": 262.675,
+      "decDeg": -21.4833
+    },
+    "distance": {
+      "lightYears": "16,600 – 20,000 Light Years",
+      "parsecs": "5,000 pc",
+      "redshift": 0.00004
+    },
+    "physics": {
+      "peakMagnitude": "-2.5 (Brighter than Jupiter at maximum)",
+      "expansionSpeed": "5,400 km/s",
+      "historicalDuration": "Naked-eye visible for over 18 months",
+      "interaction": "Strong shock collision with massive nitrogen-rich progenitor circumstellar shell"
+    },
+    "spectralBands": { "radio": 80, "infrared": 85, "optical": 82, "ultraviolet": 40, "xray": 95, "gamma": 15, "gravitational": 0 },
+    "keyDiscoveries": [
+      "The last supernova indisputably witnessed with the naked eye in our Milky Way galaxy (October 1604).",
+      "Detailed in Johannes Kepler's seminal treatise 'De Stella Nova in Pede Serpentarii'.",
+      "Spitzer and Chandra revealed interaction with a massive circumstellar shell, proving a massive asymptotic giant branch (AGB) companion star."
+    ],
+    "researchPapers": [
+      {
+        "title": "Chandra observations of the Kepler Supernova Remnant: A Type Ia with circumstellar interaction",
+        "authors": "Reynolds, S. P., et al.",
+        "journal": "The Astrophysical Journal Letters",
+        "year": 2007,
+        "doi": "10.1086/522830",
+        "bibcode": "2007ApJ...668L.135R",
+        "openAccessUrl": "https://arxiv.org/abs/0708.3858"
+      }
+    ],
+    "spectralLines": ["Fe K-alpha 6.7 keV", "Si He-alpha 1.86 keV", "H-alpha 6563 Å"]
+  },
+
+  // 92. GW190521 (Heaviest Intermediate-Mass Black Hole Merger)
+  {
+    "id": "obj-gw190521",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/LIGO-Virgo_GW190521_Numerical_Relativity_Simulation.jpg/800px-LIGO-Virgo_GW190521_Numerical_Relativity_Simulation.jpg",
+    "name": "GW190521 (IMBH Merger)",
+    "designation": "GW190521 (Pair-Instability Mass Gap Collision)",
+    "class": "blackhole",
+    "subType": "Binary Black Hole Gravitational Wave Merger Event",
+    "discoveryYear": 2020,
+    "discoveryMission": "LIGO Scientific Collaboration & Virgo Collaboration",
+    "discoveryInstrument": "Advanced LIGO (Hanford/Livingston) & Advanced Virgo",
+    "discoveryMethod": "Coherent Gravitational Wave Matched-Filter Interferometry",
+    "constellation": "Coma Berenices",
+    "coordinates": {
+      "ra": "12h 49m 42s",
+      "dec": "-34° 49′ 12″",
+      "raDeg": 192.425,
+      "decDeg": -34.82
+    },
+    "distance": {
+      "lightYears": "17.1 Billion Light Years (Luminosity Distance)",
+      "parsecs": "5,300 Mpc",
+      "redshift": 0.82
+    },
+    "physics": {
+      "primaryMass": "85 +21/-14 M☉ (In forbidden pair-instability mass gap)",
+      "secondaryMass": "66 +17/-18 M☉",
+      "finalRemnantMass": "142 +28/-16 M☉ (First directly detected IMBH)",
+      "radiatedEnergy": "8.0 M☉ c² in pure gravitational waves in ~0.1 seconds",
+      "remnantSpin": "0.72 (Kerr dimensionless spin parameter)"
+    },
+    "spectralBands": { "radio": 0, "infrared": 0, "optical": 10, "ultraviolet": 0, "xray": 0, "gamma": 0, "gravitational": 100 },
+    "keyDiscoveries": [
+      "First direct, unambiguous observational proof of an Intermediate-Mass Black Hole (100–100,000 M☉).",
+      "Component black holes defy stellar evolution: 85 M☉ falls directly into the pair-instability supernova gap where stars are completely obliterated.",
+      "Radiated 8 solar masses of pure gravitational energy within 0.1 seconds, briefly outshining all stars in the observable universe."
+    ],
+    "researchPapers": [
+      {
+        "title": "GW190521: A Binary Black Hole Merger with a Total Mass of 150 M☉",
+        "authors": "Abbott, R., et al. (LIGO Scientific Collaboration and Virgo Collaboration)",
+        "journal": "Physical Review Letters",
+        "year": 2020,
+        "doi": "10.1103/PhysRevLett.125.101102",
+        "bibcode": "2020PhRvL.125j1102A",
+        "openAccessUrl": "https://arxiv.org/abs/2009.01075"
+      }
+    ],
+    "spectralLines": ["Gravitational Wave Ringdown 66 Hz", "Inspiral Chirp Strain 1.0e-21"]
+  },
+
+  // 93. AT2018cow ("The Cow" Fast Blue Optical Transient)
+  {
+    "id": "obj-at2018cow",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/AT2018cow_Hubble.jpg/800px-AT2018cow_Hubble.jpg",
+    "name": "AT2018cow ('The Cow')",
+    "designation": "ATLAS18qqn / SN 2018cow (Fast Blue Optical Transient)",
+    "class": "supernova",
+    "subType": "Relativistic Fast Blue Optical Transient (FBOT)",
+    "discoveryYear": 2018,
+    "discoveryMission": "Asteroid Terrestrial-impact Last Alert System (ATLAS)",
+    "discoveryInstrument": "ATLAS Haleakala & Mauna Loa Telescopes",
+    "discoveryMethod": "Wide-Field Robotic Sky Transient Survey",
+    "constellation": "Hercules",
+    "coordinates": {
+      "ra": "16h 16m 00.22s",
+      "dec": "+22° 16′ 04.9″",
+      "raDeg": 244.0009,
+      "decDeg": 22.268
+    },
+    "distance": {
+      "lightYears": "200 Million Light Years",
+      "parsecs": "60 Mpc",
+      "redshift": 0.0141
+    },
+    "physics": {
+      "riseTime": "Just 2.5 days to peak luminosity (10–100x faster than normal supernova)",
+      "peakLuminosity": "4 × 10⁴⁴ erg/s (400 Billion Suns)",
+      "ejectaVelocity": "Over 30,000 km/s (0.1c relativistic blast)",
+      "centralEngine": "Birth of a rapidly spinning magnetar or accreting micro-black hole"
+    },
+    "spectralBands": { "radio": 92, "infrared": 60, "optical": 96, "ultraviolet": 95, "xray": 98, "gamma": 10, "gravitational": 0 },
+    "keyDiscoveries": [
+      "The founding prototype of the enigmatic Fast Blue Optical Transient (FBOT) class.",
+      "Outshone ordinary core-collapse supernovae by two orders of magnitude within 48 hours of explosion.",
+      "Persistent hard X-ray pulsations detected by NuSTAR revealed an active, surviving central compact engine."
+    ],
+    "researchPapers": [
+      {
+        "title": "An energetic stellar explosion in a dense circumstellar medium: The fast blue optical transient AT 2018cow",
+        "authors": "Prentice, S. J., Maguire, K., Smartt, S. J., et al.",
+        "journal": "The Astrophysical Journal Letters",
+        "year": 2018,
+        "doi": "10.3847/2041-8213/aae52b",
+        "bibcode": "2018ApJ...865L...3P",
+        "openAccessUrl": "https://arxiv.org/abs/1807.05965"
+      }
+    ],
+    "spectralLines": ["Broad featureless optical continuum", "He I 5876 Å with high velocity", "High-frequency X-ray QPO 224 Hz"]
   }
 ];

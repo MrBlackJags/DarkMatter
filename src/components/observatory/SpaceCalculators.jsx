@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 import { 
   Calculator, 
   Orbit, 
@@ -15,7 +18,10 @@ import {
   HelpCircle, 
   Copy, 
   ChevronRight,
-  Sparkles
+  Sparkles,
+  ArrowRight,
+  ExternalLink,
+  Flame
 } from 'lucide-react';
 import { saveCalculationRecord, fetchCalculationHistory } from '../../services/api';
 
@@ -75,84 +81,64 @@ export default function SpaceCalculators({ onLaunchInSimulator }) {
     <div className="space-y-6">
       
       {/* HEADER BANNER */}
-      <div className="bg-cosmic-900/80 p-6 rounded-2xl border border-cyan-500/30 backdrop-blur-md relative overflow-hidden">
+      <Card className="border-white/10 bg-gradient-to-br from-slate-950/90 via-slate-900/60 to-slate-950/90 p-6 backdrop-blur-2xl relative overflow-hidden shadow-2xl">
         <div className="hud-scanline"></div>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center space-x-2 text-xs font-mono text-hud-cyan mb-1">
-              <Calculator className="w-4 h-4" />
-              <span>ASTRODYNAMICS & ASTROPHYSICAL COMPUTATION SUITE</span>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-2">
+              <Badge variant="cyan">
+                <Calculator className="w-3.5 h-3.5 text-cyan-400" />
+                <span>ASTRODYNAMICS &amp; RELATIVISTIC COMPUTATION SUITE</span>
+              </Badge>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-wide">
-              Space Research & Celestial Mechanics Calculators
+            <h2 className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+              Astrophysics &amp; Space Flight Mechanics
             </h2>
-            <p className="text-slate-400 text-xs sm:text-sm font-sans mt-1 max-w-2xl">
-              High-precision scientific calculators for orbital velocity, escape trajectories, Hohmann transfers, relativistic time dilation, Schwarzschild event horizons, and exoplanet habitability.
+            <p className="text-slate-400 text-xs sm:text-sm font-sans max-w-2xl leading-relaxed">
+              Real-time interactive research calculators for Keplerian orbital velocity, Hohmann transfer orbits, Schwarzschild horizons, gravitational time dilation, Hawking radiation, and exoplanetary habitability.
             </p>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <button
+          <div className="flex items-center gap-3 shrink-0">
+            <Button
+              variant="outline"
+              size="default"
               onClick={() => setIsHistoryOpen(true)}
-              className="px-3.5 py-2 rounded-lg bg-cosmic-950 border border-slate-800 hover:border-cyan-500 text-xs font-mono text-slate-300 hover:text-hud-cyan transition flex items-center space-x-2"
+              className="bg-slate-900/70 border-white/10 hover:border-cyan-500/40 hover:text-cyan-300"
             >
-              <History className="w-4 h-4 text-hud-cyan" />
-              <span>Calculation History ({historyList.length})</span>
-            </button>
+              <History className="w-4 h-4 text-cyan-400" />
+              <span>History Log ({historyList.length})</span>
+            </Button>
           </div>
         </div>
 
         {/* CATEGORY TABS */}
-        <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-slate-800 text-xs font-mono">
-          <button
-            onClick={() => setActiveCategory('orbital')}
-            className={`px-3.5 py-2 rounded-lg transition border flex items-center space-x-2 ${
-              activeCategory === 'orbital'
-                ? 'bg-hud-cyan/20 border-hud-cyan text-hud-cyan font-bold shadow-sm shadow-hud-cyan/20'
-                : 'bg-cosmic-950 border-slate-800 text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Orbit className="w-4 h-4" />
-            <span>Orbital Mechanics & Trajectories</span>
-          </button>
-
-          <button
-            onClick={() => setActiveCategory('blackholes')}
-            className={`px-3.5 py-2 rounded-lg transition border flex items-center space-x-2 ${
-              activeCategory === 'blackholes'
-                ? 'bg-hud-violet/20 border-hud-violet text-hud-violet font-bold shadow-sm shadow-hud-violet/20'
-                : 'bg-cosmic-950 border-slate-800 text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Zap className="w-4 h-4" />
-            <span>Black Holes & Relativity</span>
-          </button>
-
-          <button
-            onClick={() => setActiveCategory('exoplanets')}
-            className={`px-3.5 py-2 rounded-lg transition border flex items-center space-x-2 ${
-              activeCategory === 'exoplanets'
-                ? 'bg-hud-emerald/20 border-hud-emerald text-hud-emerald font-bold shadow-sm shadow-hud-emerald/20'
-                : 'bg-cosmic-950 border-slate-800 text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Globe className="w-4 h-4" />
-            <span>Exoplanets & Habitability</span>
-          </button>
-
-          <button
-            onClick={() => setActiveCategory('relativity')}
-            className={`px-3.5 py-2 rounded-lg transition border flex items-center space-x-2 ${
-              activeCategory === 'relativity'
-                ? 'bg-hud-amber/20 border-hud-amber text-hud-amber font-bold shadow-sm shadow-hud-amber/20'
-                : 'bg-cosmic-950 border-slate-800 text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <Rocket className="w-4 h-4" />
-            <span>Cosmology & Rocket Propulsion</span>
-          </button>
+        <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-white/10 text-xs font-mono">
+          {[
+            { id: 'orbital', label: 'Orbital Mechanics & Trajectories', icon: Orbit, color: 'text-cyan-400', activeClass: 'bg-cyan-500/15 border-cyan-400/40 text-cyan-300 font-bold shadow-[0_0_15px_rgba(6,182,212,0.15)]' },
+            { id: 'blackholes', label: 'Black Holes & General Relativity', icon: Zap, color: 'text-purple-400', activeClass: 'bg-purple-500/15 border-purple-400/40 text-purple-300 font-bold shadow-[0_0_15px_rgba(168,85,247,0.15)]' },
+            { id: 'exoplanets', label: 'Exoplanets & Habitability', icon: Globe, color: 'text-emerald-400', activeClass: 'bg-emerald-500/15 border-emerald-400/40 text-emerald-300 font-bold shadow-[0_0_15px_rgba(16,185,129,0.15)]' },
+            { id: 'relativity', label: 'Cosmology & Rocket Propulsion', icon: Rocket, color: 'text-amber-400', activeClass: 'bg-amber-500/15 border-amber-400/40 text-amber-300 font-bold shadow-[0_0_15px_rgba(245,158,11,0.15)]' }
+          ].map(tab => {
+            const Icon = tab.icon;
+            const isActive = activeCategory === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveCategory(tab.id)}
+                className={`px-3.5 py-2 rounded-xl transition-all border flex items-center gap-2 cursor-pointer ${
+                  isActive
+                    ? tab.activeClass
+                    : 'bg-slate-950/60 border-white/5 text-slate-400 hover:text-slate-200 hover:border-white/15'
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${tab.color}`} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
         </div>
-      </div>
+      </Card>
 
       {/* CALCULATOR PANELS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -161,7 +147,7 @@ export default function SpaceCalculators({ onLaunchInSimulator }) {
             <OrbitalVelocityCalculator onSave={handleSaveCalculation} onLaunchInSimulator={onLaunchInSimulator} />
             <HohmannTransferCalculator onSave={handleSaveCalculation} onLaunchInSimulator={onLaunchInSimulator} />
             <EscapeVelocityCalculator onSave={handleSaveCalculation} onLaunchInSimulator={onLaunchInSimulator} />
-            <RocheHillSphereCalculator onSave={handleSaveCalculation} />
+            <RocheHillSphereCalculator onSave={handleSaveCalculation} onLaunchInSimulator={onLaunchInSimulator} />
           </>
         )}
 
@@ -195,16 +181,16 @@ export default function SpaceCalculators({ onLaunchInSimulator }) {
 
       {/* CALCULATION HISTORY DRAWER */}
       {isHistoryOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-cosmic-950/70 backdrop-blur-sm">
-          <div className="w-full max-w-xl bg-cosmic-950 border-l border-cyan-500/30 h-full overflow-y-auto flex flex-col p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-              <div className="flex items-center space-x-2">
-                <History className="w-5 h-5 text-hud-cyan" />
-                <h3 className="text-base font-bold font-mono text-white">CALCULATION LOGS & HISTORY</h3>
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-xl bg-slate-950/95 border-l border-white/10 h-full overflow-y-auto flex flex-col p-6 shadow-2xl backdrop-blur-2xl">
+            <div className="flex items-center justify-between pb-4 border-b border-white/10">
+              <div className="flex items-center space-x-2.5">
+                <History className="w-5 h-5 text-cyan-400" />
+                <h3 className="text-base font-bold font-mono text-white tracking-wide">CALCULATION LOGS &amp; TELEMETRY</h3>
               </div>
               <button 
                 onClick={() => setIsHistoryOpen(false)}
-                className="p-1.5 rounded-lg bg-cosmic-900 border border-slate-800 text-slate-400 hover:text-white"
+                className="p-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer transition"
               >
                 ✕
               </button>
@@ -212,27 +198,29 @@ export default function SpaceCalculators({ onLaunchInSimulator }) {
 
             <div className="flex-1 py-4 space-y-3 overflow-y-auto">
               {historyList.length === 0 ? (
-                <div className="text-center py-12 text-slate-500 font-mono text-xs">
-                  No calculations logged yet. Use the "Log Result" button on any calculator.
+                <div className="text-center py-16 text-slate-500 font-mono text-xs space-y-2">
+                  <Calculator className="w-8 h-8 mx-auto text-slate-600 opacity-50" />
+                  <p>No calculations logged yet.</p>
+                  <p className="text-[11px] text-slate-600">Use the save icon on any calculator card to log records to the telemetry database.</p>
                 </div>
               ) : (
                 historyList.map((item, idx) => (
-                  <div key={idx} className="p-3.5 rounded-xl bg-cosmic-900/90 border border-slate-800 text-xs font-mono space-y-2">
+                  <div key={idx} className="p-4 rounded-2xl bg-slate-900/80 border border-white/10 text-xs font-mono space-y-2.5 shadow-lg">
                     <div className="flex items-center justify-between">
-                      <span className="text-hud-cyan font-bold">{item.calculatorName}</span>
-                      <span className="text-[10px] text-slate-500">{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Recent'}</span>
+                      <span className="text-cyan-300 font-bold text-sm">{item.calculatorName}</span>
+                      <span className="text-[10px] text-slate-400 font-mono">{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Recent'}</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-slate-800/80">
-                      <div>
-                        <span className="text-slate-500 block text-[10px]">INPUTS</span>
+                    <div className="grid grid-cols-2 gap-3 text-[11px] pt-2 border-t border-white/5">
+                      <div className="space-y-1">
+                        <span className="text-slate-400 block text-[10px] uppercase font-bold tracking-wider">INPUT PARAMETERS</span>
                         {Object.entries(item.inputs || {}).map(([k, v]) => (
-                          <div key={k} className="text-slate-300 truncate">{k}: <strong className="text-slate-100">{String(v)}</strong></div>
+                          <div key={k} className="text-slate-300 truncate font-mono text-[11px]">{k}: <strong className="text-slate-100">{String(v)}</strong></div>
                         ))}
                       </div>
-                      <div>
-                        <span className="text-hud-emerald block text-[10px]">OUTPUT RESULTS</span>
+                      <div className="space-y-1">
+                        <span className="text-emerald-400 block text-[10px] uppercase font-bold tracking-wider">COMPUTED TELEMETRY</span>
                         {Object.entries(item.outputs || {}).map(([k, v]) => (
-                          <div key={k} className="text-slate-300 truncate">{k}: <strong className="text-hud-emerald">{String(v)}</strong></div>
+                          <div key={k} className="text-slate-300 truncate font-mono text-[11px]">{k}: <strong className="text-emerald-300">{String(v)}</strong></div>
                         ))}
                       </div>
                     </div>
@@ -246,8 +234,8 @@ export default function SpaceCalculators({ onLaunchInSimulator }) {
 
       {/* TOAST */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-lg bg-cosmic-900 border border-hud-cyan/50 text-hud-cyan font-mono text-xs shadow-2xl flex items-center space-x-2">
-          <CheckCircle className="w-4 h-4 text-hud-emerald" />
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl bg-slate-900/95 border border-cyan-500/50 text-cyan-300 font-mono text-xs shadow-2xl flex items-center space-x-2.5 backdrop-blur-xl animate-fade-in">
+          <CheckCircle className="w-4 h-4 text-emerald-400" />
           <span>{toast}</span>
         </div>
       )}
@@ -283,10 +271,10 @@ function OrbitalVelocityCalculator({ onSave, onLaunchInSimulator }) {
   };
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Orbit className="w-4 h-4 text-hud-cyan" />
+          <Orbit className="w-4 h-4 text-cyan-400" />
           <h3 className="font-mono text-sm font-bold text-white">Orbital Velocity & Period (Kepler)</h3>
         </div>
         <button 
@@ -298,15 +286,15 @@ function OrbitalVelocityCalculator({ onSave, onLaunchInSimulator }) {
             'Orbital Speed': `${velocityKms.toFixed(2)} km/s`,
             'Orbital Period': `${periodMinutes.toFixed(1)} min (${periodHours.toFixed(2)} h)`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
           title="Log to database"
         >
           <Save className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-[11px] font-mono text-slate-400 bg-cosmic-950 p-2 rounded border border-slate-800">
-        Formula: <span className="text-hud-cyan">v = √(GM / r)</span> &bull; <span className="text-hud-cyan">T = 2π√(r³ / GM)</span>
+      <div className="text-xs font-mono text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-white/5 backdrop-blur-md flex items-center justify-between flex-wrap gap-2">
+        Formula: <span className="text-cyan-400">v = √(GM / r)</span> &bull; <span className="text-cyan-400">T = 2π√(r³ / GM)</span>
       </div>
 
       {/* Body Presets */}
@@ -316,7 +304,7 @@ function OrbitalVelocityCalculator({ onSave, onLaunchInSimulator }) {
           <button
             key={b.name}
             onClick={() => loadBody(b)}
-            className="px-2 py-0.5 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono text-slate-300 hover:border-hud-cyan hover:text-hud-cyan transition"
+            className="px-2 py-0.5 rounded bg-slate-900/90 border border-white/10 text-[10px] font-mono text-slate-300 hover:border-hud-cyan hover:text-cyan-400 transition"
           >
             {b.name}
           </button>
@@ -332,13 +320,13 @@ function OrbitalVelocityCalculator({ onSave, onLaunchInSimulator }) {
               step="0.01" 
               value={massVal} 
               onChange={e => setMassVal(e.target.value)}
-              className="w-full bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-cyan font-bold"
+              className="w-full bg-slate-900/90 px-2 py-1 rounded border border-white/10 text-cyan-400 font-bold"
             />
             <input 
               type="number" 
               value={massExp} 
               onChange={e => setMassExp(e.target.value)}
-              className="w-16 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-300"
+              className="w-16 bg-slate-900/90 px-2 py-1 rounded border border-white/10 text-slate-300"
               title="Power of 10"
             />
           </div>
@@ -350,7 +338,7 @@ function OrbitalVelocityCalculator({ onSave, onLaunchInSimulator }) {
             type="number" 
             value={radiusKm} 
             onChange={e => setRadiusKm(e.target.value)}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-slate-200 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all"
           />
         </div>
 
@@ -366,21 +354,21 @@ function OrbitalVelocityCalculator({ onSave, onLaunchInSimulator }) {
             step="50" 
             value={altitudeKm} 
             onChange={e => setAltitudeKm(e.target.value)}
-            className="w-full accent-hud-cyan cursor-pointer mt-1"
+            className="w-full accent-cyan-400 cursor-pointer mt-1"
           />
         </div>
       </div>
 
       {/* Results */}
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-cyan-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-cyan-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">ORBITAL VELOCITY</div>
-          <div className="text-lg font-bold text-hud-cyan">{velocityKms.toFixed(3)} km/s</div>
+          <div className="text-lg font-bold text-cyan-400">{velocityKms.toFixed(3)} km/s</div>
           <div className="text-[10px] text-slate-400">{(velocityMs).toFixed(1)} m/s</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">ORBITAL PERIOD</div>
-          <div className="text-lg font-bold text-hud-emerald">{periodMinutes.toFixed(1)} min</div>
+          <div className="text-lg font-bold text-emerald-400">{periodMinutes.toFixed(1)} min</div>
           <div className="text-[10px] text-slate-400">({periodHours.toFixed(2)} hours)</div>
         </div>
       </div>
@@ -394,7 +382,7 @@ function OrbitalVelocityCalculator({ onSave, onLaunchInSimulator }) {
             orbitRadiusKm: totalRadiusM / 1000,
             centralMassKg: centralMassKg
           })}
-          className="w-full py-2 px-3 rounded-lg border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-mono text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.12)]"
+          className="w-full py-2.5 px-4 rounded-xl border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.15)] active:scale-[0.99]"
         >
           <Orbit className="w-3.5 h-3.5" />
           <span>Launch Orbit in Gravity Simulator</span>
@@ -434,10 +422,10 @@ function HohmannTransferCalculator({ onSave, onLaunchInSimulator }) {
   const transferHours = transferTimeSeconds / 3600;
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Rocket className="w-4 h-4 text-hud-amber" />
+          <Rocket className="w-4 h-4 text-amber-400" />
           <h3 className="font-mono text-sm font-bold text-white">Hohmann Transfer Orbit (Δv Budget)</h3>
         </div>
         <button 
@@ -450,14 +438,14 @@ function HohmannTransferCalculator({ onSave, onLaunchInSimulator }) {
             'Total Δv': `${(totalDeltaV / 1000).toFixed(3)} km/s`,
             'Transfer Duration': `${transferHours.toFixed(2)} hours`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-[11px] font-mono text-slate-400 bg-cosmic-950 p-2 rounded border border-slate-800">
-        Formula: <span className="text-hud-amber">Δv_total = Δv₁ + Δv₂</span> &bull; <span className="text-hud-amber">τ = π√((r₁ + r₂)³ / 8μ)</span>
+      <div className="text-xs font-mono text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-white/5 backdrop-blur-md flex items-center justify-between flex-wrap gap-2">
+        Formula: <span className="text-amber-400">Δv_total = Δv₁ + Δv₂</span> &bull; <span className="text-amber-400">τ = π√((r₁ + r₂)³ / 8μ)</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3 text-xs font-mono">
@@ -467,7 +455,7 @@ function HohmannTransferCalculator({ onSave, onLaunchInSimulator }) {
             type="number" 
             value={r1Km} 
             onChange={e => setR1Km(e.target.value)}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-cyan font-bold"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all font-bold"
           />
           <span className="text-[10px] text-slate-500">e.g. LEO: 6,771 km</span>
         </div>
@@ -478,13 +466,13 @@ function HohmannTransferCalculator({ onSave, onLaunchInSimulator }) {
             type="number" 
             value={r2Km} 
             onChange={e => setR2Km(e.target.value)}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-amber font-bold"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-amber-300 font-mono text-xs focus:outline-none focus:border-amber-400 transition-all font-bold"
           />
           <span className="text-[10px] text-slate-500">e.g. GEO: 42,164 km</span>
         </div>
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-amber-500/30 grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-amber-500/30 grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">BURN 1 (Δv₁)</div>
           <div className="text-base font-bold text-slate-100">{(deltaV1 / 1000).toFixed(3)} km/s</div>
@@ -495,11 +483,11 @@ function HohmannTransferCalculator({ onSave, onLaunchInSimulator }) {
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">TOTAL Δv</div>
-          <div className="text-base font-bold text-hud-amber">{(totalDeltaV / 1000).toFixed(3)} km/s</div>
+          <div className="text-base font-bold text-amber-400">{(totalDeltaV / 1000).toFixed(3)} km/s</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">TRANSFER TIME</div>
-          <div className="text-base font-bold text-hud-emerald">{transferHours.toFixed(2)} h</div>
+          <div className="text-base font-bold text-emerald-400">{transferHours.toFixed(2)} h</div>
         </div>
       </div>
 
@@ -513,7 +501,7 @@ function HohmannTransferCalculator({ onSave, onLaunchInSimulator }) {
             targetRadiusKm: r2 / 1000,
             centralMassKg: centralMass
           })}
-          className="w-full py-2 px-3 rounded-lg border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-mono text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.12)]"
+          className="w-full py-2.5 px-4 rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.15)] active:scale-[0.99]"
         >
           <Orbit className="w-3.5 h-3.5" />
           <span>Simulate Transfer in Gravity Simulator</span>
@@ -535,10 +523,10 @@ function EscapeVelocityCalculator({ onSave, onLaunchInSimulator }) {
   const v_esc_kms = v_esc_ms / 1000;
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Zap className="w-4 h-4 text-hud-emerald" />
+          <Zap className="w-4 h-4 text-emerald-400" />
           <h3 className="font-mono text-sm font-bold text-white">Gravitational Escape Velocity</h3>
         </div>
         <button 
@@ -548,14 +536,14 @@ function EscapeVelocityCalculator({ onSave, onLaunchInSimulator }) {
           }, {
             'Escape Speed': `${v_esc_kms.toFixed(2)} km/s`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-[11px] font-mono text-slate-400 bg-cosmic-950 p-2 rounded border border-slate-800">
-        Formula: <span className="text-hud-emerald">v_esc = √(2GM / R)</span>
+      <div className="text-xs font-mono text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-white/5 backdrop-blur-md flex items-center justify-between flex-wrap gap-2">
+        Formula: <span className="text-emerald-400">v_esc = √(2GM / R)</span>
       </div>
 
       <div className="flex flex-wrap gap-1.5 items-center">
@@ -564,7 +552,7 @@ function EscapeVelocityCalculator({ onSave, onLaunchInSimulator }) {
           <button
             key={b.name}
             onClick={() => { setMassKg(b.mass); setRadiusKm(Math.round(b.radius / 1000)); }}
-            className="px-2 py-0.5 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono text-slate-300 hover:border-hud-emerald hover:text-hud-emerald transition"
+            className="px-2 py-0.5 rounded bg-slate-900/90 border border-white/10 text-[10px] font-mono text-slate-300 hover:border-hud-emerald hover:text-emerald-400 transition"
           >
             {b.name}
           </button>
@@ -578,7 +566,7 @@ function EscapeVelocityCalculator({ onSave, onLaunchInSimulator }) {
             type="text" 
             value={massKg} 
             onChange={e => setMassKg(Number(e.target.value) || massKg)}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-emerald font-bold"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-emerald-300 font-mono text-xs focus:outline-none focus:border-emerald-400 transition-all font-bold"
           />
         </div>
         <div>
@@ -587,20 +575,20 @@ function EscapeVelocityCalculator({ onSave, onLaunchInSimulator }) {
             type="number" 
             value={radiusKm} 
             onChange={e => setRadiusKm(Number(e.target.value))}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-slate-200 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all"
           />
         </div>
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-emerald-500/30 flex items-center justify-between font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-emerald-500/30 flex items-center justify-between font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">ESCAPE VELOCITY (v_esc)</div>
-          <div className="text-xl font-bold text-hud-emerald">{v_esc_kms.toFixed(2)} km/s</div>
+          <div className="text-xl font-bold text-emerald-400">{v_esc_kms.toFixed(2)} km/s</div>
           <div className="text-[10px] text-slate-400">({(v_esc_kms * 3600).toLocaleString()} km/h)</div>
         </div>
         <div className="text-right text-[11px] text-slate-400">
           <div>Speed of Light Fraction:</div>
-          <div className="text-hud-cyan font-bold">{((v_esc_ms / c) * 100).toExponential(3)}% c</div>
+          <div className="text-cyan-400 font-bold">{((v_esc_ms / c) * 100).toExponential(3)}% c</div>
         </div>
       </div>
 
@@ -613,7 +601,7 @@ function EscapeVelocityCalculator({ onSave, onLaunchInSimulator }) {
             orbitRadiusKm: radiusM / 1000,
             centralMassKg: massKg
           })}
-          className="w-full py-2 px-3 rounded-lg border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-mono text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.12)]"
+          className="w-full py-2.5 px-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(16,185,129,0.15)] active:scale-[0.99]"
         >
           <Orbit className="w-3.5 h-3.5" />
           <span>Simulate Escape Vector in Gravity Simulator</span>
@@ -626,7 +614,7 @@ function EscapeVelocityCalculator({ onSave, onLaunchInSimulator }) {
 // ----------------------------------------------------
 // 4. ROCHE LIMIT & HILL SPHERE CALCULATOR
 // ----------------------------------------------------
-function RocheHillSphereCalculator({ onSave }) {
+function RocheHillSphereCalculator({ onSave, onLaunchInSimulator }) {
   const [primaryMassKg, setPrimaryMassKg] = useState(5.972e24); // Earth
   const [primaryRadiusKm, setPrimaryRadiusKm] = useState(6371);
   const [primaryDensity, setPrimaryDensity] = useState(5515); // kg/m^3
@@ -645,10 +633,10 @@ function RocheHillSphereCalculator({ onSave }) {
   const hillSphereKm = hillSphereM / 1000;
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Layers className="w-4 h-4 text-hud-rose" />
+          <Layers className="w-4 h-4 text-rose-400" />
           <h3 className="font-mono text-sm font-bold text-white">Roche Limit & Hill Sphere</h3>
         </div>
         <button 
@@ -661,14 +649,14 @@ function RocheHillSphereCalculator({ onSave }) {
             'Fluid Roche Limit': `${d_fluid_km.toFixed(0)} km`,
             'Hill Sphere Radius': `${hillSphereKm.toFixed(0)} km`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-[11px] font-mono text-slate-400 bg-cosmic-950 p-2 rounded border border-slate-800">
-        Tidal Disruption: <span className="text-hud-rose">d_fluid = 2.44 R (ρ_M / ρ_m)¹/³</span> &bull; <span className="text-hud-rose">r_H = a ∛(m / 3M)</span>
+      <div className="text-xs font-mono text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-white/5 backdrop-blur-md flex items-center justify-between flex-wrap gap-2">
+        Tidal Disruption: <span className="text-rose-400">d_fluid = 2.44 R (ρ_M / ρ_m)¹/³</span> &bull; <span className="text-rose-400">r_H = a ∛(m / 3M)</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3 text-xs font-mono">
@@ -678,7 +666,7 @@ function RocheHillSphereCalculator({ onSave }) {
             type="number" 
             value={primaryDensity} 
             onChange={e => setPrimaryDensity(Number(e.target.value))}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-slate-200 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all"
           />
         </div>
         <div>
@@ -687,25 +675,41 @@ function RocheHillSphereCalculator({ onSave }) {
             type="number" 
             value={satelliteDensity} 
             onChange={e => setSatelliteDensity(Number(e.target.value))}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-slate-200 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all"
           />
         </div>
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-rose-500/30 grid grid-cols-3 gap-2 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-rose-500/30 grid grid-cols-3 gap-2 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">RIGID ROCHE</div>
           <div className="text-base font-bold text-white">{Math.round(d_rigid_km).toLocaleString()} km</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">FLUID ROCHE</div>
-          <div className="text-base font-bold text-hud-rose">{Math.round(d_fluid_km).toLocaleString()} km</div>
+          <div className="text-base font-bold text-rose-400">{Math.round(d_fluid_km).toLocaleString()} km</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">HILL SPHERE</div>
-          <div className="text-base font-bold text-hud-cyan">{Math.round(hillSphereKm).toLocaleString()} km</div>
+          <div className="text-base font-bold text-cyan-400">{Math.round(hillSphereKm).toLocaleString()} km</div>
         </div>
       </div>
+
+      {onLaunchInSimulator && (
+        <button
+          onClick={() => onLaunchInSimulator({
+            type: 'calculator_launch',
+            calculatorName: 'Roche Tidal Disruption',
+            satelliteSpeed: 3.2,
+            orbitRadiusKm: Math.round(d_fluid_km),
+            centralMassKg: primaryMassKg
+          })}
+          className="w-full py-2.5 px-4 rounded-xl border border-rose-500/40 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.15)] active:scale-[0.99]"
+        >
+          <Orbit className="w-3.5 h-3.5" />
+          <span>Simulate Tidal Disruption in Gravity Simulator</span>
+        </button>
+      )}
     </div>
   );
 }
@@ -727,10 +731,10 @@ function SchwarzschildCalculator({ onSave }) {
   const iscoKm = rsKm * 3;
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Zap className="w-4 h-4 text-hud-violet" />
+          <Zap className="w-4 h-4 text-purple-400" />
           <h3 className="font-mono text-sm font-bold text-white">Schwarzschild Event Horizon & ISCO</h3>
         </div>
         <button 
@@ -741,22 +745,22 @@ function SchwarzschildCalculator({ onSave }) {
             'Photon Sphere (1.5 Rs)': `${photonSphereKm.toFixed(2)} km`,
             'ISCO Orbit (3 Rs)': `${iscoKm.toFixed(2)} km`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-[11px] font-mono text-slate-400 bg-cosmic-950 p-2 rounded border border-slate-800">
-        Formula: <span className="text-hud-violet">R_s = 2GM / c²</span> &bull; <span className="text-hud-violet">R_photon = 1.5 R_s</span> &bull; <span className="text-hud-violet">R_isco = 3 R_s</span>
+      <div className="text-xs font-mono text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-white/5 backdrop-blur-md flex items-center justify-between flex-wrap gap-2">
+        Formula: <span className="text-purple-400">R_s = 2GM / c²</span> &bull; <span className="text-purple-400">R_photon = 1.5 R_s</span> &bull; <span className="text-purple-400">R_isco = 3 R_s</span>
       </div>
 
       <div className="flex flex-wrap gap-1.5 items-center">
         <span className="text-[10px] font-mono text-slate-500">Presets:</span>
-        <button onClick={() => setMassSolar(10)} className="px-2 py-0.5 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono text-slate-300 hover:text-hud-violet">10 M☉ (Stellar)</button>
-        <button onClick={() => setMassSolar(4.154e6)} className="px-2 py-0.5 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono text-slate-300 hover:text-hud-violet">Sgr A* (4.15M M☉)</button>
-        <button onClick={() => setMassSolar(6.5e9)} className="px-2 py-0.5 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono text-slate-300 hover:text-hud-violet">M87* (6.5B M☉)</button>
-        <button onClick={() => setMassSolar(6.6e10)} className="px-2 py-0.5 rounded bg-cosmic-950 border border-slate-800 text-[10px] font-mono text-slate-300 hover:text-hud-violet">TON 618 (66B M☉)</button>
+        <button onClick={() => setMassSolar(10)} className="px-2.5 py-1 rounded-lg bg-slate-900/80 border border-white/10 text-[11px] font-mono text-slate-300 hover:border-purple-400/50 hover:text-purple-300 hover:bg-slate-800 transition cursor-pointer">10 M☉ (Stellar)</button>
+        <button onClick={() => setMassSolar(4.154e6)} className="px-2.5 py-1 rounded-lg bg-slate-900/80 border border-white/10 text-[11px] font-mono text-slate-300 hover:border-purple-400/50 hover:text-purple-300 hover:bg-slate-800 transition cursor-pointer">Sgr A* (4.15M M☉)</button>
+        <button onClick={() => setMassSolar(6.5e9)} className="px-2.5 py-1 rounded-lg bg-slate-900/80 border border-white/10 text-[11px] font-mono text-slate-300 hover:border-purple-400/50 hover:text-purple-300 hover:bg-slate-800 transition cursor-pointer">M87* (6.5B M☉)</button>
+        <button onClick={() => setMassSolar(6.6e10)} className="px-2.5 py-1 rounded-lg bg-slate-900/80 border border-white/10 text-[11px] font-mono text-slate-300 hover:border-purple-400/50 hover:text-purple-300 hover:bg-slate-800 transition cursor-pointer">TON 618 (66B M☉)</button>
       </div>
 
       <div className="text-xs font-mono">
@@ -765,14 +769,14 @@ function SchwarzschildCalculator({ onSave }) {
           type="number" 
           value={massSolar} 
           onChange={e => setMassSolar(Number(e.target.value))}
-          className="w-full mt-1 bg-cosmic-950 px-3 py-1.5 rounded border border-slate-800 text-hud-violet font-bold"
+          className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-purple-300 font-mono text-xs focus:outline-none focus:border-purple-400 transition-all font-bold"
         />
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-purple-500/30 grid grid-cols-3 gap-2 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-purple-500/30 grid grid-cols-3 gap-2 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">EVENT HORIZON (Rs)</div>
-          <div className="text-sm font-bold text-hud-violet">{rsKm < 1e6 ? `${rsKm.toFixed(2)} km` : `${rsAu.toFixed(3)} AU`}</div>
+          <div className="text-sm font-bold text-purple-400">{rsKm < 1e6 ? `${rsKm.toFixed(2)} km` : `${rsAu.toFixed(3)} AU`}</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">PHOTON SPHERE</div>
@@ -780,7 +784,7 @@ function SchwarzschildCalculator({ onSave }) {
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">ISCO STABLE ORBIT</div>
-          <div className="text-sm font-bold text-hud-cyan">{iscoKm < 1e6 ? `${iscoKm.toFixed(1)} km` : `${(iscoKm / (AU / 1000)).toFixed(3)} AU`}</div>
+          <div className="text-sm font-bold text-cyan-400">{iscoKm < 1e6 ? `${iscoKm.toFixed(1)} km` : `${(iscoKm / (AU / 1000)).toFixed(3)} AU`}</div>
         </div>
       </div>
     </div>
@@ -810,10 +814,10 @@ function GravitationalTimeDilationCalculator({ onSave }) {
   const dilationRatio = timeFactor > 0 ? (1 / timeFactor) : Infinity;
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Clock className="w-4 h-4 text-hud-cyan" />
+          <Clock className="w-4 h-4 text-cyan-400" />
           <h3 className="font-mono text-sm font-bold text-white">Gravitational Time Dilation</h3>
         </div>
         <button 
@@ -824,14 +828,14 @@ function GravitationalTimeDilationCalculator({ onSave }) {
             'Dilation Factor': `${timeFactor.toFixed(6)}`,
             '1 hr at infinity equals': `${(dilationRatio).toFixed(3)} hr at target`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-[11px] font-mono text-slate-400 bg-cosmic-950 p-2 rounded border border-slate-800">
-        Formula: <span className="text-hud-cyan">Δt_proper = Δt_coord √(1 - R_s / r)</span>
+      <div className="text-xs font-mono text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-white/5 backdrop-blur-md flex items-center justify-between flex-wrap gap-2">
+        Formula: <span className="text-cyan-400">Δt_proper = Δt_coord √(1 - R_s / r)</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3 text-xs font-mono">
@@ -841,7 +845,7 @@ function GravitationalTimeDilationCalculator({ onSave }) {
             type="number" 
             value={massSolar} 
             onChange={e => setMassSolar(Number(e.target.value))}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-cyan font-bold"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all font-bold"
           />
         </div>
         <div>
@@ -850,20 +854,20 @@ function GravitationalTimeDilationCalculator({ onSave }) {
             type="number" 
             value={distanceKm} 
             onChange={e => setDistanceKm(Number(e.target.value))}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-slate-200 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all"
           />
         </div>
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-cyan-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-cyan-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">PROPER TIME COEFFICIENT</div>
-          <div className="text-lg font-bold text-hud-cyan">{timeFactor.toFixed(6)}</div>
+          <div className="text-lg font-bold text-cyan-400">{timeFactor.toFixed(6)}</div>
           <div className="text-[10px] text-slate-400">{timeFactor === 0 ? 'Inside Horizon' : 'Relativistic Dilation'}</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">1 HOUR DEEP WELL TIME</div>
-          <div className="text-lg font-bold text-hud-emerald">{dilationRatio === Infinity ? 'Infinite' : `${dilationRatio.toFixed(2)} h`}</div>
+          <div className="text-lg font-bold text-emerald-400">{dilationRatio === Infinity ? 'Infinite' : `${dilationRatio.toFixed(2)} h`}</div>
           <div className="text-[10px] text-slate-400">elapsed for distant observer</div>
         </div>
       </div>
@@ -886,10 +890,10 @@ function HawkingRadiationCalculator({ onSave }) {
   const t_evap_yr = t_evap_sec / (365.25 * 86400);
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Sparkles className="w-4 h-4 text-hud-violet" />
+          <Sparkles className="w-4 h-4 text-purple-400" />
           <h3 className="font-mono text-sm font-bold text-white">Hawking Radiation & Lifetime</h3>
         </div>
         <button 
@@ -899,14 +903,14 @@ function HawkingRadiationCalculator({ onSave }) {
             'Temperature T_H': `${T_H.toExponential(4)} K`,
             'Evaporation Lifetime': `${t_evap_yr.toExponential(3)} Years`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-[11px] font-mono text-slate-400 bg-cosmic-950 p-2 rounded border border-slate-800">
-        Formula: <span className="text-hud-violet">T_H = ℏc³ / (8πGMk_B)</span> &bull; <span className="text-hud-violet">t_evap ∝ M³</span>
+      <div className="text-xs font-mono text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-white/5 backdrop-blur-md flex items-center justify-between flex-wrap gap-2">
+        Formula: <span className="text-purple-400">T_H = ℏc³ / (8πGMk_B)</span> &bull; <span className="text-purple-400">t_evap ∝ M³</span>
       </div>
 
       <div className="text-xs font-mono">
@@ -915,19 +919,19 @@ function HawkingRadiationCalculator({ onSave }) {
           type="number" 
           value={massSolar} 
           onChange={e => setMassSolar(Number(e.target.value))}
-          className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-violet font-bold"
+          className="w-full mt-1 bg-slate-900/90 px-2 py-1 rounded border border-white/10 text-purple-400 font-bold"
         />
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-purple-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-purple-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">HAWKING TEMPERATURE</div>
-          <div className="text-base font-bold text-hud-violet">{T_H.toExponential(3)} K</div>
+          <div className="text-base font-bold text-purple-400">{T_H.toExponential(3)} K</div>
           <div className="text-[10px] text-slate-400">Far colder than 2.7K CMB</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">EVAPORATION TIME</div>
-          <div className="text-base font-bold text-hud-cyan">{t_evap_yr.toExponential(2)} yr</div>
+          <div className="text-base font-bold text-cyan-400">{t_evap_yr.toExponential(2)} yr</div>
           <div className="text-[10px] text-slate-400">Far exceeds Universe age (13.8 Gyr)</div>
         </div>
       </div>
@@ -953,10 +957,10 @@ function GravitationalRedshiftCalculator({ onSave }) {
   }
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Compass className="w-4 h-4 text-hud-amber" />
+          <Compass className="w-4 h-4 text-amber-400" />
           <h3 className="font-mono text-sm font-bold text-white">Gravitational Redshift (z_g)</h3>
         </div>
         <button 
@@ -967,14 +971,14 @@ function GravitationalRedshiftCalculator({ onSave }) {
             'Gravitational Redshift z_g': `${z_g.toFixed(5)}`,
             'Photon Energy Loss': `${((1 - 1 / (1 + z_g)) * 100).toFixed(2)}%`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-[11px] font-mono text-slate-400 bg-cosmic-950 p-2 rounded border border-slate-800">
-        Formula: <span className="text-hud-amber">1 + z_g = (1 - R_s / R)^(-1/2)</span>
+      <div className="text-xs font-mono text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-white/5 backdrop-blur-md flex items-center justify-between flex-wrap gap-2">
+        Formula: <span className="text-amber-400">1 + z_g = (1 - R_s / R)^(-1/2)</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3 text-xs font-mono">
@@ -984,7 +988,7 @@ function GravitationalRedshiftCalculator({ onSave }) {
             type="number" 
             value={massSolar} 
             onChange={e => setMassSolar(Number(e.target.value))}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-amber font-bold"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-amber-300 font-mono text-xs focus:outline-none focus:border-amber-400 transition-all font-bold"
           />
         </div>
         <div>
@@ -993,15 +997,15 @@ function GravitationalRedshiftCalculator({ onSave }) {
             type="number" 
             value={radiusKm} 
             onChange={e => setRadiusKm(Number(e.target.value))}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-slate-200 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all"
           />
         </div>
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-amber-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-amber-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">REDSHIFT FACTOR z_g</div>
-          <div className="text-lg font-bold text-hud-amber">{z_g.toFixed(4)}</div>
+          <div className="text-lg font-bold text-amber-400">{z_g.toFixed(4)}</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">PHOTON ENERGY RETENTION</div>
@@ -1028,10 +1032,10 @@ function ExoplanetTransitCalculator({ onSave }) {
   const depthPercent = depthFraction * 100;
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Globe className="w-4 h-4 text-hud-cyan" />
+          <Globe className="w-4 h-4 text-cyan-400" />
           <h3 className="font-mono text-sm font-bold text-white">Transit Photometry Depth (ppm)</h3>
         </div>
         <button 
@@ -1041,14 +1045,14 @@ function ExoplanetTransitCalculator({ onSave }) {
           }, {
             'Transit Depth': `${depthPpm.toFixed(1)} ppm (${depthPercent.toFixed(4)}%)`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-[11px] font-mono text-slate-400 bg-cosmic-950 p-2 rounded border border-slate-800">
-        Formula: <span className="text-hud-cyan">ΔF / F = (R_p / R_*)²</span>
+      <div className="text-xs font-mono text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-white/5 backdrop-blur-md flex items-center justify-between flex-wrap gap-2">
+        Formula: <span className="text-cyan-400">ΔF / F = (R_p / R_*)²</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3 text-xs font-mono">
@@ -1059,7 +1063,7 @@ function ExoplanetTransitCalculator({ onSave }) {
             step="0.1" 
             value={rpEarth} 
             onChange={e => setRpEarth(Number(e.target.value))}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-cyan font-bold"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all font-bold"
           />
         </div>
         <div>
@@ -1069,15 +1073,15 @@ function ExoplanetTransitCalculator({ onSave }) {
             step="0.05" 
             value={rStarSolar} 
             onChange={e => setRStarSolar(Number(e.target.value))}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-slate-200 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all"
           />
         </div>
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-cyan-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-cyan-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">TRANSIT DEPTH (PPM)</div>
-          <div className="text-xl font-bold text-hud-cyan">{Math.round(depthPpm).toLocaleString()} ppm</div>
+          <div className="text-xl font-bold text-cyan-400">{Math.round(depthPpm).toLocaleString()} ppm</div>
           <div className="text-[10px] text-slate-400">{depthPercent.toFixed(4)}% Flux Dip</div>
         </div>
         <div>
@@ -1114,10 +1118,10 @@ function HabitableZoneCalculator({ onSave }) {
   const isInsideHz = semiMajorAxisAu >= hzInnerAu && semiMajorAxisAu <= hzOuterAu;
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Globe className="w-4 h-4 text-hud-emerald" />
+          <Globe className="w-4 h-4 text-emerald-400" />
           <h3 className="font-mono text-sm font-bold text-white">Equilibrium Temperature & Habitable Zone</h3>
         </div>
         <button 
@@ -1130,14 +1134,14 @@ function HabitableZoneCalculator({ onSave }) {
             'HZ Boundaries': `${hzInnerAu.toFixed(2)} - ${hzOuterAu.toFixed(2)} AU`,
             'In Habitable Zone': isInsideHz ? 'YES' : 'NO'
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-[11px] font-mono text-slate-400 bg-cosmic-950 p-2 rounded border border-slate-800">
-        Formula: <span className="text-hud-emerald">T_eq = 278.5 K × (L / a²)¹/⁴ × (1 - A)¹/⁴</span>
+      <div className="text-xs font-mono text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-white/5 backdrop-blur-md flex items-center justify-between flex-wrap gap-2">
+        Formula: <span className="text-emerald-400">T_eq = 278.5 K × (L / a²)¹/⁴ × (1 - A)¹/⁴</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3 text-xs font-mono">
@@ -1148,7 +1152,7 @@ function HabitableZoneCalculator({ onSave }) {
             step="0.01" 
             value={starLuminosity} 
             onChange={e => setStarLuminosity(Number(e.target.value))}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-emerald font-bold"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-emerald-300 font-mono text-xs focus:outline-none focus:border-emerald-400 transition-all font-bold"
           />
         </div>
         <div>
@@ -1158,20 +1162,20 @@ function HabitableZoneCalculator({ onSave }) {
             step="0.05" 
             value={semiMajorAxisAu} 
             onChange={e => setSemiMajorAxisAu(Number(e.target.value))}
-            className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200"
+            className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-slate-200 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all"
           />
         </div>
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-emerald-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-emerald-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">EQUILIBRIUM TEMP (T_eq)</div>
-          <div className="text-lg font-bold text-hud-emerald">{Teq.toFixed(1)} K ({TeqC.toFixed(0)} °C)</div>
+          <div className="text-lg font-bold text-emerald-400">{Teq.toFixed(1)} K ({TeqC.toFixed(0)} °C)</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">HABITABLE ZONE (HZ)</div>
           <div className="text-sm font-bold text-white">{hzInnerAu.toFixed(2)} - {hzOuterAu.toFixed(2)} AU</div>
-          <span className={`inline-block px-2 py-0.5 mt-1 rounded text-[10px] font-bold ${isInsideHz ? 'bg-hud-emerald/20 text-hud-emerald' : 'bg-rose-950 text-rose-300'}`}>
+          <span className={`inline-block px-2 py-0.5 mt-1 rounded text-[10px] font-bold ${isInsideHz ? 'bg-hud-emerald/20 text-emerald-400' : 'bg-rose-950 text-rose-300'}`}>
             {isInsideHz ? '✓ WITHIN HABITABLE ZONE' : '✗ OUTSIDE HABITABLE ZONE'}
           </span>
         </div>
@@ -1199,10 +1203,10 @@ function EarthSimilarityIndexCalculator({ onSave }) {
   const esi = s_r * s_d * s_v * s_t;
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Bookmark className="w-4 h-4 text-hud-emerald" />
+          <Bookmark className="w-4 h-4 text-emerald-400" />
           <h3 className="font-mono text-sm font-bold text-white">Earth Similarity Index (ESI)</h3>
         </div>
         <button 
@@ -1214,7 +1218,7 @@ function EarthSimilarityIndexCalculator({ onSave }) {
           }, {
             'ESI Score': `${esi.toFixed(3)}`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
@@ -1223,30 +1227,30 @@ function EarthSimilarityIndexCalculator({ onSave }) {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
         <div>
           <label className="text-[10px] text-slate-400">RADIUS (R⊕)</label>
-          <input type="number" step="0.05" value={radiusR} onChange={e => setRadiusR(Number(e.target.value))} className="w-full bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200" />
+          <input type="number" step="0.05" value={radiusR} onChange={e => setRadiusR(Number(e.target.value))} className="w-full bg-slate-900/90 px-2 py-1 rounded border border-white/10 text-slate-200" />
         </div>
         <div>
           <label className="text-[10px] text-slate-400">DENSITY (ρ⊕)</label>
-          <input type="number" step="0.05" value={densityRho} onChange={e => setDensityRho(Number(e.target.value))} className="w-full bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200" />
+          <input type="number" step="0.05" value={densityRho} onChange={e => setDensityRho(Number(e.target.value))} className="w-full bg-slate-900/90 px-2 py-1 rounded border border-white/10 text-slate-200" />
         </div>
         <div>
           <label className="text-[10px] text-slate-400">ESCAPE V (v⊕)</label>
-          <input type="number" step="0.05" value={vesc} onChange={e => setVesc(Number(e.target.value))} className="w-full bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200" />
+          <input type="number" step="0.05" value={vesc} onChange={e => setVesc(Number(e.target.value))} className="w-full bg-slate-900/90 px-2 py-1 rounded border border-white/10 text-slate-200" />
         </div>
         <div>
           <label className="text-[10px] text-slate-400">TEMP (K)</label>
-          <input type="number" value={tempK} onChange={e => setTempK(Number(e.target.value))} className="w-full bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200" />
+          <input type="number" value={tempK} onChange={e => setTempK(Number(e.target.value))} className="w-full bg-slate-900/90 px-2 py-1 rounded border border-white/10 text-slate-200" />
         </div>
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-emerald-500/30 flex items-center justify-between font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-emerald-500/30 flex items-center justify-between font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">COMPUTED ESI METRIC</div>
-          <div className="text-2xl font-bold text-hud-emerald">{isNaN(esi) ? '0.000' : esi.toFixed(3)}</div>
+          <div className="text-2xl font-bold text-emerald-400">{isNaN(esi) ? '0.000' : esi.toFixed(3)}</div>
         </div>
         <div className="text-right text-[11px] text-slate-400">
           <div>Earth Benchmark = 1.000</div>
-          <div className="text-hud-cyan font-bold">{esi >= 0.8 ? 'Earth-like Candidate' : esi >= 0.6 ? 'Sub-terrestrial / Mars-like' : 'Non-Earth Analog'}</div>
+          <div className="text-cyan-400 font-bold">{esi >= 0.8 ? 'Earth-like Candidate' : esi >= 0.6 ? 'Sub-terrestrial / Mars-like' : 'Non-Earth Analog'}</div>
         </div>
       </div>
     </div>
@@ -1266,10 +1270,10 @@ function PlanetSurfaceGravityCalculator({ onSave }) {
   const g_ratio = g / g_earth;
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Globe className="w-4 h-4 text-hud-cyan" />
+          <Globe className="w-4 h-4 text-cyan-400" />
           <h3 className="font-mono text-sm font-bold text-white">Surface Gravity & Acceleration (g)</h3>
         </div>
         <button 
@@ -1279,7 +1283,7 @@ function PlanetSurfaceGravityCalculator({ onSave }) {
           }, {
             'Surface Acceleration g': `${g.toFixed(2)} m/s² (${g_ratio.toFixed(2)} g)`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
@@ -1288,22 +1292,22 @@ function PlanetSurfaceGravityCalculator({ onSave }) {
       <div className="grid grid-cols-2 gap-3 text-xs font-mono">
         <div>
           <label className="text-slate-400 block text-[10px]">MASS (M⊕ Earth Masses)</label>
-          <input type="number" step="0.1" value={massEarth} onChange={e => setMassEarth(Number(e.target.value))} className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-cyan font-bold" />
+          <input type="number" step="0.1" value={massEarth} onChange={e => setMassEarth(Number(e.target.value))} className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all font-bold" />
         </div>
         <div>
           <label className="text-slate-400 block text-[10px]">RADIUS (R⊕ Earth Radii)</label>
-          <input type="number" step="0.1" value={radiusEarth} onChange={e => setRadiusEarth(Number(e.target.value))} className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200" />
+          <input type="number" step="0.1" value={radiusEarth} onChange={e => setRadiusEarth(Number(e.target.value))} className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-slate-200 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all" />
         </div>
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-cyan-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-cyan-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">SURFACE GRAVITY</div>
-          <div className="text-xl font-bold text-hud-cyan">{g.toFixed(2)} m/s²</div>
+          <div className="text-xl font-bold text-cyan-400">{g.toFixed(2)} m/s²</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">IN EARTH G-UNITS</div>
-          <div className="text-xl font-bold text-hud-emerald">{g_ratio.toFixed(2)} g</div>
+          <div className="text-xl font-bold text-emerald-400">{g_ratio.toFixed(2)} g</div>
         </div>
       </div>
     </div>
@@ -1325,10 +1329,10 @@ function TsiolkovskyRocketCalculator({ onSave }) {
   const deltaVKms = deltaV / 1000;
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Rocket className="w-4 h-4 text-hud-amber" />
+          <Rocket className="w-4 h-4 text-amber-400" />
           <h3 className="font-mono text-sm font-bold text-white">Tsiolkovsky Rocket Equation</h3>
         </div>
         <button 
@@ -1340,35 +1344,35 @@ function TsiolkovskyRocketCalculator({ onSave }) {
             'Total Velocity Increment Δv': `${deltaVKms.toFixed(3)} km/s`,
             'Mass Ratio m0/mf': `${massRatio.toFixed(2)}`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-[11px] font-mono text-slate-400 bg-cosmic-950 p-2 rounded border border-slate-800">
-        Formula: <span className="text-hud-amber">Δv = I_sp × g₀ × ln(m₀ / m_f)</span>
+      <div className="text-xs font-mono text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-white/5 backdrop-blur-md flex items-center justify-between flex-wrap gap-2">
+        Formula: <span className="text-amber-400">Δv = I_sp × g₀ × ln(m₀ / m_f)</span>
       </div>
 
       <div className="grid grid-cols-3 gap-2 text-xs font-mono">
         <div>
           <label className="text-[10px] text-slate-400">SPECIFIC IMPULSE (s)</label>
-          <input type="number" value={isp} onChange={e => setIsp(Number(e.target.value))} className="w-full bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-amber font-bold" />
+          <input type="number" value={isp} onChange={e => setIsp(Number(e.target.value))} className="w-full bg-slate-900/90 px-2 py-1 rounded border border-white/10 text-amber-400 font-bold" />
         </div>
         <div>
           <label className="text-[10px] text-slate-400">INITIAL WET MASS (kg)</label>
-          <input type="number" value={mInitial} onChange={e => setMInitial(Number(e.target.value))} className="w-full bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200" />
+          <input type="number" value={mInitial} onChange={e => setMInitial(Number(e.target.value))} className="w-full bg-slate-900/90 px-2 py-1 rounded border border-white/10 text-slate-200" />
         </div>
         <div>
           <label className="text-[10px] text-slate-400">DRY FINAL MASS (kg)</label>
-          <input type="number" value={mDry} onChange={e => setMDry(Number(e.target.value))} className="w-full bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200" />
+          <input type="number" value={mDry} onChange={e => setMDry(Number(e.target.value))} className="w-full bg-slate-900/90 px-2 py-1 rounded border border-white/10 text-slate-200" />
         </div>
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-amber-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-amber-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">AVAILABLE DELTA-V (Δv)</div>
-          <div className="text-xl font-bold text-hud-amber">{deltaVKms.toFixed(3)} km/s</div>
+          <div className="text-xl font-bold text-amber-400">{deltaVKms.toFixed(3)} km/s</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">MASS RATIO (m₀ / m_f)</div>
@@ -1390,10 +1394,10 @@ function LorentzRelativityCalculator({ onSave }) {
   const gamma = beta < 1 ? 1 / Math.sqrt(1 - beta * beta) : Infinity;
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Zap className="w-4 h-4 text-hud-rose" />
+          <Zap className="w-4 h-4 text-rose-400" />
           <h3 className="font-mono text-sm font-bold text-white">Special Relativistic Lorentz Factor (γ)</h3>
         </div>
         <button 
@@ -1403,14 +1407,14 @@ function LorentzRelativityCalculator({ onSave }) {
             'Lorentz Gamma (γ)': `${gamma.toFixed(4)}`,
             'Time Dilation Factor': `${gamma.toFixed(3)}×`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="text-[11px] font-mono text-slate-400 bg-cosmic-950 p-2 rounded border border-slate-800">
-        Formula: <span className="text-hud-rose">γ = 1 / √(1 - v² / c²)</span>
+      <div className="text-xs font-mono text-slate-300 bg-slate-900/80 p-3 rounded-xl border border-white/5 backdrop-blur-md flex items-center justify-between flex-wrap gap-2">
+        Formula: <span className="text-rose-400">γ = 1 / √(1 - v² / c²)</span>
       </div>
 
       <div className="text-xs font-mono">
@@ -1425,14 +1429,14 @@ function LorentzRelativityCalculator({ onSave }) {
           step="0.1" 
           value={velocityPercentC} 
           onChange={e => setVelocityPercentC(Number(e.target.value))}
-          className="w-full accent-hud-rose cursor-pointer mt-1"
+          className="w-full accent-rose-400 cursor-pointer mt-1"
         />
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-rose-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-rose-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">LORENTZ FACTOR (γ)</div>
-          <div className="text-xl font-bold text-hud-rose">{gamma.toFixed(3)}</div>
+          <div className="text-xl font-bold text-rose-400">{gamma.toFixed(3)}</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">TIME DILATION & LENGTH CONTRACTION</div>
@@ -1459,10 +1463,10 @@ function CosmologicalRedshiftCalculator({ onSave }) {
   const a = 1 / (1 + z);
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Compass className="w-4 h-4 text-hud-cyan" />
+          <Compass className="w-4 h-4 text-cyan-400" />
           <h3 className="font-mono text-sm font-bold text-white">Cosmological Redshift & Scale Factor</h3>
         </div>
         <button 
@@ -1472,7 +1476,7 @@ function CosmologicalRedshiftCalculator({ onSave }) {
             'Recession Velocity': `${v_kms.toFixed(1)} km/s (${(v_rel_c * 100).toFixed(2)}% c)`,
             'Cosmic Scale Factor a': `${a.toFixed(5)}`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
@@ -1485,19 +1489,19 @@ function CosmologicalRedshiftCalculator({ onSave }) {
           step="0.1" 
           value={z} 
           onChange={e => setZ(Number(e.target.value))}
-          className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-cyan font-bold"
+          className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all font-bold"
         />
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-cyan-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-cyan-500/30 grid grid-cols-2 gap-3 font-mono text-xs">
         <div>
           <div className="text-[10px] text-slate-500 uppercase">RECESSION VELOCITY</div>
-          <div className="text-base font-bold text-hud-cyan">{(v_rel_c * 100).toFixed(2)}% c</div>
+          <div className="text-base font-bold text-cyan-400">{(v_rel_c * 100).toFixed(2)}% c</div>
           <div className="text-[10px] text-slate-400">{Math.round(v_kms).toLocaleString()} km/s</div>
         </div>
         <div>
           <div className="text-[10px] text-slate-500 uppercase">COSMIC SCALE FACTOR a</div>
-          <div className="text-base font-bold text-hud-emerald">{a.toFixed(4)}</div>
+          <div className="text-base font-bold text-emerald-400">{a.toFixed(4)}</div>
           <div className="text-[10px] text-slate-400">Universe was {((1 - a) * 100).toFixed(1)}% smaller</div>
         </div>
       </div>
@@ -1518,10 +1522,10 @@ function InterstellarTravelTimeCalculator({ onSave }) {
   const timeYears = timeSeconds / (365.25 * 86400);
 
   return (
-    <div className="hud-bracket-card p-5 rounded-xl bg-cosmic-900/90 border border-slate-800 space-y-4">
+    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 sm:p-6 backdrop-blur-xl shadow-xl transition-all duration-300 hover:border-white/20 space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Rocket className="w-4 h-4 text-hud-emerald" />
+          <Rocket className="w-4 h-4 text-emerald-400" />
           <h3 className="font-mono text-sm font-bold text-white">Interstellar Transit Duration</h3>
         </div>
         <button 
@@ -1531,7 +1535,7 @@ function InterstellarTravelTimeCalculator({ onSave }) {
           }, {
             'Transit Time': `${Math.round(timeYears).toLocaleString()} Years`
           })}
-          className="p-1 text-slate-400 hover:text-hud-cyan transition"
+          className="p-1.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 transition cursor-pointer"
         >
           <Save className="w-4 h-4" />
         </button>
@@ -1540,17 +1544,17 @@ function InterstellarTravelTimeCalculator({ onSave }) {
       <div className="grid grid-cols-2 gap-3 text-xs font-mono">
         <div>
           <label className="text-slate-400 block text-[10px]">DISTANCE (Light Years)</label>
-          <input type="number" step="0.1" value={distanceLy} onChange={e => setDistanceLy(Number(e.target.value))} className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-slate-200" />
+          <input type="number" step="0.1" value={distanceLy} onChange={e => setDistanceLy(Number(e.target.value))} className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-slate-200 font-mono text-xs focus:outline-none focus:border-cyan-400 transition-all" />
         </div>
         <div>
           <label className="text-slate-400 block text-[10px]">PROBE SPEED (km/s)</label>
-          <input type="number" value={speedKms} onChange={e => setSpeedKms(Number(e.target.value))} className="w-full mt-1 bg-cosmic-950 px-2 py-1 rounded border border-slate-800 text-hud-emerald font-bold" />
+          <input type="number" value={speedKms} onChange={e => setSpeedKms(Number(e.target.value))} className="w-full mt-1.5 bg-slate-900/90 px-3 py-2 rounded-xl border border-white/10 text-emerald-300 font-mono text-xs focus:outline-none focus:border-emerald-400 transition-all font-bold" />
         </div>
       </div>
 
-      <div className="p-3.5 rounded-lg bg-cosmic-950 border border-emerald-500/30 font-mono text-xs">
+      <div className="p-3.5 rounded-lg bg-slate-900/90 border border-emerald-500/30 font-mono text-xs">
         <div className="text-[10px] text-slate-500 uppercase">CRUISE TRANSIT TIME</div>
-        <div className="text-xl font-bold text-hud-emerald">{Math.round(timeYears).toLocaleString()} Earth Years</div>
+        <div className="text-xl font-bold text-emerald-400">{Math.round(timeYears).toLocaleString()} Earth Years</div>
         <div className="text-[10px] text-slate-400">At {(speedKms / 299792 * 100).toFixed(4)}% the speed of light</div>
       </div>
     </div>

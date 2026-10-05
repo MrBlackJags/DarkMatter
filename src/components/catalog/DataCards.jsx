@@ -10,6 +10,9 @@ import {
   TOTAL_STELLAR_DISCOVERIES_COUNT 
 } from '../../data/stellarSurveys';
 import { formatStarForObjectDetail } from '../../services/stellarDiscoveryEngine';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 import { 
   Orbit, 
   Search, 
@@ -28,7 +31,10 @@ import {
   Calendar,
   Scale,
   PlusCircle,
-  BookOpen
+  BookOpen,
+  ArrowUpDown,
+  Filter,
+  Check
 } from 'lucide-react';
 
 /**
@@ -107,112 +113,123 @@ function AntigravityCard({ object, index, onSelect, onSimulate, isCompared = fal
 
   const metric = getPrimaryMetric();
 
+  const getBadgeVariant = (cls) => {
+    const c = (cls || '').toLowerCase();
+    if (c === 'blackhole') return 'purple';
+    if (c === 'exoplanet' || c === 'interstellar') return 'emerald';
+    if (c === 'galaxy') return 'cyan';
+    if (c === 'pulsar') return 'cyan';
+    if (c === 'supernova') return 'amber';
+    return 'amber';
+  };
+
+  const badgeVariant = getBadgeVariant(object.class);
+
   return (
-    <article
+    <Card
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={() => onSelect(object)}
-      className="group relative cursor-pointer rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-black/40 p-5 backdrop-blur-md transition-all duration-500 ease-out will-change-transform flex flex-col justify-between"
+      className="group relative cursor-pointer overflow-hidden border-white/10 bg-slate-950/70 p-5 backdrop-blur-xl transition-all duration-300 hover:border-cyan-500/40 hover:bg-slate-900/80 flex flex-col justify-between"
       style={{
         transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateY(${isHovered ? '-6px' : '0px'})`,
         boxShadow: isHovered
           ? `0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 30px ${theme.glow}, 0 0 1px rgba(255, 255, 255, 0.2)`
-          : '0 4px 20px -2px rgba(0, 0, 0, 0.4)',
-        borderColor: isHovered ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.08)'
+          : '0 4px 20px -2px rgba(0, 0, 0, 0.4)'
       }}
     >
       <div>
         {/* CELESTIAL VISUAL */}
-        <div className="mb-4 overflow-hidden rounded-xl">
+        <div className="mb-4 overflow-hidden rounded-xl border border-white/5 bg-black/40">
           <CelestialVisual object={object} isHovered={isHovered} size="card" />
         </div>
 
         {/* CLASSIFICATION BADGE & CONSTELLATION */}
         <div className="flex items-center justify-between gap-2">
-          <div className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[10px] font-mono tracking-wider uppercase ${theme.badge}`}>
-            <span className={`w-1 h-1 rounded-full ${theme.dot}`} />
-            {object.subType?.split(' ')[0] || object.class}
-          </div>
+          <Badge variant={badgeVariant}>
+            <span className={`w-1.5 h-1.5 rounded-full ${theme.dot}`} />
+            <span>{object.subType?.split(' ')[0] || object.class}</span>
+          </Badge>
           {object.constellation && (
-            <span className="text-[11px] font-light text-white/40 truncate">
+            <span className="text-[11px] font-mono text-slate-400 truncate">
               {object.constellation}
             </span>
           )}
         </div>
 
         {/* OBJECT TITLE & DESIGNATION */}
-        <h3 className="mt-3 text-lg font-light tracking-tight text-white transition-colors duration-300 group-hover:text-white/95">
+        <h3 className="mt-3 text-lg font-medium tracking-tight text-white transition-colors duration-200 group-hover:text-cyan-300">
           {object.name}
         </h3>
         {object.designation && object.designation !== object.name && (
-          <p className="mt-0.5 text-xs font-mono text-white/30 truncate">
+          <p className="mt-0.5 text-xs font-mono text-slate-400 truncate">
             {object.designation}
           </p>
         )}
 
         {/* PRIMARY METRIC */}
-        <div className="mt-4 rounded-xl border border-white/[0.04] bg-white/[0.015] p-3">
-          <div className="text-[10px] uppercase tracking-wider text-white/35 font-mono">
+        <div className="mt-4 rounded-xl border border-white/5 bg-white/[0.02] p-3 backdrop-blur-sm">
+          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-mono">
             {metric.label}
           </div>
-          <div className="mt-0.5 text-xl font-light tracking-tight text-white/90">
+          <div className="mt-0.5 text-lg font-mono font-bold tracking-tight text-cyan-300">
             {metric.value}
           </div>
         </div>
 
         {/* 1-SENTENCE SUMMARY */}
         {object.keyDiscoveries && object.keyDiscoveries.length > 0 && (
-          <p className="mt-3 text-xs leading-relaxed font-light text-white/40 line-clamp-2">
+          <p className="mt-3 text-xs leading-relaxed font-sans text-slate-300 line-clamp-2">
             {object.keyDiscoveries[0]}
           </p>
         )}
       </div>
 
-      {/* FOOTER */}
-      <div className="mt-5 flex items-center justify-between border-t border-white/[0.05] pt-3.5 text-[11px] font-light text-white/40">
-        <span className="truncate max-w-[130px]">
+      {/* FOOTER ACTIONS */}
+      <div className="mt-5 flex items-center justify-between border-t border-white/5 pt-3.5 text-xs font-mono text-slate-400">
+        <span className="truncate max-w-[120px] text-[11px]">
           {object.distance?.lightYears ? `${object.distance.lightYears} LY` : (object.discoveryMission || 'Deep Sky')}
         </span>
         <div className="flex items-center gap-1.5 sm:gap-2">
           {onToggleCompare && (
-            <button
+            <Button
+              size="sm"
+              variant={isCompared ? "cyan" : "outline"}
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleCompare(object);
               }}
-              className={`p-1 sm:px-2 sm:py-1 rounded-full border text-[10px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
-                isCompared
-                  ? 'border-cyan-400 bg-cyan-400/20 text-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.3)]'
-                  : 'border-white/10 hover:border-cyan-500/30 bg-white/[0.02] hover:bg-white/[0.08] text-white/50 hover:text-white'
-              }`}
+              className="h-7 px-2.5 text-[11px]"
               title={isCompared ? 'Remove from comparison' : 'Add to comparative analysis'}
             >
-              <Scale className="w-2.5 h-2.5" />
+              <Scale className="w-3 h-3" />
               <span className="hidden sm:inline">{isCompared ? 'Queued' : 'Compare'}</span>
-            </button>
+            </Button>
           )}
           {onSimulate && (
-            <button
+            <Button
+              size="sm"
+              variant="cyan"
               onClick={(e) => {
                 e.stopPropagation();
                 onSimulate(object);
               }}
-              className="px-2 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-[10px] font-mono flex items-center gap-1 transition-all cursor-pointer shadow-[0_0_10px_rgba(6,182,212,0.15)]"
+              className="h-7 px-2.5 text-[11px]"
               title="Simulate gravitational field in Orbit Simulator"
             >
-              <Orbit className="w-2.5 h-2.5" />
+              <Orbit className="w-3 h-3" />
               <span className="hidden sm:inline">Simulate</span>
-            </button>
+            </Button>
           )}
-          <span className="flex items-center gap-1 transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:text-white/80">
-            Inspect
-            <ArrowRight className="w-3 h-3" />
+          <span className="flex items-center gap-1 transition-transform duration-200 group-hover:translate-x-1 text-slate-300 group-hover:text-cyan-300 ml-1">
+            <span className="hidden sm:inline">Inspect</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </span>
         </div>
       </div>
-    </article>
+    </Card>
   );
 }
 
@@ -232,27 +249,27 @@ function StellarSurveyStarCard({ star, onSelect, onSimulate }) {
   const formattedStar = formatStarForObjectDetail(star);
 
   return (
-    <article
+    <Card
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 backdrop-blur-md transition-all duration-300 flex flex-col justify-between hover:border-white/20 hover:bg-white/[0.035] hover:shadow-[0_15px_35px_rgba(0,0,0,0.6)]"
+      className="group relative overflow-hidden border-white/10 bg-slate-950/70 p-5 backdrop-blur-xl transition-all duration-300 hover:border-cyan-500/40 hover:bg-slate-900/80 flex flex-col justify-between shadow-xl"
     >
       <div>
         {/* Real Telescope Survey Photo Visual Header */}
         <div
           onClick={() => onSelect(formattedStar)}
-          className="mb-4 overflow-hidden rounded-xl cursor-pointer"
+          className="mb-4 overflow-hidden rounded-xl border border-white/5 bg-black/40 cursor-pointer"
         >
           <CelestialVisual object={{ ...star, class: 'star' }} isHovered={isHovered} size="card" />
         </div>
 
         {/* Header & Badges */}
         <div className="flex items-center justify-between gap-2">
-          <div className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[10px] font-mono tracking-wider uppercase ${badge.color}`}>
+          <Badge variant="outline" className={`${badge.color} border px-2.5 py-0.5`}>
             <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: badge.hex }} />
-            {badge.badge}
-          </div>
-          <span className="text-[11px] font-mono text-white/40">
+            <span>{badge.badge}</span>
+          </Badge>
+          <span className="text-[11px] font-mono text-slate-400">
             {star.constellation}
           </span>
         </div>
@@ -260,71 +277,73 @@ function StellarSurveyStarCard({ star, onSelect, onSimulate }) {
         {/* Star Name & Catalog IDs */}
         <h3
           onClick={() => onSelect(formattedStar)}
-          className="mt-3 text-lg font-light text-white tracking-tight group-hover:text-cyan-300 transition-colors cursor-pointer"
+          className="mt-3 text-lg font-medium text-white tracking-tight group-hover:text-cyan-300 transition-colors cursor-pointer"
         >
           {star.name}
         </h3>
-        <p className="text-xs font-mono text-white/35 truncate mt-0.5">
+        <p className="text-xs font-mono text-slate-400 truncate mt-0.5">
           {star.catalogDesignations[0]}
         </p>
 
         {/* Astrophysical Metrics Grid */}
         <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-mono">
-          <div className="p-2.5 rounded-lg border border-white/[0.04] bg-white/[0.015]">
-            <div className="text-[9px] uppercase tracking-wider text-white/35">Temperature</div>
-            <div className="text-sm font-light text-white/90 mt-0.5">
+          <div className="p-2.5 rounded-xl border border-white/5 bg-white/[0.02]">
+            <div className="text-[9px] uppercase tracking-wider text-slate-400 font-mono">Temperature</div>
+            <div className="text-sm font-semibold text-slate-100 mt-0.5">
               {star.temperatureK.toLocaleString()} K
             </div>
           </div>
-          <div className="p-2.5 rounded-lg border border-white/[0.04] bg-white/[0.015]">
-            <div className="text-[9px] uppercase tracking-wider text-white/35">Distance</div>
-            <div className="text-sm font-light text-cyan-300 mt-0.5">
+          <div className="p-2.5 rounded-xl border border-white/5 bg-white/[0.02]">
+            <div className="text-[9px] uppercase tracking-wider text-slate-400 font-mono">Distance</div>
+            <div className="text-sm font-semibold text-cyan-300 mt-0.5">
               {star.distanceLy.toLocaleString()} LY
             </div>
           </div>
-          <div className="p-2.5 rounded-lg border border-white/[0.04] bg-white/[0.015]">
-            <div className="text-[9px] uppercase tracking-wider text-white/35">Stellar Mass</div>
-            <div className="text-sm font-light text-amber-300 mt-0.5">
+          <div className="p-2.5 rounded-xl border border-white/5 bg-white/[0.02]">
+            <div className="text-[9px] uppercase tracking-wider text-slate-400 font-mono">Stellar Mass</div>
+            <div className="text-sm font-semibold text-amber-300 mt-0.5">
               {star.massSolar} M☉
             </div>
           </div>
-          <div className="p-2.5 rounded-lg border border-white/[0.04] bg-white/[0.015]">
-            <div className="text-[9px] uppercase tracking-wider text-white/35">Luminosity</div>
-            <div className="text-sm font-light text-purple-300 mt-0.5">
+          <div className="p-2.5 rounded-xl border border-white/5 bg-white/[0.02]">
+            <div className="text-[9px] uppercase tracking-wider text-slate-400 font-mono">Luminosity</div>
+            <div className="text-sm font-semibold text-purple-300 mt-0.5">
               {star.luminositySolar > 1000 ? `${(star.luminositySolar / 1000).toFixed(1)}k` : star.luminositySolar} L☉
             </div>
           </div>
         </div>
 
         {/* Brief description / significance */}
-        <p className="mt-3 text-xs leading-relaxed font-light text-white/40 line-clamp-2">
+        <p className="mt-3 text-xs leading-relaxed font-sans text-slate-300 line-clamp-2">
           {star.significance}
         </p>
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-5 pt-3.5 border-t border-white/[0.06] flex items-center justify-between gap-2">
+      <div className="mt-5 pt-3.5 border-t border-white/5 flex items-center justify-between gap-2">
         <button
           onClick={() => onSelect(formattedStar)}
-          className="text-xs font-light text-white/60 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
+          className="text-xs font-mono text-slate-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
         >
           <span>Dossier</span>
-          <ArrowRight className="w-3 h-3" />
+          <ArrowRight className="w-3.5 h-3.5" />
         </button>
 
-        <button
+        <Button
+          size="sm"
+          variant="cyan"
           onClick={(e) => {
             e.stopPropagation();
             onSimulate && onSimulate(star);
           }}
-          className="px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-xs font-mono flex items-center gap-1.5 transition-all shadow-[0_0_12px_rgba(6,182,212,0.1)] cursor-pointer"
+          className="h-7 px-2.5 text-[11px]"
           title="Load this star directly into the Gravity Simulator"
         >
           <Orbit className="w-3 h-3" />
           <span>Simulate</span>
-        </button>
+        </Button>
       </div>
-    </article>
+    </Card>
   );
 }
 
@@ -346,9 +365,10 @@ export default function DataCards({
   const [catalogMode, setCatalogMode] = useState('curated'); // 'curated' | 'stellar_surveys'
   const [curatedView, setCuratedView] = useState('grid'); // 'grid' | 'radar' | 'timeline'
   
-  // Curated Filters
+  // Curated Filters & Advanced Sorting
   const [activeTab, setActiveTab] = useState('all'); // 'all' | 'stars' | 'blackholes' | 'planets'
   const [searchQuery, setSearchQuery] = useState('');
+  const [curatedSortBy, setCuratedSortBy] = useState('discovery-desc'); // 'discovery-desc' | 'discovery-asc' | 'name-asc' | 'name-desc' | 'distance-asc' | 'distance-desc' | 'class'
 
   // All-Sky Multi-Million Stellar Survey Filters
   const [stellarPage, setStellarPage] = useState(1);
@@ -368,21 +388,77 @@ export default function DataCards({
   const blackHoleCount = objects.filter(o => isBlackHoleObject(o.class)).length;
   const planetCount = objects.filter(o => isPlanetObject(o.class)).length;
 
-  const filteredCuratedObjects = objects.filter(obj => {
-    if (activeTab === 'stars' && !isStarObject(obj.class)) return false;
-    if (activeTab === 'blackholes' && !isBlackHoleObject(obj.class)) return false;
-    if (activeTab === 'planets' && !isPlanetObject(obj.class)) return false;
-
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      const matchName = (obj.name || '').toLowerCase().includes(q);
-      const matchDesig = (obj.designation || '').toLowerCase().includes(q);
-      const matchConst = (obj.constellation || '').toLowerCase().includes(q);
-      const matchSub = (obj.subType || '').toLowerCase().includes(q);
-      return matchName || matchDesig || matchConst || matchSub;
+  const parseDistanceNumeric = (obj) => {
+    if (!obj.distance) return Infinity;
+    if (obj.distance.lightYears) {
+      const cleaned = String(obj.distance.lightYears).replace(/,/g, '').toLowerCase();
+      if (cleaned.includes('billion')) return parseFloat(cleaned) * 1e9;
+      if (cleaned.includes('million')) return parseFloat(cleaned) * 1e6;
+      const num = parseFloat(cleaned);
+      if (!isNaN(num)) return num;
     }
-    return true;
-  });
+    if (obj.distance.lightTravelTime) {
+      const cleaned = String(obj.distance.lightTravelTime).replace(/,/g, '').toLowerCase();
+      if (cleaned.includes('billion')) return parseFloat(cleaned) * 1e9;
+      if (cleaned.includes('million')) return parseFloat(cleaned) * 1e6;
+      const num = parseFloat(cleaned);
+      if (!isNaN(num)) return num;
+    }
+    if (obj.distance.redshift) {
+      return parseFloat(obj.distance.redshift) * 3.26e9; // roughly scale redshift
+    }
+    return Infinity;
+  };
+
+  const filteredCuratedObjects = useMemo(() => {
+    let list = objects.filter(obj => {
+      if (activeTab === 'stars' && !isStarObject(obj.class)) return false;
+      if (activeTab === 'blackholes' && !isBlackHoleObject(obj.class)) return false;
+      if (activeTab === 'planets' && !isPlanetObject(obj.class)) return false;
+
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const matchName = (obj.name || '').toLowerCase().includes(q);
+        const matchDesig = (obj.designation || '').toLowerCase().includes(q);
+        const matchConst = (obj.constellation || '').toLowerCase().includes(q);
+        const matchSub = (obj.subType || '').toLowerCase().includes(q);
+        return matchName || matchDesig || matchConst || matchSub;
+      }
+      return true;
+    });
+
+    // Apply rigorous, multi-attribute sorting
+    list = [...list].sort((a, b) => {
+      if (curatedSortBy === 'discovery-desc') {
+        const yA = a.discoveryYear || 0;
+        const yB = b.discoveryYear || 0;
+        return yB - yA;
+      }
+      if (curatedSortBy === 'discovery-asc') {
+        const yA = a.discoveryYear || 9999;
+        const yB = b.discoveryYear || 9999;
+        return yA - yB;
+      }
+      if (curatedSortBy === 'name-asc') {
+        return (a.name || '').localeCompare(b.name || '');
+      }
+      if (curatedSortBy === 'name-desc') {
+        return (b.name || '').localeCompare(a.name || '');
+      }
+      if (curatedSortBy === 'distance-asc') {
+        return parseDistanceNumeric(a) - parseDistanceNumeric(b);
+      }
+      if (curatedSortBy === 'distance-desc') {
+        return parseDistanceNumeric(b) - parseDistanceNumeric(a);
+      }
+      if (curatedSortBy === 'class') {
+        return (a.class || '').localeCompare(b.class || '');
+      }
+      return 0;
+    });
+
+    return list;
+  }, [objects, activeTab, searchQuery, curatedSortBy]);
 
   // Query All-Sky Multi-Million Stellar Surveys
   const stellarSurveyData = useMemo(() => {
@@ -527,8 +603,28 @@ export default function DataCards({
               })}
             </div>
 
-            {/* View Mode Switcher (Grid | Radar | Timeline) & Compare Counter */}
-            <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+            {/* Sorting Dropdown & View Mode Switcher */}
+            <div className="flex flex-wrap items-center gap-2 self-end sm:self-auto shrink-0">
+              
+              {/* Better Sorting Selector for Curated Discoveries */}
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-slate-950/80 backdrop-blur-md text-xs font-mono text-slate-300">
+                <ArrowUpDown className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                <span className="text-[10px] uppercase text-slate-400 hidden lg:inline">Sort:</span>
+                <select
+                  value={curatedSortBy}
+                  onChange={(e) => setCuratedSortBy(e.target.value)}
+                  className="bg-transparent text-slate-200 text-xs font-mono focus:outline-none cursor-pointer pr-1"
+                >
+                  <option value="discovery-desc" className="bg-slate-900 text-white">Year: Newest First</option>
+                  <option value="discovery-asc" className="bg-slate-900 text-white">Year: Historic First</option>
+                  <option value="name-asc" className="bg-slate-900 text-white">Name: A → Z</option>
+                  <option value="name-desc" className="bg-slate-900 text-white">Name: Z → A</option>
+                  <option value="distance-asc" className="bg-slate-900 text-white">Distance: Closest</option>
+                  <option value="distance-desc" className="bg-slate-900 text-white">Distance: Deepest</option>
+                  <option value="class" className="bg-slate-900 text-white">Class &amp; Category</option>
+                </select>
+              </div>
+
               {compareList.length > 0 && onOpenCompare && (
                 <button
                   onClick={onOpenCompare}

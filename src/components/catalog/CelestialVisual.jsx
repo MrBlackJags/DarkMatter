@@ -8,11 +8,11 @@ import React, { useRef, useEffect, useState } from 'react';
  */
 export default function CelestialVisual({ object, isHovered = false, size = 'card' }) {
   const canvasRef = useRef(null);
-  const [viewMode, setViewMode] = useState(object?.image ? 'image' : 'model');
+  const [viewMode, setViewMode] = useState(object?.image ? 'both' : 'model');
   const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
-    setViewMode(object?.image ? 'image' : 'model');
+    setViewMode(object?.image ? 'both' : 'model');
     setImgError(false);
   }, [object?.image, object?.id, object?.name]);
 
@@ -20,7 +20,7 @@ export default function CelestialVisual({ object, isHovered = false, size = 'car
   const canvasHeight = isDetail ? 280 : 160;
 
   useEffect(() => {
-    if (viewMode !== 'model') return;
+    if (viewMode === 'image') return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -487,8 +487,39 @@ export default function CelestialVisual({ object, isHovered = false, size = 'car
       {/* Background Starfield ambient for model */}
       <div className="absolute inset-0 bg-radial-gradient from-transparent to-black/90 pointer-events-none" />
 
-      {/* Render Image or Model */}
-      {viewMode === 'image' && hasImage ? (
+      {/* Render Dual (Both), Image, or Model */}
+      {viewMode === 'both' && hasImage ? (
+        <div className="relative w-full h-full flex flex-row items-center justify-between overflow-hidden">
+          {/* Left: Real Astronomical Telescope Imagery */}
+          <div className="relative w-1/2 h-full bg-black overflow-hidden flex items-center justify-center border-r border-white/10">
+            <img
+              src={object.image}
+              alt={object.name}
+              onError={() => {
+                setImgError(true);
+                setViewMode('model');
+              }}
+              className="w-full h-full object-cover filter brightness-95 contrast-105 transition-transform duration-700 ease-out group-hover/visual:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
+            <div className="absolute bottom-1.5 left-2 z-10 px-1.5 py-0.5 rounded bg-black/80 border border-white/15 text-[8px] font-mono tracking-wider text-emerald-300">
+              PHOTO
+            </div>
+          </div>
+
+          {/* Right: Interactive 3D Physics Simulation Canvas */}
+          <div className="relative w-1/2 h-full flex items-center justify-center bg-black/40">
+            <canvas
+              ref={canvasRef}
+              className="w-full h-full relative z-10 block pointer-events-none"
+            />
+            <div className="absolute bottom-1.5 right-2 z-10 px-1.5 py-0.5 rounded bg-black/80 border border-white/15 text-[8px] font-mono tracking-wider text-cyan-300">
+              3D MODEL
+            </div>
+          </div>
+        </div>
+      ) : viewMode === 'image' && hasImage ? (
         <div className="relative w-full h-full bg-black overflow-hidden flex items-center justify-center">
           <img
             src={object.image}
@@ -497,7 +528,7 @@ export default function CelestialVisual({ object, isHovered = false, size = 'car
               setImgError(true);
               setViewMode('model');
             }}
-            className="w-full h-full object-cover filter brightness-95 contrast-105 transition-transform duration-700 ease-out group-hover:scale-105"
+            className="w-full h-full object-cover filter brightness-95 contrast-105 transition-transform duration-700 ease-out group-hover/visual:scale-105"
             loading="lazy"
           />
           {/* Subtle vignette overlay */}
@@ -513,24 +544,56 @@ export default function CelestialVisual({ object, isHovered = false, size = 'car
 
       {/* Mode Switcher pill if image is present */}
       {hasImage && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setViewMode(viewMode === 'model' ? 'image' : 'model');
-          }}
-          className="absolute bottom-2.5 right-2.5 z-20 px-2.5 py-1 text-[10px] font-mono tracking-wider rounded-lg border border-white/15 bg-black/80 hover:bg-black/95 text-white/70 hover:text-white hover:border-cyan-400/50 backdrop-blur-md transition-all shadow-lg flex items-center gap-1.5 cursor-pointer"
-          title={`Switch between real telescope photograph and 3D procedural simulation`}
-        >
-          <span className="text-[11px]">{viewMode === 'model' ? '📷' : '🪐'}</span>
-          <span>{viewMode === 'model' ? 'PHOTO' : '3D MODEL'}</span>
-        </button>
+        <div className="absolute bottom-2.5 right-2.5 z-20 flex items-center gap-1 rounded-lg border border-white/15 bg-black/85 p-0.5 backdrop-blur-md shadow-lg">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setViewMode('both');
+            }}
+            className={`px-1.5 py-0.5 text-[9px] font-mono rounded transition-all cursor-pointer ${
+              viewMode === 'both' ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-400/40 font-semibold' : 'text-white/50 hover:text-white'
+            }`}
+            title="Show BOTH Imagery & 3D Model side-by-side"
+          >
+            BOTH
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setViewMode('image');
+            }}
+            className={`px-1.5 py-0.5 text-[9px] font-mono rounded transition-all cursor-pointer ${
+              viewMode === 'image' ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-400/40 font-semibold' : 'text-white/50 hover:text-white'
+            }`}
+            title="Show Full Telescope Photo"
+          >
+            PHOTO
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setViewMode('model');
+            }}
+            className={`px-1.5 py-0.5 text-[9px] font-mono rounded transition-all cursor-pointer ${
+              viewMode === 'model' ? 'bg-purple-500/30 text-purple-300 border border-purple-400/40 font-semibold' : 'text-white/50 hover:text-white'
+            }`}
+            title="Show Full 3D Physics Simulation"
+          >
+            3D
+          </button>
+        </div>
       )}
 
       {/* Scientific Telemetry & Status Indicator */}
-      <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/70 border border-white/10 backdrop-blur-md pointer-events-none">
-        <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${viewMode === 'image' ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]' : 'bg-cyan-400 shadow-[0_0_6px_#22d3ee]'}`} />
+      <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/75 border border-white/10 backdrop-blur-md pointer-events-none">
+        <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+          viewMode === 'both' ? 'bg-amber-400 shadow-[0_0_6px_#fbbf24]' :
+          viewMode === 'image' ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]' :
+          'bg-cyan-400 shadow-[0_0_6px_#22d3ee]'
+        }`} />
         <span className="text-[9px] font-mono tracking-widest text-white/70 uppercase">
-          {viewMode === 'image' ? 'TELESCOPE IMAGERY' : '3D SIMULATION'}
+          {viewMode === 'both' ? 'IMAGERY + 3D MODEL' :
+           viewMode === 'image' ? 'TELESCOPE IMAGERY' : '3D SIMULATION'}
         </span>
       </div>
     </div>

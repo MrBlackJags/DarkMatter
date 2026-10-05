@@ -166,8 +166,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden selection:bg-white/20 selection:text-white">
-      {/* Immersive cosmic background canvas */}
-      <CosmicCanvas />
+      {/* Immersive cosmic background canvas (ONLY on landing view to guarantee zero scroll lag when browsing) */}
+      {view === 'landing' && <CosmicCanvas />}
 
       {/* Persistent Glassmorphic Observatory Header (when viewing content) */}
       {view !== 'landing' && (
@@ -185,7 +185,6 @@ export default function App() {
       {view === 'landing' && (
         <Landing 
           onDiscover={() => handleNavigate('explore')} 
-          onNavigate={handleNavigate}
         />
       )}
 

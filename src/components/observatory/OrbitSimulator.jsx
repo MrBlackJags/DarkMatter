@@ -723,18 +723,27 @@ export default function OrbitSimulator({ initialStar = null }) {
       const star1 = CELESTIAL_CATALOG.find(c => c.id === 'star_blue');
       const star2 = CELESTIAL_CATALOG.find(c => c.id === 'star_yellow');
       const terra = CELESTIAL_CATALOG.find(c => c.id === 'terra');
-      const dist = 140;
-      const v = 4.8;
+      
+      const m1 = 16000;
+      const m2 = 12000;
+      const totalM = m1 + m2;
+      const sep = 280; // separation distance R = r1 + r2
+      const r1 = sep * (m2 / totalM); // 120
+      const r2 = sep * (m1 / totalM); // 160
+      // True circular two-body speeds around barycenter: v1 = r1 * omega, v2 = r2 * omega, where omega = sqrt(G*M_tot / sep^3)
+      const omega = Math.sqrt((1.0 * totalM) / Math.pow(sep, 3));
+      const v1 = r1 * omega;
+      const v2 = r2 * omega;
 
       bodiesRef.current = [
         {
           id: 'star-alpha',
           name: 'Alpha Core (Class O Blue)',
           type: star1.type,
-          x: center.x - dist,
+          x: center.x - r1,
           y: center.y,
-          vx: 0, vy: v, ax: 0, ay: 0,
-          mass: 16000,
+          vx: 0, vy: v1, ax: 0, ay: 0,
+          mass: m1,
           radius: 46,
           color: star1.color,
           isCore: false,
@@ -745,10 +754,10 @@ export default function OrbitSimulator({ initialStar = null }) {
           id: 'star-beta',
           name: 'Beta Core (Class G Yellow)',
           type: star2.type,
-          x: center.x + dist,
+          x: center.x + r2,
           y: center.y,
-          vx: 0, vy: -v, ax: 0, ay: 0,
-          mass: 12000,
+          vx: 0, vy: -v2, ax: 0, ay: 0,
+          mass: m2,
           radius: 36,
           color: star2.color,
           isCore: false,
@@ -761,7 +770,7 @@ export default function OrbitSimulator({ initialStar = null }) {
           type: terra.type,
           x: center.x,
           y: center.y - 360,
-          vx: Math.sqrt((1.0 * 28000) / 360), vy: 0, ax: 0, ay: 0,
+          vx: Math.sqrt((1.0 * totalM) / 360), vy: 0, ax: 0, ay: 0,
           mass: terra.mass,
           radius: terra.radius,
           color: terra.color,
@@ -1157,17 +1166,25 @@ export default function OrbitSimulator({ initialStar = null }) {
     } else if (scenarioId === 'kilonova_merger') {
       // Witness: Binary Neutron Star Kilonova (GW170817-inspired)
       const pulsar = CELESTIAL_CATALOG.find(c => c.id === 'pulsar');
-      const d = 80;
-      const v = Math.sqrt((1.0 * pulsar.mass) / (d * 2)) * 0.95;
+      const m1 = 1.4 * 14000; // 1.4 M☉ = 19600
+      const m2 = 1.6 * 14000; // 1.6 M☉ = 22400
+      const totalM = m1 + m2;
+      const sep = 160; // mutual separation distance
+      const r1 = sep * (m2 / totalM);
+      const r2 = sep * (m1 / totalM);
+      // Angular velocity omega = sqrt(G * M_tot / sep^3)
+      const omega = Math.sqrt((1.0 * totalM) / Math.pow(sep, 3));
+      const v1 = r1 * omega;
+      const v2 = r2 * omega;
 
       bodiesRef.current = [
         {
           id: 'ns-alpha',
           name: 'Neutron Star Alpha (1.4 M☉)',
           type: pulsar.type,
-          x: center.x - d, y: center.y,
-          vx: 0, vy: v, ax: 0, ay: 0,
-          mass: 1.4 * 14000, // 1.4 solar masses
+          x: center.x - r1, y: center.y,
+          vx: 0, vy: v1, ax: 0, ay: 0,
+          mass: m1,
           radius: pulsar.radius,
           baseRadius: pulsar.radius,
           color: '#c084fc',
@@ -1181,9 +1198,9 @@ export default function OrbitSimulator({ initialStar = null }) {
           id: 'ns-beta',
           name: 'Neutron Star Beta (1.6 M☉)',
           type: pulsar.type,
-          x: center.x + d, y: center.y,
-          vx: 0, vy: -v, ax: 0, ay: 0,
-          mass: 1.6 * 14000,
+          x: center.x + r2, y: center.y,
+          vx: 0, vy: -v2, ax: 0, ay: 0,
+          mass: m2,
           radius: pulsar.radius,
           baseRadius: pulsar.radius,
           color: '#a78bfa',
@@ -4275,45 +4292,58 @@ function drawAimTrajectory(ctx, start, current, item, power, bodies, G, isSlings
   ctx.arc(current.x, current.y, 5, 0, Math.PI * 2);
   ctx.stroke();
 
-  // 2. Initial velocity impulse
-  const vx0 = (start.x - current.x) * 0.048 * power;
-  const vy0 = (start.y - current.y) * 0.048 * power;
+  // 2. Initial velocity impulse (calibrated with spawn release impulse 0.045 * launchPower)
+  const impulseScale = isSlingshot ? (0.052 * power) : (0.045 * power);
+  const vx0 = (start.x - current.x) * impulseScale;
+  const vy0 = (start.y - current.y) * impulseScale;
   const spd = Math.hypot(vx0, vy0);
 
-  // 3. Multi-step numerical trajectory curve under gravitational fields
-  const trajSteps = 100;
-  const dtTraj = 1.4;
+  // 3. Multi-step Symplectic Verlet numerical trajectory curve under gravitational fields
+  const trajSteps = 120;
+  const dtTraj = 1.0;
   let simX = start.x;
   let simY = start.y;
   let simVx = (item.vx || 0) + vx0;
   let simVy = (item.vy || 0) + vy0;
 
-  const stationaryBodies = (bodies || []).filter(b => b.isCore || b.isLarge || b.mass >= 1200);
+  const stationaryBodies = (bodies || []).filter(b => b.isCore || b.isLarge || b.mass >= 1000);
 
-  ctx.beginPath();
-  ctx.moveTo(simX, simY);
-
-  for (let s = 0; s < trajSteps; s++) {
-    let ax = 0;
-    let ay = 0;
+  const getSimAcc = (px, py) => {
+    let ax = 0, ay = 0;
     for (let b of stationaryBodies) {
       if (b.id === item.id) continue;
-      const dx = b.x - simX;
-      const dy = b.y - simY;
+      const dx = b.x - px;
+      const dy = b.y - py;
       const distSq = dx * dx + dy * dy;
       const dist = Math.sqrt(distSq);
-      if (dist > 8) {
-        let rel = b.type === 'blackhole' ? 1.0 + Math.min(2.8, 22.0 / dist) : 1.0;
+      if (dist > 4) {
+        // 1PN correction consistent with solver
+        const rel = 1.0 + Math.min(3.0, (3.0 * G * b.mass) / (dist * 300 * 300));
         const f = (G * b.mass * rel) / (distSq + 25);
         ax += (dx / dist) * f;
         ay += (dy / dist) * f;
       }
     }
+    return { ax, ay };
+  };
 
-    simVx += ax * dtTraj;
-    simVy += ay * dtTraj;
+  let { ax: currAx, ay: currAy } = getSimAcc(simX, simY);
+
+  ctx.beginPath();
+  ctx.moveTo(simX, simY);
+
+  for (let s = 0; s < trajSteps; s++) {
+    // Verlet Kick-Drift-Kick
+    simVx += 0.5 * currAx * dtTraj;
+    simVy += 0.5 * currAy * dtTraj;
     simX += simVx * dtTraj;
     simY += simVy * dtTraj;
+    
+    const nextAcc = getSimAcc(simX, simY);
+    currAx = nextAcc.ax;
+    currAy = nextAcc.ay;
+    simVx += 0.5 * currAx * dtTraj;
+    simVy += 0.5 * currAy * dtTraj;
 
     ctx.lineTo(simX, simY);
   }
