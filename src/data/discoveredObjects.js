@@ -5077,5 +5077,821 @@ export const DISCOVERED_OBJECTS = [
       }
     ],
     "spectralLines": ["Broad featureless optical continuum", "He I 5876 Å with high velocity", "High-frequency X-ray QPO 224 Hz"]
+  },
+
+  // 47. Kepler-22b - First Kepler Habitable Zone Exoplanet
+  {
+    id: 'obj-kepler-22b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Kepler22b-artwork.jpg/800px-Kepler22b-artwork.jpg',
+    name: 'Kepler-22b',
+    designation: 'KOI-087.01 / KIC 10593626 b',
+    class: 'exoplanet',
+    subType: 'Habitable-Zone Super-Earth / Mini-Neptune',
+    discoveryYear: 2011,
+    discoveryMission: 'Kepler Space Telescope',
+    discoveryInstrument: 'Kepler Photometer (0.95m Schmidt)',
+    discoveryMethod: 'Transit Photometry',
+    constellation: 'Cygnus',
+    coordinates: {
+      ra: '19h 16m 52.19s',
+      dec: '+47° 53′ 03.96″',
+      raDeg: 289.2175,
+      decDeg: 47.8844
+    },
+    distance: {
+      lightYears: '635 Light Years',
+      parsecs: '195 pc'
+    },
+    physics: {
+      radius: '2.38 ± 0.13 R⊕',
+      mass: '< 36 M⊕ (Estimated 9.1 M⊕)',
+      orbitalPeriod: '289.8623 days',
+      semiMajorAxis: '0.849 AU',
+      equilibriumTemp: '262 K (-11 °C)',
+      hostStar: 'G5V Solar-type Star (0.97 M☉)'
+    },
+    spectralBands: { radio: 0, infrared: 75, optical: 90, ultraviolet: 15, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'The first transiting planet confirmed by NASA’s Kepler mission to orbit squarely within the habitable zone of a Sun-like star.',
+      'Orbital period of ~290 days closely parallels Earth’s 365-day year at 0.85 AU separation.',
+      'Archetype candidate for global ocean surface conditions beneath a volatile-rich atmosphere.'
+    ],
+    researchPapers: [
+      {
+        title: 'Kepler-22b: A 2.4 Earth-radius Planet in the Habitable Zone of a Sun-like Star',
+        authors: 'Borucki, W. J., Koch, D. G., Batalha, N., et al.',
+        journal: 'The Astrophysical Journal',
+        year: 2012,
+        doi: '10.1088/0004-637X/745/2/120',
+        bibcode: '2012ApJ...745..120B',
+        openAccessUrl: 'https://iopscience.iop.org/article/10.1088/0004-637X/745/2/120'
+      }
+    ],
+    spectralLines: ['Transit dip depth of 492 ppm in Kepler white-light bandpass']
+  },
+
+  // 48. Kepler-186f - First Earth-Sized Habitable Zone World
+  {
+    id: 'obj-kepler-186f',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Kepler-186f_artist_concept.jpg/800px-Kepler-186f_artist_concept.jpg',
+    name: 'Kepler-186f',
+    designation: 'KOI-571.05 / KIC 8120608 f',
+    class: 'exoplanet',
+    subType: 'Earth-Sized Habitable-Zone Terrestrial World',
+    discoveryYear: 2014,
+    discoveryMission: 'Kepler Space Telescope',
+    discoveryInstrument: 'Kepler Photometer & Keck II AO',
+    discoveryMethod: 'Transit Photometry & Validation',
+    constellation: 'Cygnus',
+    coordinates: {
+      ra: '19h 54m 36.65s',
+      dec: '+43° 57′ 18.06″',
+      raDeg: 298.6527,
+      decDeg: 43.9550
+    },
+    distance: {
+      lightYears: '582 Light Years',
+      parsecs: '178.5 pc'
+    },
+    physics: {
+      radius: '1.17 ± 0.08 R⊕',
+      mass: '1.44 ± 0.3 M⊕ (Theoretical rocky model)',
+      orbitalPeriod: '129.9441 days',
+      semiMajorAxis: '0.432 AU',
+      stellarInsolation: '32% of Earth Solar Flux',
+      equilibriumTemp: '188 K (-85 °C, temperate with greenhouse)',
+      hostStar: 'M1V Red Dwarf (0.54 M☉)'
+    },
+    spectralBands: { radio: 0, infrared: 88, optical: 75, ultraviolet: 10, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'Historic first discovery in human history of a truly Earth-sized exoplanet (within 15% of Earth radius) orbiting in the habitable zone of its parent star.',
+      'Occupies an orbit at the outer edge of Kepler-186’s circumstellar habitable zone, receiving roughly 1/3 of Earth’s solar flux.',
+      'Orbital tilt dynamics suggest spin-axis tilt stability, potentially protecting against chaotic climate disruptions.'
+    ],
+    researchPapers: [
+      {
+        title: 'An Earth-Sized Planet in the Habitable Zone of a Cool Star',
+        authors: 'Quintana, E. V., Barclay, T., Raymond, S. N., et al.',
+        journal: 'Science',
+        year: 2014,
+        doi: '10.1126/science.1249403',
+        bibcode: '2014Sci...344..277Q',
+        openAccessUrl: 'https://www.science.org/doi/10.1126/science.1249403'
+      }
+    ],
+    spectralLines: ['416 ppm photometric transit signal across 3 transit epochs']
+  },
+
+  // 49. Kepler-442b - High Earth Similarity Index Candidate
+  {
+    id: 'obj-kepler-442b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Kepler-442b_artist%27s_concept.png/800px-Kepler-442b_artist%27s_concept.png',
+    name: 'Kepler-442b',
+    designation: 'KOI-4742.01 / KIC 4138008 b',
+    class: 'exoplanet',
+    subType: 'Super-Habitable Rocky World Candidate',
+    discoveryYear: 2015,
+    discoveryMission: 'Kepler Space Telescope',
+    discoveryInstrument: 'Kepler Photometer',
+    discoveryMethod: 'Transit Photometry & BLENDER Validation',
+    constellation: 'Lyra',
+    coordinates: {
+      ra: '19h 01m 27.98s',
+      dec: '+39° 16′ 48.30″',
+      raDeg: 285.3666,
+      decDeg: 39.2801
+    },
+    distance: {
+      lightYears: '1,193 Light Years',
+      parsecs: '366 pc'
+    },
+    physics: {
+      radius: '1.34 ± 0.11 R⊕',
+      mass: '2.34 M⊕ (Probabilistic Rocky Composition)',
+      orbitalPeriod: '112.3053 days',
+      semiMajorAxis: '0.409 AU',
+      stellarInsolation: '70% of Earth Solar Flux',
+      equilibriumTemp: '233 K (-40 °C)',
+      hostStar: 'K5V Orange Dwarf (0.61 M☉, 30-Billion-Year Lifespan)'
+    },
+    spectralBands: { radio: 0, infrared: 86, optical: 80, ultraviolet: 12, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'Ranked as one of the most promising "super-habitable" candidates known, receiving optimal stellar insolation from a long-lived, quiet K-dwarf.',
+      'High Earth Similarity Index (ESI = 0.84), combining rocky radius with benign UV stellar radiation environment.',
+      'Sufficient mass to sustain an enduring geomagnetic dynamo and plate tectonics over billions of years.'
+    ],
+    researchPapers: [
+      {
+        title: 'Validation of Twelve Small Kepler Transiting Planets in the Habitable Zone',
+        authors: 'Torres, G., Kipping, D. M., Fressin, F., et al.',
+        journal: 'The Astrophysical Journal',
+        year: 2015,
+        doi: '10.1088/0004-637X/800/2/99',
+        bibcode: '2015ApJ...800...99T',
+        openAccessUrl: 'https://iopscience.iop.org/article/10.1088/0004-637X/800/2/99'
+      }
+    ],
+    spectralLines: ['Transit dip depth of 370 ppm in Kepler photometry']
+  },
+
+  // 50. Kepler-62f - Water-Rich Habitable Super-Earth
+  {
+    id: 'obj-kepler-62f',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Kepler-62f_art.jpg/800px-Kepler-62f_art.jpg',
+    name: 'Kepler-62f',
+    designation: 'KOI-701.04 / KIC 9002278 f',
+    class: 'exoplanet',
+    subType: 'Volatile-Rich Habitable Zone Super-Earth',
+    discoveryYear: 2013,
+    discoveryMission: 'Kepler Space Telescope',
+    discoveryInstrument: 'Kepler Photometer',
+    discoveryMethod: 'Multi-Planet Transit Timing & Photometry',
+    constellation: 'Lyra',
+    coordinates: {
+      ra: '18h 52m 51.06s',
+      dec: '+45° 20′ 59.50″',
+      raDeg: 283.2128,
+      decDeg: 45.3499
+    },
+    distance: {
+      lightYears: '980 Light Years',
+      parsecs: '300 pc'
+    },
+    physics: {
+      radius: '1.41 ± 0.07 R⊕',
+      mass: '2.8 ± 0.4 M⊕',
+      orbitalPeriod: '267.291 days',
+      semiMajorAxis: '0.718 AU',
+      stellarInsolation: '41% of Earth Solar Flux',
+      equilibriumTemp: '208 K (-65 °C)',
+      hostStar: 'K2V Dwarf Star (0.69 M☉)'
+    },
+    spectralBands: { radio: 0, infrared: 84, optical: 80, ultraviolet: 14, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'Orbits in the conservative habitable zone of the compact 5-planet Kepler-62 system alongside sibling Kepler-62e.',
+      'Climate modeling indicates that with carbon dioxide greenhouse warming of 0.5 to 5 bars, liquid water is stable globally.',
+      'Radius of 1.41 R⊕ sits just below the Fulton gap radius cliff, suggesting a dense rocky-water mantle.'
+    ],
+    researchPapers: [
+      {
+        title: 'Kepler-62: A Five-Planet System with Planets of 1.4 and 1.6 Earth Radii in the Habitable Zone',
+        authors: 'Borucki, W. J., Agol, E., Fressin, F., et al.',
+        journal: 'Science',
+        year: 2013,
+        doi: '10.1126/science.1234702',
+        bibcode: '2013Sci...340..587B',
+        openAccessUrl: 'https://www.science.org/doi/10.1126/science.1234702'
+      }
+    ],
+    spectralLines: ['Periodic 500 ppm photometric transit profile with 7.5 hour transit duration']
+  },
+
+  // 51. Kepler-1649c - Earth-Sized Red Dwarf Companion
+  {
+    id: 'obj-kepler-1649c',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Kepler-1649c_artist_concept.jpg/800px-Kepler-1649c_artist_concept.jpg',
+    name: 'Kepler-1649c',
+    designation: 'KOI-3138.01 / KIC 6444896 c',
+    class: 'exoplanet',
+    subType: 'Earth-Twin Habitable-Zone Exoplanet',
+    discoveryYear: 2020,
+    discoveryMission: 'Kepler False Positive Working Group',
+    discoveryInstrument: 'Kepler Photometer & Robovetter Reanalysis',
+    discoveryMethod: 'Archival Transit Deep-Learning Reanalysis',
+    constellation: 'Cygnus',
+    coordinates: {
+      ra: '19h 30m 00.91s',
+      dec: '+41° 59′ 35.03″',
+      raDeg: 292.5038,
+      decDeg: 41.9931
+    },
+    distance: {
+      lightYears: '301 Light Years',
+      parsecs: '92.4 pc'
+    },
+    physics: {
+      radius: '1.06 ± 0.15 R⊕ (Closest Earth Size Match)',
+      mass: '1.20 M⊕ (Rocky composition)',
+      orbitalPeriod: '19.53527 days',
+      semiMajorAxis: '0.0827 AU',
+      stellarInsolation: '75% of Earth Solar Flux',
+      equilibriumTemp: '234 K (-39 °C)',
+      hostStar: 'M5V Red Dwarf (0.20 M☉)'
+    },
+    spectralBands: { radio: 0, infrared: 90, optical: 60, ultraviolet: 10, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'Discovered by inspecting Kepler false positives initially misclassified by automated vetting algorithms.',
+      'Of all confirmed exoplanets discovered by Kepler, Kepler-1649c is the closest to Earth in both size (1.06 R⊕) and calculated equilibrium temperature.',
+      'Maintains a 9:4 orbital resonance with inner sibling Kepler-1649b, suggesting long-term dynamical equilibrium.'
+    ],
+    researchPapers: [
+      {
+        title: 'A Habitable-zone Earth-sized Planet Rescued from False Positive Status',
+        authors: 'Vanderburg, A., Rowden, P., Bryson, S., et al.',
+        journal: 'The Astrophysical Journal Letters',
+        year: 2020,
+        doi: '10.3847/2041-8213/ab84e5',
+        bibcode: '2020ApJ...893L..27V',
+        openAccessUrl: 'https://iopscience.iop.org/article/10.3847/2041-8213/ab84e5'
+      }
+    ],
+    spectralLines: ['1,340 ppm transit depth across Kepler archival light curves']
+  },
+
+  // 52. Kepler-90i - 8th Planet Found via Neural Networks
+  {
+    id: 'obj-kepler-90i',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Kepler-90_Planetary_System.jpg/800px-Kepler-90_Planetary_System.jpg',
+    name: 'Kepler-90i',
+    designation: 'KOI-351.08 / KIC 11442793 i',
+    class: 'exoplanet',
+    subType: 'AI-Discovered Super-Earth in 8-Planet System',
+    discoveryYear: 2017,
+    discoveryMission: 'Kepler & Google AI / Deep Learning',
+    discoveryInstrument: 'Kepler Space Telescope & Deep CNN Classifier',
+    discoveryMethod: 'Convolutional Neural Network Deep Signal Extraction',
+    constellation: 'Draco',
+    coordinates: {
+      ra: '18h 57m 44.04s',
+      dec: '+49° 18′ 18.59″',
+      raDeg: 284.4335,
+      decDeg: 49.3052
+    },
+    distance: {
+      lightYears: '2,840 Light Years',
+      parsecs: '870 pc'
+    },
+    physics: {
+      radius: '1.32 ± 0.21 R⊕',
+      mass: '2.5 M⊕',
+      orbitalPeriod: '14.44912 days',
+      semiMajorAxis: '0.1234 AU',
+      surfaceTemp: '709 K (436 °C)',
+      hostStar: 'G0V Solar-Type Star (1.20 M☉)'
+    },
+    spectralBands: { radio: 0, infrared: 70, optical: 92, ultraviolet: 20, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'Discovery tied the Kepler-90 system with our Solar System for the most known planets orbiting a single star (8 confirmed planets).',
+      'The landmark first exoplanet confirmed using an artificial neural network trained on over 15,000 Kepler signals by Google Brain & NASA.',
+      'Sizzling rocky surface where daytime temperatures reach above 430 °C, orbiting between planets c and d.'
+    ],
+    researchPapers: [
+      {
+        title: 'Identifying Exoplanets with Deep Learning: A Five-planet Resonant Chain and Eighth Planet around Kepler-90',
+        authors: 'Shallue, C. J., & Vanderburg, A.',
+        journal: 'The Astronomical Journal',
+        year: 2018,
+        doi: '10.3847/1538-3881/aa9e09',
+        bibcode: '2018AJ....155...94S',
+        openAccessUrl: 'https://iopscience.iop.org/article/10.3847/1538-3881/aa9e09'
+      }
+    ],
+    spectralLines: ['Weak 160 ppm periodic transit dip recovered via convolutional filtering']
+  },
+
+  // 53. Kepler-10b - First Confirmed Rocky Exoplanet
+  {
+    id: 'obj-kepler-10b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Kepler-10b_artist_impression.jpg/800px-Kepler-10b_artist_impression.jpg',
+    name: 'Kepler-10b',
+    designation: 'KOI-72.01 / KIC 11904151 b',
+    class: 'exoplanet',
+    subType: 'Ultra-Short Period Lava World / Iron Core',
+    discoveryYear: 2011,
+    discoveryMission: 'Kepler Space Telescope & W. M. Keck Observatory',
+    discoveryInstrument: 'Kepler Photometer & Keck HIRES Echelle Spectrometer',
+    discoveryMethod: 'Transit Photometry & Radial Velocity Density Confirmation',
+    constellation: 'Draco',
+    coordinates: {
+      ra: '19h 02m 43.06s',
+      dec: '+50° 14′ 28.70″',
+      raDeg: 285.6794,
+      decDeg: 50.2413
+    },
+    distance: {
+      lightYears: '608 Light Years',
+      parsecs: '186.5 pc'
+    },
+    physics: {
+      radius: '1.47 ± 0.03 R⊕',
+      mass: '4.6 ± 0.4 M⊕',
+      density: '8.8 ± 0.8 g/cm³ (Denser than solid iron)',
+      orbitalPeriod: '0.837495 days (20.1 hours)',
+      semiMajorAxis: '0.01684 AU',
+      daySideTemp: '1,833 K (1,560 °C - Molten Iron Surface)'
+    },
+    spectralBands: { radio: 0, infrared: 92, optical: 94, ultraviolet: 25, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'Historic first indisputably rocky planet discovered by NASA’s Kepler mission (announced January 2011).',
+      'High density (8.8 g/cm³) proved the presence of a massive iron core and rocky silicate mantle under extreme stellar irradiance.',
+      'Day-side surface is an incandescent global sea of liquid magma glowing red-hot.'
+    ],
+    researchPapers: [
+      {
+        title: 'Kepler’s First Rocky Planet: Kepler-10b',
+        authors: 'Batalha, N. M., Borucki, W. J., Bryson, S. T., et al.',
+        journal: 'The Astrophysical Journal',
+        year: 2011,
+        doi: '10.1088/0004-637X/729/1/27',
+        bibcode: '2011ApJ...729...27B',
+        openAccessUrl: 'https://iopscience.iop.org/article/10.1088/0004-637X/729/1/27'
+      }
+    ],
+    spectralLines: ['152 ppm transit depth accompanied by 7.6 ppm occultation reflected light phase curve']
+  },
+
+  // 54. Kepler-11 System
+  {
+    id: 'obj-kepler-11',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Kepler-11_system_artist%27s_concept.jpg/800px-Kepler-11_system_artist%27s_concept.jpg',
+    name: 'Kepler-11 System',
+    designation: 'KOI-157 / KIC 6541920',
+    class: 'exoplanet',
+    subType: 'Flat Coplanar 6-Planet Resonant System',
+    discoveryYear: 2011,
+    discoveryMission: 'Kepler Space Telescope',
+    discoveryInstrument: 'Kepler Photometer & Transit Timing Variations (TTV)',
+    discoveryMethod: 'Multi-Planet Transit Photometry & TTV Mass Measurement',
+    constellation: 'Cygnus',
+    coordinates: {
+      ra: '19h 48m 27.62s',
+      dec: '+41° 54′ 32.90″',
+      raDeg: 297.1151,
+      decDeg: 41.9091
+    },
+    distance: {
+      lightYears: '2,148 Light Years',
+      parsecs: '659 pc'
+    },
+    physics: {
+      planetsCount: '6 Confirmed Transiting Planets',
+      innerFiveSeparation: 'All 5 inner planets orbit closer than Mercury is to our Sun (< 0.25 AU)',
+      outerPlanetPeriod: 'Kepler-11g orbits at 0.46 AU (118.4 days)',
+      orbitalCoplanarity: 'Inclinations aligned within 1 degree (Flatter than the Solar System)'
+    },
+    spectralBands: { radio: 0, infrared: 78, optical: 95, ultraviolet: 20, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'Landmark discovery proving that packed, multi-planet flat architectures are common throughout our galaxy.',
+      'Mutual gravitational tugs allowed precise transit timing variations (TTV) to weigh all planets without radial velocity instruments.',
+      'Low densities revealed extensive light hydrogen-helium envelopes surrounding rocky cores.'
+    ],
+    researchPapers: [
+      {
+        title: 'A closely packed system of low-mass, low-density planets transiting Kepler-11',
+        authors: 'Lissauer, J. J., Fabrycky, D. C., Ford, E. B., et al.',
+        journal: 'Nature',
+        year: 2011,
+        doi: '10.1038/nature09760',
+        bibcode: '2011Natur.470...53L',
+        openAccessUrl: 'https://www.nature.com/articles/nature09760'
+      }
+    ],
+    spectralLines: ['Coupled multi-planet sinusoidal transit timing variations']
+  },
+
+  // 55. TOI-700 e - Second Earth-Sized HZ Planet in System
+  {
+    id: 'obj-toi-700e',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/TOI-700_system_graphic.jpg/800px-TOI-700_system_graphic.jpg',
+    name: 'TOI-700 e',
+    designation: '2MASS J06282325-6534456 e / TIC 150428135 e',
+    class: 'exoplanet',
+    subType: 'Optimistic Habitable-Zone Terrestrial World',
+    discoveryYear: 2023,
+    discoveryMission: 'Transiting Exoplanet Survey Satellite (TESS)',
+    discoveryInstrument: 'TESS Optical Cameras & Ground Confirmation',
+    discoveryMethod: 'Extended-Mission Multi-Sector Photometry',
+    constellation: 'Dorado',
+    coordinates: {
+      ra: '06h 28m 22.97s',
+      dec: '-65° 34′ 43.00″',
+      raDeg: 97.0957,
+      decDeg: -65.5786
+    },
+    distance: {
+      lightYears: '101.4 Light Years',
+      parsecs: '31.1 pc'
+    },
+    physics: {
+      radius: '0.953 ± 0.089 R⊕ (95% of Earth)',
+      mass: '0.845 M⊕ (Estimated rocky)',
+      orbitalPeriod: '27.80978 days',
+      semiMajorAxis: '0.1340 AU',
+      stellarInsolation: '127% of Earth Solar Flux',
+      equilibriumTemp: '273 K (0 °C - Water Freezing Point)',
+      hostStar: 'M2V Inactive Red Dwarf (0.41 M☉)'
+    },
+    spectralBands: { radio: 0, infrared: 92, optical: 80, ultraviolet: 12, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'Announced in January 2023 as TESS’s second Earth-sized habitable-zone planet in the remarkable TOI-700 system, orbiting between planets c and d.',
+      'Takes 28 days to orbit its quiet, non-flaring M-dwarf host star, receiving insolation comparable to early Earth or Venus.',
+      'One of only a handful of multi-planet systems known harboring two small worlds in circumstellar habitable zones.'
+    ],
+    researchPapers: [
+      {
+        title: 'A Second Earth-sized Planet in the Habitable Zone of the M Dwarf, TOI-700',
+        authors: 'Gilbert, E. A., Vanderburg, A., Rodriguez, J. E., et al.',
+        journal: 'The Astrophysical Journal Letters',
+        year: 2023,
+        doi: '10.3847/2041-8213/acb9ec',
+        bibcode: '2023ApJ...944L..35G',
+        openAccessUrl: 'https://iopscience.iop.org/article/10.3847/2041-8213/acb9ec'
+      }
+    ],
+    spectralLines: ['750 ppm transit light curve dip recovered across 28 TESS sectors']
+  },
+
+  // 56. TOI-1452 b - Prime Ocean World Candidate
+  {
+    id: 'obj-toi-1452b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Artist%27s_concept_of_the_super-Earth_TOI-1452_b.jpg/800px-Artist%27s_concept_of_the_super-Earth_TOI-1452_b.jpg',
+    name: 'TOI-1452 b',
+    designation: 'TIC 420112587 b',
+    class: 'exoplanet',
+    subType: 'Deep Global Water World Candidate',
+    discoveryYear: 2022,
+    discoveryMission: 'TESS & Observatoire du Mont-Mégantic (OMM)',
+    discoveryInstrument: 'TESS Cameras & SPIRou Near-Infrared Spectropolarimeter',
+    discoveryMethod: 'Transit Photometry & Precision Infrared Radial Velocity',
+    constellation: 'Draco',
+    coordinates: {
+      ra: '19h 20m 41.71s',
+      dec: '+73° 11′ 42.60″',
+      raDeg: 290.1738,
+      decDeg: 73.1952
+    },
+    distance: {
+      lightYears: '99.5 Light Years',
+      parsecs: '30.5 pc'
+    },
+    physics: {
+      radius: '1.672 ± 0.071 R⊕',
+      mass: '4.82 ± 1.30 M⊕',
+      density: '5.6 g/cm³',
+      waterMassFraction: 'Up to 22% of total planetary mass (Earth water fraction is < 0.1%)',
+      orbitalPeriod: '11.06201 days',
+      equilibriumTemp: '326 K (53 °C)'
+    },
+    spectralBands: { radio: 0, infrared: 95, optical: 75, ultraviolet: 10, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'One of the strongest candidates for an "ocean planet" whose interior modeling implies a liquid water mantle making up to 20-30% of its total mass.',
+      'Orbits in the temperate zone of a binary red dwarf system separated by 97 AU.',
+      'Selected as a prime priority atmospheric target for the James Webb Space Telescope NIRSpec transmission spectroscopy.'
+    ],
+    researchPapers: [
+      {
+        title: 'TOI-1452 b: An Extremely Temperate and Water-rich Super-Earth Transiting an M Dwarf',
+        authors: 'Cadieux, C., Doyon, R., Plotnykov, M., et al.',
+        journal: 'The Astronomical Journal',
+        year: 2022,
+        doi: '10.3847/1538-3881/ac7ce9',
+        bibcode: '2022AJ....164...96C',
+        openAccessUrl: 'https://iopscience.iop.org/article/10.3847/1538-3881/ac7ce9'
+      }
+    ],
+    spectralLines: ['SPIRou precision radial velocity Doppler shift at 1.7 m/s']
+  },
+
+  // 57. GJ 367 b (Tahay) - Ultra-Dense Iron Sub-Earth
+  {
+    id: 'obj-gj-367b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/GJ_367b_artist_impression.jpg/800px-GJ_367b_artist_impression.jpg',
+    name: 'GJ 367 b (Tahay)',
+    designation: 'TOI-731 b / TIC 34068865 b',
+    class: 'exoplanet',
+    subType: 'Ultra-Short Period Super-Mercury / Pure Iron Core',
+    discoveryYear: 2021,
+    discoveryMission: 'Transiting Exoplanet Survey Satellite (TESS)',
+    discoveryInstrument: 'TESS & ESO HARPS High-Resolution Spectrograph',
+    discoveryMethod: 'High-Cadence Transit Photometry & HARPS Radial Velocities',
+    constellation: 'Vela',
+    coordinates: {
+      ra: '09h 44m 29.83s',
+      dec: '-45° 46′ 35.40″',
+      raDeg: 146.1243,
+      decDeg: -45.7765
+    },
+    distance: {
+      lightYears: '30.7 Light Years',
+      parsecs: '9.41 pc'
+    },
+    physics: {
+      radius: '0.699 ± 0.024 R⊕ (Smaller than Mars)',
+      mass: '0.633 ± 0.050 M⊕',
+      density: '10.2 ± 1.3 g/cm³ (Denser than lead)',
+      ironCoreRadius: '86% of total planetary radius',
+      orbitalPeriod: '7.7 hours (0.3219 days)',
+      daySideTemp: '1,740 K (1,467 °C)'
+    },
+    spectralBands: { radio: 0, infrared: 90, optical: 85, ultraviolet: 15, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'Ultra-dense sub-Earth orbiting in just 7.7 hours; its year is shorter than an average workday.',
+      'Density of 10.2 g/cm³ reveals an exposed colossal iron-nickel core stripped entirely of its rocky outer silicate mantle.',
+      'Official IAU name Tahay honors indigenous Chilean folklore.'
+    ],
+    researchPapers: [
+      {
+        title: 'GJ 367b: A dense, ultrashort-period sub-Earth planet transiting a nearby red dwarf star',
+        authors: 'Lam, K. W. F., Csizmadia, S., Astudillo-Defru, N., et al.',
+        journal: 'Science',
+        year: 2021,
+        doi: '10.1126/science.aay3253',
+        bibcode: '2021Sci...374.1271L',
+        openAccessUrl: 'https://www.science.org/doi/10.1126/science.aay3253'
+      }
+    ],
+    spectralLines: ['Transit duration of only 41 minutes with 300 ppm depth']
+  },
+
+  // 58. LTT 1445 A b - Rocky World in Triple Star System
+  {
+    id: 'obj-ltt-1445ab',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Artist%E2%80%99s_concept_of_the_planet_LTT_1445_Ab.jpg/800px-Artist%E2%80%99s_concept_of_the_planet_LTT_1445_Ab.jpg',
+    name: 'LTT 1445 A b',
+    designation: 'TIC 98796344 b',
+    class: 'exoplanet',
+    subType: 'Transiting Rocky Terrestrial in Hierarchical Triple System',
+    discoveryYear: 2019,
+    discoveryMission: 'Transiting Exoplanet Survey Satellite (TESS) & HST',
+    discoveryInstrument: 'TESS & Hubble WFC3 / ESPRESSO Spectrograph',
+    discoveryMethod: 'Transit Photometry & VLT Radial Velocities',
+    constellation: 'Eridanus',
+    coordinates: {
+      ra: '03h 01m 51.41s',
+      dec: '-16° 35′ 36.10″',
+      raDeg: 45.4642,
+      decDeg: -16.5934
+    },
+    distance: {
+      lightYears: '22.4 Light Years',
+      parsecs: '6.86 pc'
+    },
+    physics: {
+      radius: '1.30 ± 0.06 R⊕',
+      mass: '2.87 ± 0.25 M⊕',
+      orbitalPeriod: '5.35882 days',
+      semiMajorAxis: '0.0381 AU',
+      daySideTemp: '433 K (160 °C)',
+      hostSystem: 'Hierarchical triple M-dwarf stellar system'
+    },
+    spectralBands: { radio: 0, infrared: 94, optical: 85, ultraviolet: 10, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'Second closest transiting rocky exoplanet to Earth, orbiting the primary star of a spectacular three-red-dwarf system.',
+      'From the planet’s surface, two companion red dwarf stars rise and set alongside the primary star in alien skies.',
+      'Hubble Space Telescope observations confirmed a clear, cloud-free optical transmission baseline ideal for JWST characterization.'
+    ],
+    researchPapers: [
+      {
+        title: 'A Transiting Rocky Planet Orbiting the Nearby M Dwarf LTT 1445A',
+        authors: 'Winters, J. G., Medina, A. A., Irwin, J. M., et al.',
+        journal: 'The Astronomical Journal',
+        year: 2019,
+        doi: '10.3847/1538-3881/ab364d',
+        bibcode: '2019AJ....158..152W',
+        openAccessUrl: 'https://iopscience.iop.org/article/10.3847/1538-3881/ab364d'
+      }
+    ],
+    spectralLines: ['HST WFC3 transmission spectrum constraints between 1.1 and 1.7 µm']
+  },
+
+  // 59. TOI-849 b - Giant Stripped Planetary Core
+  {
+    id: 'obj-toi-849b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/TOI_849b_illustration.jpg/800px-TOI_849b_illustration.jpg',
+    name: 'TOI-849 b',
+    designation: 'TIC 335955169 b',
+    class: 'exoplanet',
+    subType: 'Exposed Chthonian Giant Core in the Neptunian Desert',
+    discoveryYear: 2020,
+    discoveryMission: 'Transiting Exoplanet Survey Satellite (TESS)',
+    discoveryInstrument: 'TESS Cameras & HARPS Spectrograph',
+    discoveryMethod: 'Transit Photometry & HARPS Radial Velocities',
+    constellation: 'Fornax',
+    coordinates: {
+      ra: '01h 53m 50.41s',
+      dec: '-29° 25′ 37.10″',
+      raDeg: 28.4600,
+      decDeg: -29.4270
+    },
+    distance: {
+      lightYears: '734 Light Years',
+      parsecs: '225 pc'
+    },
+    physics: {
+      mass: '39.1 ± 2.7 M⊕ (Over 2× more massive than Neptune)',
+      radius: '3.44 ± 0.12 R⊕ (Neptune size)',
+      density: '5.2 g/cm³',
+      orbitalPeriod: '18.4 hours (0.7655 days)',
+      equilibriumTemp: '1,800 K (1,530 °C)'
+    },
+    spectralBands: { radio: 0, infrared: 88, optical: 90, ultraviolet: 30, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'The most massive stripped planetary core ever discovered, residing inside the mysterious "Neptunian Desert".',
+      'Holds nearly 40 Earth masses packed into a Neptune-sized sphere, indicating an accretion runaway that either failed to capture gas or had its envelope completely blown away.',
+      'Provides empirical confirmation of the "chthonian planet" hypothesis: giant planets stripped down to bare rock and iron.'
+    ],
+    researchPapers: [
+      {
+        title: 'A remnant planetary core in the Neptunian desert',
+        authors: 'Armstrong, D. J., Lopez, T. A., Adibekyan, V., et al.',
+        journal: 'Nature',
+        year: 2020,
+        doi: '10.1038/s41586-020-2421-7',
+        bibcode: '2020Natur.583...39A',
+        openAccessUrl: 'https://www.nature.com/articles/s41586-020-2421-7'
+      }
+    ],
+    spectralLines: ['High-amplitude HARPS Doppler reflex wobble of 15.6 m/s']
+  },
+
+  // 60. CoRoT-7b - First Rocky Super-Earth with Measured Density
+  {
+    id: 'obj-corot-7b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Corot-7b_artist_impression.jpg/800px-Corot-7b_artist_impression.jpg',
+    name: 'CoRoT-7b',
+    designation: 'CoRoT-Exo-7b',
+    class: 'exoplanet',
+    subType: 'Historic First Transiting Rocky Planet',
+    discoveryYear: 2009,
+    discoveryMission: 'CoRoT (CNES / ESA Space Telescope)',
+    discoveryInstrument: 'CoRoT 27-cm Afocal Telescope & HARPS',
+    discoveryMethod: 'Ultra-High Precision Transit Photometry & HARPS RV',
+    constellation: 'Monoceros',
+    coordinates: {
+      ra: '06h 43m 49.47s',
+      dec: '-01° 02′ 46.00″',
+      raDeg: 100.9561,
+      decDeg: -1.0461
+    },
+    distance: {
+      lightYears: '489 Light Years',
+      parsecs: '150 pc'
+    },
+    physics: {
+      radius: '1.58 ± 0.10 R⊕',
+      mass: '4.73 ± 0.95 M⊕',
+      density: '6.6 ± 1.5 g/cm³ (Confirmed rocky composition)',
+      orbitalPeriod: '20.4 hours (0.853585 days)',
+      daySideTemp: '2,000–2,600 K (Vaporizes rock into mineral clouds)'
+    },
+    spectralBands: { radio: 0, infrared: 90, optical: 92, ultraviolet: 20, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'The historic first transiting rocky super-Earth ever discovered in astronomical history (February 2009).',
+      'First planet where simultaneous transit radius and radial velocity mass measurements unambiguously established an Earth-like silicate density.',
+      'Surface temperature is high enough to boil silicate rock into a vapor atmosphere that condenses as falling pebble rain on the night side.'
+    ],
+    researchPapers: [
+      {
+        title: 'Transiting exoplanets from the CoRoT space mission. VIII. CoRoT-7b: the first super-Earth with measured radius',
+        authors: 'Léger, A., Rouan, D., Schneider, J., et al.',
+        journal: 'Astronomy & Astrophysics',
+        year: 2009,
+        doi: '10.1051/0004-6361/200911933',
+        bibcode: '2009A&A...506..287L',
+        openAccessUrl: 'https://www.aanda.org/articles/aa/full_html/2009/42/aa11933-09/aa11933-09.html'
+      }
+    ],
+    spectralLines: ['340 ppm transit dip signature confirmed across 130 consecutive orbits']
+  },
+
+  // 61. GJ 1214 b - The Steamy Water-World Prototype
+  {
+    id: 'obj-gj-1214b',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Artist%E2%80%99s_impression_of_the_exoplanet_GJ_1214b.jpg/800px-Artist%E2%80%99s_impression_of_the_exoplanet_GJ_1214b.jpg',
+    name: 'GJ 1214 b',
+    designation: 'Gliese 1214 b',
+    class: 'exoplanet',
+    subType: 'Water-Rich Sub-Neptune / Steamy World',
+    discoveryYear: 2009,
+    discoveryMission: 'MEarth Project & Kepler / Spitzer / JWST',
+    discoveryInstrument: 'MEarth Array & JWST MIRI Spectrometer',
+    discoveryMethod: 'Transit Photometry & MIRI Phase Curve Spectroscopy',
+    constellation: 'Ophiuchus',
+    coordinates: {
+      ra: '17h 15m 18.94s',
+      dec: '+04° 57′ 49.70″',
+      raDeg: 258.8289,
+      decDeg: 4.9638
+    },
+    distance: {
+      lightYears: '47.8 Light Years',
+      parsecs: '14.65 pc'
+    },
+    physics: {
+      radius: '2.74 ± 0.05 R⊕',
+      mass: '8.17 ± 0.43 M⊕',
+      density: '2.14 g/cm³',
+      orbitalPeriod: '1.580404 days',
+      semiMajorAxis: '0.0149 AU',
+      daySideTemp: '553 K (280 °C)'
+    },
+    spectralBands: { radio: 0, infrared: 98, optical: 70, ultraviolet: 10, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'The foundational prototype of the entire "sub-Neptune" exoplanet class, the most abundant planet category in the Milky Way.',
+      'JWST MIRI thermal phase curves in 2023 penetrated deep into its atmosphere, revealing high metallicity and reflective aerosol haze.',
+      'Atmosphere shows strong water vapor signatures consistent with a volatile-rich steaming water-world.'
+    ],
+    researchPapers: [
+      {
+        title: 'A reflective, metal-rich atmosphere for the sub-Neptune GJ 1214b from its JWST phase curve',
+        authors: 'Kempton, E. M.-R., Zhang, M., Bean, J. L., et al.',
+        journal: 'Nature',
+        year: 2023,
+        doi: '10.1038/s41586-023-06159-5',
+        bibcode: '2023Natur.620...67K',
+        openAccessUrl: 'https://www.nature.com/articles/s41586-023-06159-5'
+      }
+    ],
+    spectralLines: ['JWST MIRI 5–12 µm thermal emission phase curve & H2O absorption bands']
+  },
+
+  // 62. HR 8799 System - Historic First Directly Imaged Exoplanetary System
+  {
+    id: 'obj-hr-8799',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/HR_8799_Orbiting_Exoplanets.gif/800px-HR_8799_Orbiting_Exoplanets.gif',
+    name: 'HR 8799 Planetary System',
+    designation: 'HD 218396 (b, c, d, e)',
+    class: 'exoplanet',
+    subType: 'Directly Imaged Multi-Super-Jupiter System',
+    discoveryYear: 2008,
+    discoveryMission: 'Keck Observatory & Gemini North',
+    discoveryInstrument: 'Adaptive Optics Near-Infrared Coronagraph (NIRC2)',
+    discoveryMethod: 'High-Contrast Direct Adaptive Optics Imaging & Astrometry',
+    constellation: 'Pegasus',
+    coordinates: {
+      ra: '23h 07m 28.71s',
+      dec: '+21° 08′ 03.30″',
+      raDeg: 346.8696,
+      decDeg: 21.1343
+    },
+    distance: {
+      lightYears: '133.3 Light Years',
+      parsecs: '40.9 pc'
+    },
+    physics: {
+      planetsCount: '4 Massive Gas Giants (b: 5.7 M_J, c: 7.2 M_J, d: 7.2 M_J, e: 7.2 M_J)',
+      orbitalRadii: 'Orbiting at 16, 27, 43, and 68 AU from host star',
+      orbitalPeriods: '45 to 460 Earth Years',
+      orbitalResonance: 'Near-perfect 1:2:4:8 Laplace resonance chain',
+      hostStar: 'Young Lambda Boötis star (1.56 M☉, 30 Myr age)'
+    },
+    spectralBands: { radio: 0, infrared: 100, optical: 60, ultraviolet: 10, xray: 0, gamma: 0, gravitational: 0 },
+    keyDiscoveries: [
+      'The landmark first multi-planet extrasolar system ever directly photographed in motion around another star.',
+      'A famous 12-year time-lapse video captured with Keck Observatory shows all four giant planets visibly orbiting their host star.',
+      'Direct spectroscopy detected carbon monoxide (CO), water vapor (H2O), and methane in the atmospheres of planets c and d.'
+    ],
+    researchPapers: [
+      {
+        title: 'Direct Imaging of Multiple Planets Orbiting the Star HR 8799',
+        authors: 'Marois, C., Macintosh, B., Barman, T., et al.',
+        journal: 'Science',
+        year: 2008,
+        doi: '10.1126/science.1166585',
+        bibcode: '2008Sci...322.1348M',
+        openAccessUrl: 'https://www.science.org/doi/10.1126/science.1166585'
+      }
+    ],
+    spectralLines: ['Near-infrared H-band (1.6 µm) and K-band (2.2 µm) planetary thermal emission']
   }
 ];

@@ -46,8 +46,7 @@ export default function Navbar({
     { id: 'radar', label: 'Celestial Radar', icon: Compass },
     { id: 'timeline', label: 'Timeline', icon: Calendar },
     { id: 'calculators', label: 'Space Calculators', icon: Calculator },
-    { id: 'simulator', label: 'Gravity & Collision Sim', icon: Orbit },
-    { id: 'pipeline', label: 'Pipeline & DB', icon: Server }
+    { id: 'simulator', label: 'Gravity & Collision Sim', icon: Orbit }
   ];
 
   return (

@@ -23,6 +23,13 @@ export const db = new sqlite3.Database(DB_PATH, (err) => {
     console.error('[-] Error connecting to SQLite database:', err.message);
   } else {
     console.log('[+] Connected to SQLite database at:', DB_PATH);
+    // Apply high-performance pragmas for telemetry workloads
+    db.serialize(() => {
+      db.run('PRAGMA journal_mode = WAL;');
+      db.run('PRAGMA synchronous = NORMAL;');
+      db.run('PRAGMA cache_size = -64000;'); // 64MB cache
+      db.run('PRAGMA temp_store = MEMORY;');
+    });
   }
 });
 
@@ -126,6 +133,14 @@ export async function initDatabase(initialObjects = []) {
     )
   `);
 
+  // Performance Indexes for high-cadence search & filtering
+  await dbRun(`CREATE INDEX IF NOT EXISTS idx_objects_class ON objects(class)`);
+  await dbRun(`CREATE INDEX IF NOT EXISTS idx_objects_year ON objects(discovery_year)`);
+  await dbRun(`CREATE INDEX IF NOT EXISTS idx_objects_mission ON objects(discovery_mission)`);
+  await dbRun(`CREATE INDEX IF NOT EXISTS idx_objects_constellation ON objects(constellation)`);
+  await dbRun(`CREATE INDEX IF NOT EXISTS idx_objects_name ON objects(name)`);
+  await dbRun(`CREATE INDEX IF NOT EXISTS idx_calc_history_created ON calculation_history(created_at)`);
+
   // Sync/upsert curated discoveries to ensure full archive coverage
   if (initialObjects.length > 0) {
     for (const obj of initialObjects) {
@@ -162,4 +177,43 @@ export async function initDatabase(initialObjects = []) {
     }
     console.log(`[+] Seeded/verified ${initialObjects.length} discovery database objects successfully.`);
   }
+}
+
+// Telemetry & metrics about database file
+export async function getDatabaseMetrics() {
+  let fileSizeKb = 0;
+  try {
+    if (fs.existsSync(DB_PATH)) {
+      const stats = fs.statSync(DB_PATH);
+      fileSizeKb = Math.round(stats.size / 1024);
+    }
+  } catch (e) {}
+
+  const [objects, jobs, calculations, presets] = await Promise.all([
+    dbGet('SELECT COUNT(*) as count FROM objects'),
+    dbGet('SELECT COUNT(*) as count FROM pipeline_jobs'),
+    dbGet('SELECT COUNT(*) as count FROM calculation_history'),
+    dbGet('SELECT COUNT(*) as count FROM simulation_presets')
+  ]);
+
+  return {
+    path: DB_PATH,
+    sizeKb: fileSizeKb,
+    tables: {
+      objects: objects?.count || 0,
+      pipelineJobs: jobs?.count || 0,
+      calculations: calculations?.count || 0,
+      simulationPresets: presets?.count || 0
+    }
+  };
+}
+
+export function closeDatabase() {
+  return new Promise((resolve) => {
+    db.close((err) => {
+      if (err) console.error('[-] Error closing database:', err.message);
+      else console.log('[+] Database connection closed cleanly.');
+      resolve();
+    });
+  });
 }

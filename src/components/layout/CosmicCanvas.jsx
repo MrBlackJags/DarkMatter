@@ -923,11 +923,11 @@ export default function CosmicCanvas() {
         starLookup.set(cs.id, starObj);
       }
 
-      // ─── 2. GENERAL STELLAR POPULATION (4,500 Stars with Milky Way Disk) ───
+      // ─── 2. GENERAL STELLAR POPULATION (9,500 Stars with Milky Way Disk) ───
       const galacticTilt = 0.49;
       const cosG = Math.cos(galacticTilt);
       const sinG = Math.sin(galacticTilt);
-      const TOTAL_STARS = 4500;
+      const TOTAL_STARS = 9500;
 
       for (let i = 0; i < TOTAL_STARS; i++) {
         let theta, phi;
@@ -1022,7 +1022,7 @@ export default function CosmicCanvas() {
       }
 
       // ─── 3. MILKY WAY GALACTIC PLANE LUMINESCENCE ───
-      const DUST_PARTICLES = 360;
+      const DUST_PARTICLES = 650;
       for (let i = 0; i < DUST_PARTICLES; i++) {
         const theta = Math.random() * Math.PI * 2;
         const u1 = Math.random();
@@ -1293,36 +1293,7 @@ export default function CosmicCanvas() {
             ctx.fill();
             ctx.scale(1.0, nW / nH);
 
-            // Layer B: Intricate Filamentary Ionization Ribbons & Shock Fronts (Bezier Splines)
-            if (neb.filaments && neb.filaments.length > 0) {
-              for (const fil of neb.filaments) {
-                const sx = fil.start[0] * scale;
-                const sy = fil.start[1] * scale;
-                const c1x = fil.cp1[0] * scale;
-                const c1y = fil.cp1[1] * scale;
-                const c2x = fil.cp2[0] * scale;
-                const c2y = fil.cp2[1] * scale;
-                const ex = fil.end[0] * scale;
-                const ey = fil.end[1] * scale;
 
-                // Feathered glow pass
-                ctx.strokeStyle = fil.color;
-                ctx.globalAlpha = fil.alpha * fade * 0.45;
-                ctx.lineWidth = Math.max(1.5, fil.width * scale * 2.2);
-                ctx.beginPath();
-                ctx.moveTo(sx, sy);
-                ctx.bezierCurveTo(c1x, c1y, c2x, c2y, ex, ey);
-                ctx.stroke();
-
-                // Core sharp filament spine
-                ctx.globalAlpha = fil.alpha * fade;
-                ctx.lineWidth = Math.max(0.8, fil.width * scale);
-                ctx.beginPath();
-                ctx.moveTo(sx, sy);
-                ctx.bezierCurveTo(c1x, c1y, c2x, c2y, ex, ey);
-                ctx.stroke();
-              }
-            }
 
             // Layer C: Towering Dark Molecular Dust Pillars & Silhouettes (e.g. Horsehead, Pillars)
             if (neb.darkSilhouettes && neb.darkSilhouettes.length > 0) {
@@ -1446,22 +1417,8 @@ export default function CosmicCanvas() {
             }
 
             // Register in screen hits for click interaction
-            screenStarHits.push({ px, py, star: s });
-
-            // Relativistic Warp Starlight Streaking
-            if (warpStreakPower > 0 && !isVisitedStar) {
-              const dx = px - cx;
-              const dy = py - cy;
-              const distFromCenter = Math.hypot(dx, dy);
-              if (distFromCenter > 5) {
-                const streakLen = (distFromCenter / cx) * warpStreakPower * 12;
-                ctx.strokeStyle = `rgba(186, 230, 253, ${alpha * 0.75})`;
-                ctx.lineWidth = Math.max(0.7, renderSize * 0.85);
-                ctx.beginPath();
-                ctx.moveTo(px, py);
-                ctx.lineTo(px + (dx / distFromCenter) * streakLen, py + (dy / distFromCenter) * streakLen);
-                ctx.stroke();
-              }
+            if (s.isCompulsory || s.isBeacon) {
+              screenStarHits.push({ px, py, star: s });
             }
 
             // High-luminosity Anchor / Compulsory Star Airy disk & Corona
@@ -1476,16 +1433,6 @@ export default function CosmicCanvas() {
               ctx.beginPath();
               ctx.arc(px, py, haloR, 0, Math.PI * 2);
               ctx.fill();
-
-              // Telescope 4-point cross diffraction spikes
-              ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * (p.dist < 60 ? 0.85 : 0.45)})`;
-              ctx.lineWidth = p.dist < 60 ? 1.4 : 0.65;
-              const spikeLen = renderSize * (p.dist < 60 ? 7.5 : 5.5);
-              ctx.beginPath();
-              ctx.moveTo(px - spikeLen, py);
-              ctx.lineTo(px + spikeLen, py);
-              ctx.moveTo(px, py - spikeLen);
-              ctx.lineTo(px, py + spikeLen);
             }
 
             // Core photosphere disk
@@ -1598,21 +1545,15 @@ export default function CosmicCanvas() {
               }
             } else if (ev.type === 'GRB') {
               const intensity = Math.pow(1.0 - progress, 1.8);
-              ctx.rotate(ev.jetAngle);
-              const beamLen = (180 + progress * 240) * scale;
-              const beamW = (8 + progress * 24) * scale;
-
-              const bGrad = ctx.createLinearGradient(0, -beamLen, 0, beamLen);
-              bGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
-              bGrad.addColorStop(0.5, `rgba(255, 255, 255, ${intensity * 0.95})`);
+              const flashR = (25 + progress * 50) * scale;
+              const bGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, flashR);
+              bGrad.addColorStop(0, `rgba(255, 255, 255, ${intensity * 0.95})`);
+              bGrad.addColorStop(0.4, `rgba(186, 230, 253, ${intensity * 0.4})`);
               bGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-              ctx.strokeStyle = bGrad;
-              ctx.lineWidth = Math.max(1.2, beamW);
+              ctx.fillStyle = bGrad;
               ctx.beginPath();
-              ctx.moveTo(0, -beamLen);
-              ctx.lineTo(0, beamLen);
-              ctx.stroke();
+              ctx.arc(0, 0, flashR, 0, Math.PI * 2);
+              ctx.fill();
             }
 
             ctx.restore();
@@ -1622,35 +1563,6 @@ export default function CosmicCanvas() {
         if (ev.frame >= ev.maxFrames) {
           activeCosmicEvent = null;
         }
-      }
-
-      // ── 7. RARE DEEP SPACE METEORS ──
-      if (Math.random() < 0.007 && !warp.active) {
-        spawnMeteor();
-      }
-
-      for (let i = meteors.length - 1; i >= 0; i--) {
-        const m = meteors[i];
-        m.x += m.dx;
-        m.y += m.dy;
-        m.life -= m.decay;
-
-        if (m.life <= 0) {
-          meteors.splice(i, 1);
-          continue;
-        }
-
-        const grad = ctx.createLinearGradient(m.x, m.y, m.x - m.dx * 3.5, m.y - m.dy * 3.5);
-        grad.addColorStop(0, `rgba(255, 255, 255, ${m.life * 0.85})`);
-        grad.addColorStop(0.3, `rgba(186, 230, 253, ${m.life * 0.4})`);
-        grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = 1.1;
-        ctx.beginPath();
-        ctx.moveTo(m.x, m.y);
-        ctx.lineTo(m.x - m.dx * 3.5, m.y - m.dy * 3.5);
-        ctx.stroke();
       }
 
       time += 1 * speedFactor;
@@ -1696,7 +1608,7 @@ export default function CosmicCanvas() {
       {/* BACKGROUND DEEP SKY CANVAS */}
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 w-full h-full z-0 cursor-crosshair"
+        className="fixed inset-0 w-full h-full z-0 cursor-default"
         style={{ background: '#000000' }}
       />
 

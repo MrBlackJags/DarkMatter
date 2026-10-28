@@ -34,7 +34,9 @@ import {
   BookOpen,
   ArrowUpDown,
   Filter,
-  Check
+  Check,
+  X,
+  Command
 } from 'lucide-react';
 
 /**
@@ -379,6 +381,38 @@ export default function DataCards({
   const [selectedSurvey, setSelectedSurvey] = useState('all');
   const [sortBy, setSortBy] = useState('distance-asc');
 
+  // Enhanced search bar state
+  const searchRef = useRef(null);
+  const [placeholderIdx, setPlaceholderIdx] = useState(0);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const placeholders = [
+    'Search TRAPPIST-1e, Kepler-452b...',
+    'Search black holes, pulsars...',
+    'Search by constellation...',
+    'Search JWST discoveries...',
+    'Search habitable zone worlds...'
+  ];
+
+  // Rotate placeholder text every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlaceholderIdx(prev => (prev + 1) % placeholders.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Global Ctrl+K / Cmd+K keyboard shortcut to focus search
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Compute Curated Filtered Objects
   const isStarObject = (cls) => ['star', 'galaxy', 'pulsar', 'supernova'].includes(cls);
   const isBlackHoleObject = (cls) => cls === 'blackhole';
@@ -478,7 +512,7 @@ export default function DataCards({
     <section className="relative z-10 min-h-screen w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 transition-opacity duration-700 ease-out">
       
       {/* TOP OBSERVATORY HEADER & BROWSE MODE TOGGLE */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-white/[0.08] pb-6 mb-8">
+      <header className="flex flex-col gap-5 border-b border-white/[0.08] pb-6 mb-8">
         
         <div className="flex items-center gap-4">
           <button
@@ -518,47 +552,110 @@ export default function DataCards({
           </div>
         </div>
 
-        {/* SEARCH BAR & QUICK ACTIONS */}
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <div className="relative w-full sm:w-72">
-            <input
-              type="text"
-              value={catalogMode === 'curated' ? searchQuery : stellarSearch}
-              onChange={(e) => {
-                if (catalogMode === 'curated') {
-                  setSearchQuery(e.target.value);
-                } else {
-                  setStellarSearch(e.target.value);
-                  setStellarPage(1);
-                }
-              }}
-              placeholder={catalogMode === 'curated' ? 'Search deep space catalog...' : 'Search Gaia DR3, KIC, TIC, SDSS, HD...'}
-              className="w-full bg-white/[0.03] border border-white/[0.08] rounded-full px-4 py-2 pl-9 text-xs font-light text-white placeholder-white/30 focus:outline-none focus:border-cyan-400/50 focus:bg-white/[0.05] transition-all"
-            />
-            <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30" />
-            {((catalogMode === 'curated' && searchQuery) || (catalogMode === 'stellar_surveys' && stellarSearch)) && (
+        {/* ENHANCED SEARCH BAR & QUICK ACTIONS */}
+        <div className="flex flex-col gap-3 w-full">
+          <div className="flex items-center gap-3 w-full">
+            <div 
+              className={`relative flex-1 group/search transition-all duration-500 ${
+                isSearchFocused 
+                  ? 'ring-2 ring-cyan-400/40 shadow-[0_0_30px_rgba(0,200,255,0.15),0_0_60px_rgba(0,200,255,0.05)]' 
+                  : 'shadow-[0_2px_15px_rgba(0,0,0,0.3)]'
+              } rounded-2xl`}
+            >
+              {/* Gradient border overlay on focus */}
+              <div className={`absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-cyan-500/50 via-blue-500/50 to-purple-500/50 transition-opacity duration-500 ${
+                isSearchFocused ? 'opacity-100' : 'opacity-0'
+              }`} />
+              
+              <div className={`relative flex items-center w-full bg-white/[0.04] border rounded-2xl transition-all duration-500 ${
+                isSearchFocused 
+                  ? 'border-transparent bg-white/[0.07]' 
+                  : 'border-white/[0.08] hover:border-white/[0.15]'
+              }`}>
+                {/* Search Icon */}
+                <Search className={`w-4 h-4 ml-4 shrink-0 transition-colors duration-300 ${
+                  isSearchFocused ? 'text-cyan-400' : 'text-white/30'
+                }`} />
+                
+                {/* Input */}
+                <input
+                  ref={searchRef}
+                  type="text"
+                  value={catalogMode === 'curated' ? searchQuery : stellarSearch}
+                  onChange={(e) => {
+                    if (catalogMode === 'curated') {
+                      setSearchQuery(e.target.value);
+                    } else {
+                      setStellarSearch(e.target.value);
+                      setStellarPage(1);
+                    }
+                  }}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setIsSearchFocused(false)}
+                  placeholder={catalogMode === 'curated' ? placeholders[placeholderIdx] : 'Search Gaia DR3, KIC, TIC, SDSS, HD...'}
+                  className="flex-1 bg-transparent px-3 py-3 text-sm font-light text-white placeholder-white/25 focus:outline-none transition-all"
+                />
+
+                {/* Right side badges */}
+                <div className="flex items-center gap-2 mr-3 shrink-0">
+                  {/* Live result count */}
+                  {((catalogMode === 'curated' && searchQuery) || (catalogMode === 'stellar_surveys' && stellarSearch)) && (
+                    <span className="text-[10px] font-mono px-2 py-1 rounded-lg bg-cyan-500/15 text-cyan-300 border border-cyan-500/20 whitespace-nowrap">
+                      {catalogMode === 'curated' 
+                        ? `${filteredCuratedObjects.length} result${filteredCuratedObjects.length !== 1 ? 's' : ''}`
+                        : `${stellarSurveyData.totalMatching.toLocaleString()} result${stellarSurveyData.totalMatching !== 1 ? 's' : ''}`
+                      }
+                    </span>
+                  )}
+
+                  {/* Clear button */}
+                  {((catalogMode === 'curated' && searchQuery) || (catalogMode === 'stellar_surveys' && stellarSearch)) && (
+                    <button
+                      onClick={() => {
+                        if (catalogMode === 'curated') setSearchQuery('');
+                        else setStellarSearch('');
+                        searchRef.current?.focus();
+                      }}
+                      className="p-1 rounded-lg hover:bg-white/10 text-white/30 hover:text-white transition-all cursor-pointer"
+                      aria-label="Clear search"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+
+                  {/* Keyboard shortcut hint */}
+                  {!((catalogMode === 'curated' && searchQuery) || (catalogMode === 'stellar_surveys' && stellarSearch)) && (
+                    <kbd className="hidden sm:inline-flex items-center gap-0.5 text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-white/[0.06] border border-white/[0.1] text-white/30">
+                      <span className="text-[9px]">⌘</span>K
+                    </kbd>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Log Discovery Candidate Button */}
+            {catalogMode === 'curated' && onOpenLogger && (
               <button
-                onClick={() => {
-                  if (catalogMode === 'curated') setSearchQuery('');
-                  else setStellarSearch('');
-                }}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white text-xs cursor-pointer"
+                onClick={onOpenLogger}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-3 rounded-2xl border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-xs font-mono transition-all shadow-[0_0_15px_rgba(6,182,212,0.12)] cursor-pointer shrink-0"
+                title="Record and persist custom celestial observation to database"
               >
-                ✕
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>Log Discovery</span>
               </button>
             )}
           </div>
 
-          {/* Log Discovery Candidate Button */}
-          {catalogMode === 'curated' && onOpenLogger && (
-            <button
-              onClick={onOpenLogger}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-xs font-mono transition-all shadow-[0_0_15px_rgba(6,182,212,0.12)] cursor-pointer shrink-0"
-              title="Record and persist custom celestial observation to database"
-            >
-              <PlusCircle className="w-3.5 h-3.5" />
-              <span>Log Discovery</span>
-            </button>
+          {/* Search scope indicator pills */}
+          {isSearchFocused && (
+            <div className="flex items-center gap-1.5 ml-1 animate-fade-in">
+              <span className="text-[10px] font-mono text-white/25 mr-1">Searching:</span>
+              {['Name', 'Designation', 'Constellation', 'Type'].map(field => (
+                <span key={field} className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-white/40">
+                  {field}
+                </span>
+              ))}
+            </div>
           )}
         </div>
 

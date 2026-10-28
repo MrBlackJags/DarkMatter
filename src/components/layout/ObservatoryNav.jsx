@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Orbit, Telescope, Calculator, Rocket, Database, Home, BookOpen, Scale } from 'lucide-react';
+import { Orbit, Telescope, Calculator, Rocket, Home, BookOpen, Scale } from 'lucide-react';
 import { fetchSystemHealth } from '../../services/api';
 
 export default function ObservatoryNav({ 
@@ -55,8 +55,7 @@ export default function ObservatoryNav({
   const navItems = [
     { id: 'explore', label: 'Stellar Discoveries', badge: '2.4M+', icon: Telescope, accentColor: 'cyan' },
     { id: 'calculators', label: 'Space Calculators', badge: '14+', icon: Calculator, accentColor: 'violet' },
-    { id: 'simulation', label: 'Gravity & Collisions', badge: 'N-BODY', icon: Orbit, accentColor: 'amber' },
-    { id: 'pipeline', label: 'Telemetry Pipeline', badge: 'LIVE', icon: Database, accentColor: 'emerald' }
+    { id: 'simulation', label: 'Gravity & Collisions', badge: 'N-BODY', icon: Orbit, accentColor: 'amber' }
   ];
 
   const accentStyles = {

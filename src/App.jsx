@@ -14,8 +14,10 @@ import SpaceCalculators from './components/observatory/SpaceCalculators';
 import OrbitSimulator from './components/observatory/OrbitSimulator';
 import DataPipelineDashboard from './components/reference/DataPipelineDashboard';
 import DataDictionaryBar from './components/reference/DataDictionaryBar';
+import CosmicLoadingScreen from './components/layout/CosmicLoadingScreen';
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const [objects, setObjects] = useState(() => {
     try {
       const saved = localStorage.getItem('darkmatter_catalog_v2');
@@ -166,6 +168,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden selection:bg-white/20 selection:text-white">
+      {/* Sci-Fi Observatory Loading Screen */}
+      {isLoading && (
+        <CosmicLoadingScreen 
+          onComplete={() => setIsLoading(false)} 
+          minDuration={1400} 
+        />
+      )}
+
       {/* Immersive cosmic background canvas (ONLY on landing view to guarantee zero scroll lag when browsing) */}
       {view === 'landing' && <CosmicCanvas />}
 
