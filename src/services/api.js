@@ -1,6 +1,8 @@
 import { DISCOVERED_OBJECTS } from '../data/discoveredObjects';
 
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL}/api` 
+  : (import.meta.env.DEV ? 'http://localhost:3001/api' : '');
 
 /**
  * Robust API Client with automatic fallback to localStorage / in-memory
